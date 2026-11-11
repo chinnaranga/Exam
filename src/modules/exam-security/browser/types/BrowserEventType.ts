@@ -1,0 +1,19 @@
+// Enterprise Browser Event Types
+
+export type BrowserEventType =
+  | 'PAGE_VISIBLE'
+  | 'PAGE_HIDDEN'
+  | 'WINDOW_FOCUS'
+  | 'WINDOW_BLUR'
+  | 'WINDOW_RESIZE'
+  | 'WINDOW_SCROLL'
+  | 'WINDOW_ONLINE'
+  | 'WINDOW_OFFLINE'
+  | 'FULLSCREEN_CHANGE'
+  | 'BEFORE_UNLOAD'
+  | 'HASH_CHANGE'
+  | 'POP_STATE'
+  | 'KEYBOARD_EVENT'
+  | 'MOUSE_EVENT'
+  | 'CLIPBOARD_EVENT'
+  | 'CONTEXT_MENU';

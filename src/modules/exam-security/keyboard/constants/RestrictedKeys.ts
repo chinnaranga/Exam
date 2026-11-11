@@ -1,0 +1,22 @@
+import { KeyboardShortcutRule } from '../types/KeyboardShortcut';
+
+export const DEFAULT_RESTRICTED_SHORTCUTS: KeyboardShortcutRule[] = [
+  { id: 'f12_devtools', name: 'Developer Tools (F12)', keyCombination: 'F12', action: 'BLOCK', preventDefault: true, stopPropagation: true, severity: 'CRITICAL', description: 'Prevent opening browser developer inspection panel.' },
+  { id: 'ctrl_shift_i', name: 'Inspect Element (Ctrl+Shift+I)', keyCombination: 'Ctrl+Shift+I', action: 'BLOCK', preventDefault: true, stopPropagation: true, severity: 'CRITICAL', description: 'Prevent DOM inspector.' },
+  { id: 'ctrl_shift_j', name: 'Developer Console (Ctrl+Shift+J)', keyCombination: 'Ctrl+Shift+J', action: 'BLOCK', preventDefault: true, stopPropagation: true, severity: 'CRITICAL', description: 'Prevent console log access.' },
+  { id: 'ctrl_shift_c', name: 'Element Picker (Ctrl+Shift+C)', keyCombination: 'Ctrl+Shift+C', action: 'BLOCK', preventDefault: true, stopPropagation: true, severity: 'HIGH', description: 'Prevent inspecting elements.' },
+  { id: 'ctrl_u', name: 'View Page Source (Ctrl+U)', keyCombination: 'Ctrl+U', action: 'BLOCK', preventDefault: true, stopPropagation: true, severity: 'HIGH', description: 'Prevent source code viewing.' },
+  { id: 'ctrl_s', name: 'Save Page (Ctrl+S)', keyCombination: 'Ctrl+S', action: 'BLOCK', preventDefault: true, stopPropagation: true, severity: 'MEDIUM', description: 'Prevent downloading page files.' },
+  { id: 'ctrl_p', name: 'Print Page (Ctrl+P)', keyCombination: 'Ctrl+P', action: 'BLOCK', preventDefault: true, stopPropagation: true, severity: 'HIGH', description: 'Prevent printing exam screens.' },
+  { id: 'ctrl_r', name: 'Reload Page (Ctrl+R)', keyCombination: 'Ctrl+R', action: 'BLOCK', preventDefault: true, stopPropagation: true, severity: 'MEDIUM', description: 'Prevent accidental page reload.' },
+  { id: 'f5_reload', name: 'F5 Reload', keyCombination: 'F5', action: 'BLOCK', preventDefault: true, stopPropagation: true, severity: 'MEDIUM', description: 'Prevent page refresh.' },
+  { id: 'ctrl_f5_reload', name: 'Hard Reload (Ctrl+F5)', keyCombination: 'Ctrl+F5', action: 'BLOCK', preventDefault: true, stopPropagation: true, severity: 'MEDIUM', description: 'Prevent cache-bypass reload.' },
+  { id: 'alt_f4', name: 'Close Window (Alt+F4)', keyCombination: 'Alt+F4', action: 'WARN_ONLY', preventDefault: false, stopPropagation: false, severity: 'CRITICAL', description: 'Detect window closing attempt.' },
+  { id: 'ctrl_n', name: 'New Window (Ctrl+N)', keyCombination: 'Ctrl+N', action: 'BLOCK', preventDefault: true, stopPropagation: true, severity: 'HIGH', description: 'Prevent launching secondary windows.' },
+  { id: 'ctrl_t', name: 'New Tab (Ctrl+T)', keyCombination: 'Ctrl+T', action: 'BLOCK', preventDefault: true, stopPropagation: true, severity: 'HIGH', description: 'Prevent opening browser tabs.' },
+  { id: 'ctrl_w', name: 'Close Tab (Ctrl+W)', keyCombination: 'Ctrl+W', action: 'BLOCK', preventDefault: true, stopPropagation: true, severity: 'HIGH', description: 'Prevent tab termination.' },
+  { id: 'ctrl_tab', name: 'Switch Tab (Ctrl+Tab)', keyCombination: 'Ctrl+Tab', action: 'BLOCK', preventDefault: true, stopPropagation: true, severity: 'HIGH', description: 'Prevent tab navigation.' },
+  { id: 'ctrl_shift_tab', name: 'Switch Tab Backward (Ctrl+Shift+Tab)', keyCombination: 'Ctrl+Shift+Tab', action: 'BLOCK', preventDefault: true, stopPropagation: true, severity: 'HIGH', description: 'Prevent tab navigation.' },
+  { id: 'alt_tab', name: 'Task Switcher (Alt+Tab)', keyCombination: 'Alt+Tab', action: 'WARN_ONLY', preventDefault: false, stopPropagation: false, severity: 'HIGH', description: 'Detect operating system task switching.' },
+  { id: 'escape_key', name: 'Escape Key (Escape)', keyCombination: 'Escape', action: 'WARN_ONLY', preventDefault: false, stopPropagation: false, severity: 'LOW', description: 'Detect exiting fullscreen.' },
+];

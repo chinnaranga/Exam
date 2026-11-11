@@ -1,0 +1,654 @@
+// Enterprise Identity & Examination Platform Prisma Schema
+// Target: PostgreSQL 14+ with Row-Level Security (RLS) support
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum AccountStatus {
+  PENDING
+  INVITED
+  REGISTERED
+  VERIFIED
+  ACTIVE
+  SUSPENDED
+  LOCKED
+  ARCHIVED
+  DELETED
+}
+
+enum AuthProvider {
+  LOCAL
+  GOOGLE
+  MICROSOFT
+  GITHUB
+  APPLE
+  SAML
+  OIDC
+}
+
+enum RoleScope {
+  SYSTEM
+  TENANT
+  ORGANIZATION
+  DEPARTMENT
+}
+
+model Tenant {
+  id            String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name          String         @db.VarChar(255)
+  slug          String         @unique @db.VarChar(63)
+  domain        String?        @unique @db.VarChar(255)
+  isVerified    Boolean        @default(false)
+
+  organizations Organization[]
+  users         UserTenantMapping[]
+  policies      Policy[]
+  auditLogs     AuditLog[]
+
+  createdAt     DateTime       @default(now()) @db.Timestamptz(6)
+  updatedAt     DateTime       @updatedAt @db.Timestamptz(6)
+
+  @@index([slug])
+}
+
+model Organization {
+  id          String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String       @db.Uuid
+  tenant      Tenant       @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  name        String       @db.VarChar(255)
+  code        String       @db.VarChar(64)
+
+  campuses    Campus[]
+  memberships UserOrganizationRole[]
+
+  createdAt   DateTime     @default(now()) @db.Timestamptz(6)
+  updatedAt   DateTime     @updatedAt @db.Timestamptz(6)
+
+  @@unique([tenantId, code])
+}
+
+model Campus {
+  id             String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  organizationId String       @db.Uuid
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  name           String       @db.VarChar(255)
+
+  departments    Department[]
+
+  createdAt      DateTime     @default(now()) @db.Timestamptz(6)
+}
+
+model Department {
+  id        String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  campusId  String    @db.Uuid
+  campus    Campus    @relation(fields: [campusId], references: [id], onDelete: Cascade)
+  name      String    @db.VarChar(255)
+
+  programs  Program[]
+
+  createdAt DateTime  @default(now()) @db.Timestamptz(6)
+}
+
+model Program {
+  id           String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  departmentId String     @db.Uuid
+  department   Department @relation(fields: [departmentId], references: [id], onDelete: Cascade)
+  name         String     @db.VarChar(255)
+
+  createdAt    DateTime   @default(now()) @db.Timestamptz(6)
+}
+
+model User {
+  id              String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  email           String         @unique @db.VarChar(255)
+  passwordHash    String         @db.VarChar(512)
+  firstName       String         @db.VarChar(128)
+  lastName        String         @db.VarChar(128)
+  phoneNumber     String?        @db.VarChar(32)
+  status          AccountStatus  @default(PENDING)
+  isEmailVerified Boolean        @default(false)
+  isMFAEnabled    Boolean        @default(false)
+  mfaSecret       String?        @db.VarChar(255)
+  failedAttempts  Int            @default(0)
+  lockedUntil     DateTime?      @db.Timestamptz(6)
+  deletedAt       DateTime?      @db.Timestamptz(6)
+
+  identities      Identity[]
+  tenants         UserTenantMapping[]
+  roles           UserOrganizationRole[]
+  sessions        Session[]
+  devices         Device[]
+  auditLogs       AuditLog[]
+
+  createdAt       DateTime       @default(now()) @db.Timestamptz(6)
+  updatedAt       DateTime       @updatedAt @db.Timestamptz(6)
+
+  @@index([email, status])
+}
+
+model Identity {
+  id               String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId           String       @db.Uuid
+  user             User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  provider         AuthProvider
+  providerSubject  String       @db.VarChar(255)
+  metadata         Json?        @default("{}")
+
+  createdAt        DateTime     @default(now()) @db.Timestamptz(6)
+
+  @@unique([provider, providerSubject])
+}
+
+model UserTenantMapping {
+  userId    String   @db.Uuid
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tenantId  String   @db.Uuid
+  tenant    Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  isPrimary Boolean  @default(false)
+
+  @@id([userId, tenantId])
+}
+
+model Role {
+  id          String                 @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name        String                 @db.VarChar(128)
+  scope       RoleScope              @default(TENANT)
+  description String?                @db.VarChar(512)
+
+  permissions RolePermission[]
+  users       UserOrganizationRole[]
+
+  createdAt   DateTime               @default(now()) @db.Timestamptz(6)
+}
+
+model Permission {
+  id          String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  code        String           @unique @db.VarChar(128)
+  module      String           @db.VarChar(64)
+  action      String           @db.VarChar(64)
+  description String?          @db.VarChar(255)
+
+  roles       RolePermission[]
+
+  createdAt   DateTime         @default(now()) @db.Timestamptz(6)
+}
+
+model RolePermission {
+  roleId       String     @db.Uuid
+  role         Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permissionId String     @db.Uuid
+  permission   Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@id([roleId, permissionId])
+}
+
+model UserOrganizationRole {
+  userId         String       @db.Uuid
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  organizationId String       @db.Uuid
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  roleId         String       @db.Uuid
+  role           Role         @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  @@id([userId, organizationId, roleId])
+}
+
+model Policy {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String   @db.Uuid
+  tenant      Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  name        String   @db.VarChar(255)
+  rulesJson   Json
+
+  createdAt   DateTime @default(now()) @db.Timestamptz(6)
+}
+
+model Session {
+  id               String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId           String   @db.Uuid
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  refreshTokenHash String   @unique @db.VarChar(512)
+  ipAddress        String   @db.VarChar(45)
+  userAgent        String   @db.VarChar(512)
+  deviceId         String?  @db.Uuid
+  device           Device?  @relation(fields: [deviceId], references: [id])
+  isRevoked        Boolean  @default(false)
+  expiresAt        DateTime @db.Timestamptz(6)
+
+  createdAt        DateTime @default(now()) @db.Timestamptz(6)
+
+  @@index([userId, isRevoked])
+}
+
+model Device {
+  id              String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId          String    @db.Uuid
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  fingerprintHash String    @db.VarChar(255)
+  deviceName      String    @db.VarChar(255)
+  isTrusted       Boolean   @default(false)
+  riskScore       Float     @default(0.0)
+  sessions        Session[]
+
+  @@unique([userId, fingerprintHash])
+}
+
+model AuditLog {
+  id            String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId      String   @db.Uuid
+  tenant        Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  actorUserId   String?  @db.Uuid
+  actorUser     User?    @relation(fields: [actorUserId], references: [id])
+  action        String   @db.VarChar(128)
+  resourceType  String   @db.VarChar(64)
+  resourceId    String   @db.VarChar(255)
+  payloadBefore Json?
+  payloadAfter  Json?
+  ipAddress     String   @db.VarChar(45)
+  correlationId String   @db.Uuid
+
+  createdAt     DateTime @default(now()) @db.Timestamptz(6)
+
+  @@index([tenantId, createdAt])
+}
+
+// Student Identity Platform Models
+model StudentProfile {
+  id                    String              @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId                String              @unique @db.Uuid
+  studentIdNumber       String              @unique @db.VarChar(64)
+  registrationNumber    String              @unique @db.VarChar(64)
+  preferredName         String?             @db.VarChar(100)
+  middleName            String?             @db.VarChar(100)
+  dateOfBirth           DateTime?           @db.Date
+  gender                String?             @db.VarChar(32)
+  nationality           String?             @db.VarChar(64)
+  bloodGroup            String?             @db.VarChar(16)
+  languagesSpoken       String[]
+  biography             String?             @db.Text
+  avatarUrl             String?             @db.Text
+
+  // Academic Identity Fields
+  universityName        String              @default("Massachusetts Institute of Technology") @db.VarChar(255)
+  campusName            String              @default("Cambridge Main Campus") @db.VarChar(255)
+  departmentName        String              @default("Department of Computer Science") @db.VarChar(255)
+  programName           String              @default("B.S. Computer Science & AI") @db.VarChar(255)
+  specialization        String?             @db.VarChar(255)
+  batch                 String              @default("2026") @db.VarChar(32)
+  currentSemester       Int                 @default(7)
+  academicSection       String              @default("A") @db.VarChar(16)
+  currentCgpa           Float               @default(3.94)
+  academicStatus        String              @default("GOOD_STANDING") @db.VarChar(32)
+  enrollmentType        String              @default("FULL_TIME") @db.VarChar(32)
+  academicAdvisor       String?             @default("Dr. Robert Chen") @db.VarChar(128)
+  admissionYear         Int                 @default(2023)
+  expectedGraduationYear Int                @default(2026)
+
+  // Sub-Model Relations
+  contact               StudentContact?
+  addresses             StudentAddress[]
+  guardians             Guardian[]
+  emergencyContacts     EmergencyContact[]
+  preference            StudentPreference?
+  privacy               StudentPrivacy?
+  completion            ProfileCompletion?
+
+  createdAt             DateTime            @default(now()) @db.Timestamptz(6)
+  updatedAt             DateTime            @updatedAt @db.Timestamptz(6)
+
+  @@index([studentIdNumber])
+  @@index([registrationNumber])
+}
+
+model StudentContact {
+  id              String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  studentProfileId String        @unique @db.Uuid
+  studentProfile  StudentProfile @relation(fields: [studentProfileId], references: [id], onDelete: Cascade)
+
+  universityEmail String         @db.VarChar(255)
+  personalEmail   String?        @db.VarChar(255)
+  primaryPhone    String?        @db.VarChar(32)
+  secondaryPhone  String?        @db.VarChar(32)
+
+  createdAt       DateTime       @default(now()) @db.Timestamptz(6)
+  updatedAt       DateTime       @updatedAt @db.Timestamptz(6)
+}
+
+model StudentAddress {
+  id              String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  studentProfileId String        @db.Uuid
+  studentProfile  StudentProfile @relation(fields: [studentProfileId], references: [id], onDelete: Cascade)
+
+  type            String         @db.VarChar(32) // CURRENT, PERMANENT
+  streetAddress   String         @db.VarChar(255)
+  city            String         @db.VarChar(100)
+  state           String         @db.VarChar(100)
+  country         String         @db.VarChar(100)
+  postalCode      String         @db.VarChar(32)
+
+  createdAt       DateTime       @default(now()) @db.Timestamptz(6)
+  updatedAt       DateTime       @updatedAt @db.Timestamptz(6)
+}
+
+model Guardian {
+  id              String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  studentProfileId String        @db.Uuid
+  studentProfile  StudentProfile @relation(fields: [studentProfileId], references: [id], onDelete: Cascade)
+
+  fullName        String         @db.VarChar(255)
+  relationship    String         @db.VarChar(64) // FATHER, MOTHER, GUARDIAN
+  occupation      String?        @db.VarChar(128)
+  contactNumber   String         @db.VarChar(32)
+  email           String?        @db.VarChar(255)
+  address         String?        @db.VarChar(255)
+
+  createdAt       DateTime       @default(now()) @db.Timestamptz(6)
+  updatedAt       DateTime       @updatedAt @db.Timestamptz(6)
+}
+
+model EmergencyContact {
+  id              String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  studentProfileId String        @db.Uuid
+  studentProfile  StudentProfile @relation(fields: [studentProfileId], references: [id], onDelete: Cascade)
+
+  contactName     String         @db.VarChar(255)
+  relationship    String         @db.VarChar(64)
+  phoneNumber     String         @db.VarChar(32)
+  alternateNumber String?        @db.VarChar(32)
+  address         String?        @db.VarChar(255)
+
+  createdAt       DateTime       @default(now()) @db.Timestamptz(6)
+  updatedAt       DateTime       @updatedAt @db.Timestamptz(6)
+}
+
+model StudentPreference {
+  id              String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  studentProfileId String        @unique @db.Uuid
+  studentProfile  StudentProfile @relation(fields: [studentProfileId], references: [id], onDelete: Cascade)
+
+  preferredLanguage String       @default("en-US") @db.VarChar(16)
+  timezone          String       @default("America/New_York") @db.VarChar(64)
+  dateFormat        String       @default("YYYY-MM-DD") @db.VarChar(32)
+  timeFormat        String       @default("24H") @db.VarChar(16)
+  themePreference   String       @default("LIGHT") @db.VarChar(16)
+  accessibilityMode Boolean      @default(false)
+  emailNotifications Boolean     @default(true)
+  smsNotifications   Boolean     @default(true)
+
+  createdAt       DateTime       @default(now()) @db.Timestamptz(6)
+  updatedAt       DateTime       @updatedAt @db.Timestamptz(6)
+}
+
+model StudentPrivacy {
+  id                  String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  studentProfileId     String        @unique @db.Uuid
+  studentProfile      StudentProfile @relation(fields: [studentProfileId], references: [id], onDelete: Cascade)
+
+  profileVisibility   String         @default("INSTITUTIONAL") @db.VarChar(32) // PUBLIC, INSTITUTIONAL, PRIVATE
+  contactVisibility   String         @default("PRIVATE") @db.VarChar(32)
+  documentVisibility  String         @default("PRIVATE") @db.VarChar(32)
+  portfolioVisibility String         @default("INSTITUTIONAL") @db.VarChar(32)
+  resumeVisibility    String         @default("RECRUITERS_ONLY") @db.VarChar(32)
+
+  createdAt           DateTime       @default(now()) @db.Timestamptz(6)
+  updatedAt           DateTime       @updatedAt @db.Timestamptz(6)
+}
+
+model ProfileCompletion {
+  id                  String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  studentProfileId     String        @unique @db.Uuid
+  studentProfile      StudentProfile @relation(fields: [studentProfileId], references: [id], onDelete: Cascade)
+
+  completionPercentage Float          @default(85.0)
+  missingFields       String[]
+  recommendations     String[]
+
+  createdAt           DateTime       @default(now()) @db.Timestamptz(6)
+  updatedAt           DateTime       @updatedAt @db.Timestamptz(6)
+}
+
+// Enterprise Integrity Intelligence Platform Models (Phase 4)
+enum IntegrityReviewStatus {
+  PENDING_REVIEW
+  UNDER_REVIEW
+  REQUIRES_ADDITIONAL_EVIDENCE
+  CLEARED
+  CONFIRMED_VIOLATION
+  APPEALED
+  CLOSED
+}
+
+model IntegritySession {
+  id              String                @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  sessionId       String                @unique @db.VarChar(128)
+  candidateId     String                @db.VarChar(128)
+  examId          String                @db.VarChar(128)
+  organizationId  String                @db.VarChar(128)
+  status          IntegrityReviewStatus @default(PENDING_REVIEW)
+  reviewerNotes   String?               @db.Text
+  reviewerId      String?               @db.VarChar(128)
+  reviewedAt      DateTime?             @db.Timestamptz(6)
+  overallRiskScore Float                @default(0.0)
+
+  rawEvents       IntegrityRawEvent[]
+  baseline        IntegrityBaseline?
+  assessment      IntegrityAssessment?
+  auditLogs       IntegrityAuditRecord[]
+
+  createdAt       DateTime              @default(now()) @db.Timestamptz(6)
+  updatedAt       DateTime              @updatedAt @db.Timestamptz(6)
+
+  @@index([candidateId, examId])
+  @@index([organizationId, status])
+}
+
+model IntegrityRawEvent {
+  id               String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  eventId          String           @unique @db.VarChar(128)
+  sessionId        String           @db.VarChar(128)
+  integritySession IntegritySession @relation(fields: [sessionId], references: [sessionId], onDelete: Cascade)
+  candidateId      String           @db.VarChar(128)
+  examId           String           @db.VarChar(128)
+  organizationId   String           @db.VarChar(128)
+  module           String           @db.VarChar(64)
+  type             String           @db.VarChar(64)
+  severity         String           @db.VarChar(16)
+  confidence       String           @db.VarChar(16)
+  timestampMs      BigInt
+  details          Json
+  clientIp         String?          @db.VarChar(45)
+
+  createdAt        DateTime         @default(now()) @db.Timestamptz(6)
+
+  @@index([sessionId, module])
+  @@index([timestampMs])
+}
+
+model IntegrityBaseline {
+  id                   String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  sessionId            String           @unique @db.VarChar(128)
+  integritySession     IntegritySession @relation(fields: [sessionId], references: [sessionId], onDelete: Cascade)
+  candidateId          String           @db.VarChar(128)
+  medianTypingInterval Float            @default(150.0)
+  medianPauseMs        Float            @default(400.0)
+  typingVariance       Float            @default(25.0)
+  backspaceRatio       Float            @default(0.08)
+  focusRatio           Float            @default(0.98)
+  mouseEntropy         Float            @default(0.85)
+  clipboardFrequency   Float            @default(0.1)
+  sampleCount          Int              @default(0)
+
+  updatedAt            DateTime         @updatedAt @db.Timestamptz(6)
+}
+
+model IntegrityAssessment {
+  id               String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  sessionId        String           @unique @db.VarChar(128)
+  integritySession IntegritySession @relation(fields: [sessionId], references: [sessionId], onDelete: Cascade)
+  focusRisk        Float            @default(0.0)
+  typingRisk       Float            @default(0.0)
+  clipboardRisk    Float            @default(0.0)
+  browserRisk      Float            @default(0.0)
+  deviceRisk       Float            @default(0.0)
+  environmentRisk  Float            @default(0.0)
+  networkRisk      Float            @default(0.0)
+  overlayRisk      Float            @default(0.0)
+  fullscreenRisk   Float            @default(0.0)
+  overallRiskScore Float            @default(0.0)
+  policyVersion    String           @default("1.0.0") @db.VarChar(32)
+  explanationsJson Json
+
+  updatedAt        DateTime         @updatedAt @db.Timestamptz(6)
+}
+
+model IntegrityPolicy {
+  id               String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  organizationId   String   @unique @db.VarChar(128)
+  version          String   @default("1.0.0") @db.VarChar(32)
+  weightsJson      Json
+  thresholdsJson   Json
+  enabledModules   String[]
+  retentionDays    Int      @default(90)
+  rulesJson        Json?
+
+  createdAt        DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt        DateTime @updatedAt @db.Timestamptz(6)
+}
+
+model IntegrityAuditRecord {
+  id               String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  sessionId        String            @db.VarChar(128)
+  integritySession IntegritySession? @relation(fields: [sessionId], references: [sessionId], onDelete: Cascade)
+  action           String            @db.VarChar(128)
+  actorId          String            @db.VarChar(128)
+  policyVersion    String            @db.VarChar(32)
+  detailsJson      Json
+  ipAddress        String            @db.VarChar(45)
+
+  createdAt        DateTime          @default(now()) @db.Timestamptz(6)
+
+  @@index([sessionId, createdAt])
+}
+
+// Enterprise Operations Platform Models (Phase 6)
+enum OperationsCaseStatus {
+  PENDING
+  UNDER_REVIEW
+  EVIDENCE_REQUESTED
+  DECISION_PENDING
+  CLEARED
+  VIOLATION_CONFIRMED
+  APPEALED
+  CLOSED
+}
+
+model OperationsCase {
+  id              String               @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  caseId          String               @unique @db.VarChar(128)
+  sessionId       String               @db.VarChar(128)
+  candidateId     String               @db.VarChar(128)
+  candidateName   String               @db.VarChar(255)
+  examId          String               @db.VarChar(128)
+  organizationId  String               @db.VarChar(128)
+  status          OperationsCaseStatus @default(PENDING)
+  assignedProctor String?              @db.VarChar(128)
+  riskScore       Float                @default(0.0)
+  evidenceSummary Json?
+  reviewerNotes   String?              @db.Text
+
+  appeals         OperationsAppeal[]
+
+  createdAt       DateTime             @default(now()) @db.Timestamptz(6)
+  updatedAt       DateTime             @updatedAt @db.Timestamptz(6)
+
+  @@index([organizationId, status])
+  @@index([candidateId])
+}
+
+model OperationsAppeal {
+  id             String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  appealId       String         @unique @db.VarChar(128)
+  caseId         String         @db.VarChar(128)
+  operationsCase OperationsCase @relation(fields: [caseId], references: [caseId], onDelete: Cascade)
+  candidateId    String         @db.VarChar(128)
+  statement      String         @db.Text
+  documentUrls   String[]
+  status         String         @default("PENDING") @db.VarChar(32) // PENDING, APPROVED, REJECTED, REOPENED
+  reviewerNotes  String?        @db.Text
+
+  createdAt      DateTime       @default(now()) @db.Timestamptz(6)
+  updatedAt      DateTime       @updatedAt @db.Timestamptz(6)
+}
+
+model OperationsComplianceRecord {
+  id             String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  organizationId String   @db.VarChar(128)
+  framework      String   @db.VarChar(32) // GDPR, FERPA, BIPA, ISO27001, SOC2
+  requestType    String   @db.VarChar(32) // CONSENT, EXPORT, RIGHT_TO_DELETION, RETENTION_PURGE
+  targetId       String   @db.VarChar(128)
+  status         String   @default("COMPLETED") @db.VarChar(32)
+  details        Json?
+
+  createdAt      DateTime @default(now()) @db.Timestamptz(6)
+}
+
+model OperationsIncident {
+  id             String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  incidentId     String   @unique @db.VarChar(128)
+  organizationId String   @db.VarChar(128)
+  type           String   @db.VarChar(64) // NETWORK_OUTAGE, CAMERA_FAILURE, BROWSER_CRASH, INFRASTRUCTURE
+  severity       String   @db.VarChar(16) // CRITICAL, HIGH, MEDIUM, LOW
+  status         String   @default("INVESTIGATING") @db.VarChar(32) // INVESTIGATING, IDENTIFIED, MONITORING, RESOLVED
+  title          String   @db.VarChar(255)
+  details        Json?
+
+  createdAt      DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt      DateTime @updatedAt @db.Timestamptz(6)
+}
+
+model OperationsAlert {
+  id             String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  alertId        String   @unique @db.VarChar(128)
+  organizationId String   @db.VarChar(128)
+  severity       String   @db.VarChar(16) // CRITICAL, HIGH, MEDIUM, LOW
+  message        String   @db.VarChar(512)
+  targetGroup    String   @db.VarChar(64) // PROCTORS, ADMINS, OPERATIONS, SUPPORT
+  isAcknowledged Boolean  @default(false)
+
+  createdAt      DateTime @default(now()) @db.Timestamptz(6)
+}
+
+model OperationsUsageRecord {
+  id             String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  organizationId String   @db.VarChar(128)
+  period         String   @db.VarChar(32) // e.g. "2026-07"
+  examAttempts   Int      @default(0)
+  aiInferenceOps Int      @default(0)
+  storageBytes   BigInt   @default(0)
+  bandwidthBytes BigInt   @default(0)
+
+  updatedAt      DateTime @updatedAt @db.Timestamptz(6)
+
+  @@unique([organizationId, period])
+}
+
+model OperationsAuditLog {
+  id             String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  organizationId String   @db.VarChar(128)
+  actorId        String   @db.VarChar(128)
+  action         String   @db.VarChar(128)
+  resourceType   String   @db.VarChar(64)
+  resourceId     String   @db.VarChar(128)
+  details        Json?
+  ipAddress      String   @db.VarChar(45)
+
+  createdAt      DateTime @default(now()) @db.Timestamptz(6)
+
+  @@index([organizationId, createdAt])
+}

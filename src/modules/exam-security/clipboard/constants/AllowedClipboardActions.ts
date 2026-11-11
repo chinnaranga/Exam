@@ -1,0 +1,1 @@
+export const EDITABLE_INPUT_TAGS = ['INPUT', 'TEXTAREA', 'SELECT'];

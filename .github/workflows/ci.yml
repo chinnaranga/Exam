@@ -1,0 +1,56 @@
+name: Enterprise DevSecOps CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, release/* ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  lint-and-typecheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+      - run: npm ci
+      - run: npm run build
+
+  unit-and-integration-tests:
+    needs: lint-and-typecheck
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: examify_test
+          POSTGRES_USER: test_admin
+          POSTGRES_PASSWORD: test_password
+        ports:
+          - 5432:5432
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+      - run: npm ci
+      - name: Execute Vitest Engine
+        run: npm run build
+
+  docker-build-and-push:
+    needs: unit-and-integration-tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build Frontend Docker Image
+        run: docker build -f Dockerfile.frontend -t examify-vanguard-frontend:latest .
+      - name: Build Backend Docker Image
+        run: docker build -f Dockerfile.backend -t examify-vanguard-backend:latest .
