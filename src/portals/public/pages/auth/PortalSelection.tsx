@@ -1,8 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import BrandLogo from "@/shared/components/BrandLogo";
-import { Card } from '@/shared/components/ui/card';
-import { Button } from '@/shared/components/ui/button';
 import {
   UserCheck,
   Brain,
@@ -10,158 +8,220 @@ import {
   Building2,
   Server,
   ArrowRight,
-  ShieldCheck,
-  Sparkles,
   Code,
+  Sparkles,
 } from 'lucide-react';
+import {
+  RedCircle,
+  RedUnderline,
+  RedCheck,
+  OmrBubble,
+  MarginNote,
+  StickerBadge,
+  CropMarks,
+} from '@/components/marks';
 
 export const PortalSelection: React.FC = () => {
   const portals = [
     {
       id: 'student',
+      bubble: 'A',
       title: 'Student Portal',
-      subtitle: 'Zero-distraction examination runner, offline autosave & verified digital credentials.',
+      subtitle: 'Zero-distraction test runner with offline autosave and verifiable digital score sheets.',
       path: '/student/login',
       icon: UserCheck,
-      color: 'border-blue-200 hover:border-blue-400 bg-white',
-      badgeBg: 'bg-blue-50 text-[#1E40AF]',
-      badge: 'STUDENT ACCESS',
-      features: ['Zero-Distraction Test Runner', 'Offline Autosave Engine', 'Instant AI Score Transcripts'],
+      sheetColor: 'bg-[#C9CCFF]/35 hover:bg-[#C9CCFF]/50 border-[#2B2350]',
+      tagBg: 'bg-[#C9CCFF] text-[#2B2350]',
+      features: ['Zero-Distraction Test Window', 'Offline Autosave & Sync', 'Instant AI Score Transcripts'],
+      note: 'most popular',
     },
     {
       id: 'coding',
+      bubble: 'B',
       title: 'Coding Platform',
       subtitle: 'Polyglot coding assessments, 14 execution runtimes, judge cluster telemetry & sandbox.',
       path: '/coding/login',
       icon: Code,
-      color: 'border-indigo-200 hover:border-indigo-400 bg-white',
-      badgeBg: 'bg-indigo-50 text-indigo-700',
-      badge: 'CODING PLATFORM ACCESS',
+      sheetColor: 'bg-[#FFF3A3]/45 hover:bg-[#FFF3A3]/65 border-[#2B2350]',
+      tagBg: 'bg-[#FFF3A3] text-[#2B2350]',
       features: ['14 Polyglot Runtimes', '16 Online Judge Nodes', 'Live Execution Telemetry'],
+      note: 'low latency',
     },
     {
       id: 'faculty',
+      bubble: 'C',
       title: 'Faculty Portal',
       subtitle: 'AI item bank authoring, IRT calibration, essay rubric grading & exam blueprints.',
       path: '/faculty/login',
       icon: Brain,
-      color: 'border-purple-200 hover:border-purple-400 bg-white',
-      badgeBg: 'bg-purple-50 text-purple-700',
-      badge: 'FACULTY ACCESS',
-      features: ['AI Question Generator', 'Bloom\'s Taxonomy Blueprinting', 'IRT Difficulty Calibration'],
+      sheetColor: 'bg-[#B8F0D2]/45 hover:bg-[#B8F0D2]/65 border-[#2B2350]',
+      tagBg: 'bg-[#B8F0D2] text-[#2B2350]',
+      features: ['AI Question Generator', "Bloom's Taxonomy Matrix", 'IRT Difficulty Calibration'],
+      note: 'rubric ready',
     },
     {
       id: 'invigilator',
+      bubble: 'D',
       title: 'Invigilator Portal',
       subtitle: 'Real-time multi-candidate video grids, WASM computer vision gaze tracking & alerts.',
       path: '/invigilator/login',
       icon: Video,
-      color: 'border-amber-200 hover:border-amber-400 bg-white',
-      badgeBg: 'bg-amber-50 text-[#D97706]',
-      badge: 'INVIGILATOR ACCESS',
-      features: ['Live Candidate Grid', 'WASM Eye Gaze Detection', 'Instant Flag Incident Logs'],
+      sheetColor: 'bg-[#FFB5A7]/35 hover:bg-[#FFB5A7]/50 border-[#2B2350]',
+      tagBg: 'bg-[#FFB5A7] text-[#2B2350]',
+      features: ['Live Candidate Grid', 'WASM Eye Gaze Detection', 'Instant Incident Audit Logs'],
+      note: 'live room',
     },
     {
       id: 'org-admin',
+      bubble: 'E',
       title: 'Organization Admin',
       subtitle: 'Campus, department, program management, custom branding & role provisioning.',
       path: '/org-admin/login',
       icon: Building2,
-      color: 'border-emerald-200 hover:border-emerald-400 bg-white',
-      badgeBg: 'bg-emerald-50 text-[#15803D]',
-      badge: 'ORG ADMIN ACCESS',
-      features: ['Campus & Department Scoping', 'Roster Invitations', 'Organization Analytics'],
+      sheetColor: 'bg-[#BFE6FF]/40 hover:bg-[#BFE6FF]/60 border-[#2B2350]',
+      tagBg: 'bg-[#BFE6FF] text-[#2B2350]',
+      features: ['Campus & Dept Scoping', 'Roster Bulk Invitations', 'Institutional Analytics'],
+      note: 'admin control',
     },
     {
       id: 'super-admin',
+      bubble: 'F',
       title: 'Super Admin Portal',
       subtitle: 'Global multi-tenant infrastructure control plane, RLS isolation & AI risk engine.',
       path: '/super-admin/login',
       icon: Server,
-      color: 'border-slate-300 hover:border-slate-500 bg-white',
-      badgeBg: 'bg-slate-100 text-[#0F172A]',
-      badge: 'SUPER ADMIN ACCESS',
+      sheetColor: 'bg-white hover:bg-slate-50 border-[#2B2350]',
+      tagBg: 'bg-[#E2E8F0] text-[#2B2350]',
       features: ['Multi-Tenant Control Plane', 'RLS Row Level Security', 'Global AI Threat Radar'],
+      note: 'root clearance',
     },
   ];
 
   return (
-    <div className="min-h-screen bg-[#FAFBFC] font-sans text-[#0F172A] flex flex-col justify-between p-6">
-      {/* Navigation Header */}
-      <header className="max-w-7xl w-full mx-auto flex items-center justify-between py-4 border-b border-[#E2E8F0]">
-        <Link to="/" className="flex items-center space-x-3">
-          <BrandLogo size="md" variant="light" />
+    <div className="min-h-screen bg-white font-body text-[#2B2350] selection:bg-[#FFF3A3] selection:text-[#2B2350] antialiased pencil-cursor flex flex-col justify-between p-4 sm:p-6 lg:p-8">
+      {/* Header Bar */}
+      <header className="max-w-7xl w-full mx-auto flex items-center justify-between py-4 border-b-2 border-dashed border-[#2B2350]/20">
+        <Link to="/" className="flex items-center space-x-3 group">
+          <div className="w-8 h-8 rounded-lg bg-[#6C4DFF] text-white flex items-center justify-center shadow-xs group-hover:bg-[#5A3DEB] transition-colors">
+            <Sparkles className="w-4 h-4 fill-white" />
+          </div>
+          <span className="font-heading text-xl font-extrabold tracking-tight text-[#2B2350]">
+            Assess<span className="text-[#6C4DFF]">IQ</span>
+          </span>
         </Link>
-        <span className="text-[10px] font-mono font-bold uppercase tracking-wider bg-blue-50 text-[#1E40AF] px-3 py-1 rounded-full border border-blue-200">
-          ENTERPRISE PORTAL GATEWAY
-        </span>
+        <div className="flex items-center space-x-3">
+          <span className="text-[11px] font-mono font-bold uppercase tracking-wider bg-[#FFF3A3] text-[#2B2350] px-3 py-1 rounded-full border border-[#2B2350]">
+            FORM 01 // ROLE DISPATCH
+          </span>
+          <Link
+            to="/"
+            className="text-xs font-mono font-bold text-[#6B6590] hover:text-[#6C4DFF] transition-colors"
+          >
+            ← BACK TO HOME
+          </Link>
+        </div>
       </header>
 
-      {/* Hero Header */}
-      <main className="max-w-6xl w-full mx-auto my-auto py-12 space-y-12">
-        <div className="text-center space-y-3">
-          <div className="inline-flex items-center space-x-2 px-3.5 py-1 rounded-full bg-white border border-[#E2E8F0] shadow-xs text-xs font-mono font-bold uppercase text-[#1E40AF]">
-            <Sparkles className="w-3.5 h-3.5 text-[#2563EB]" />
-            <span>Select Your Dedicated Access Portal</span>
+      {/* Main Container */}
+      <main className="max-w-6xl w-full mx-auto my-auto py-10 space-y-10">
+        {/* Title Area */}
+        <div className="text-center space-y-3 relative">
+          <div className="inline-flex items-center space-x-2 px-3.5 py-1 rounded-full bg-white border border-[#2B2350] shadow-[2px_2px_0px_#2B2350] text-xs font-mono font-bold uppercase text-[#2B2350]">
+            <span className="w-2 h-2 rounded-full bg-[#FF4D5E] animate-pulse" />
+            <span>Select Your Graded Workspace</span>
           </div>
 
-          <h1 className="text-4xl sm:text-5xl font-extrabold text-[#0F172A] tracking-tight">
-            AssessIQ Enterprise Gateway
+          <h1 className="font-heading text-4xl sm:text-5xl lg:text-6xl font-extrabold text-[#2B2350] tracking-tight">
+            Choose your <span className="relative inline-block px-1">station<RedCircle className="scale-110" /></span>
           </h1>
 
-          <p className="text-xs sm:text-sm text-[#475569] max-w-2xl mx-auto">
-            Choose your role to log into your specialized application environment. Sharing the same zero-trust identity backend.
-          </p>
+          <div className="flex items-center justify-center gap-2">
+            <p className="text-sm sm:text-base text-[#6B6590] max-w-xl mx-auto font-body">
+              Every participant enters a tailored, zero-leak testing environment.
+            </p>
+            <MarginNote className="-rotate-3 hidden sm:inline-block">fill one bubble</MarginNote>
+          </div>
         </div>
 
-        {/* 5 Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6">
+        {/* 6 Cards Grid (3x2) */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {portals.map((portal) => {
             const Icon = portal.icon;
             return (
-              <Card
+              <div
                 key={portal.id}
-                className={`p-6 rounded-2xl border shadow-xs flex flex-col justify-between space-y-4 hover:shadow-lg transition-all ${portal.color}`}
+                className={`relative rounded-3xl border-2 p-6 flex flex-col justify-between space-y-5 transition-all duration-200 shadow-[4px_4px_0px_#2B2350] hover:shadow-[8px_8px_0px_#2B2350] hover:-translate-y-1 ${portal.sheetColor}`}
               >
-                <div className="space-y-3">
+                <CropMarks />
+
+                <div className="space-y-4">
+                  {/* Top Row: OMR Bubble + Tag */}
                   <div className="flex items-center justify-between">
-                    <div className={`p-2.5 rounded-xl ${portal.badgeBg}`}>
-                      <Icon className="w-5 h-5" />
+                    <div className="flex items-center space-x-2.5">
+                      <div className="w-8 h-8 rounded-full border-2 border-[#2B2350] bg-white font-mono text-xs font-bold flex items-center justify-center shadow-xs">
+                        {portal.bubble}
+                      </div>
+                      <div className="p-2 rounded-xl bg-white border border-[#2B2350]/30 shadow-xs">
+                        <Icon className="w-4 h-4 text-[#2B2350]" />
+                      </div>
                     </div>
-                    <span className={`text-[9px] font-mono font-bold uppercase px-2 py-0.5 rounded ${portal.badgeBg}`}>
-                      {portal.badge}
+                    <span className={`text-[10px] font-mono font-bold uppercase px-2.5 py-0.5 rounded-full border border-[#2B2350]/30 ${portal.tagBg}`}>
+                      {portal.note}
                     </span>
                   </div>
 
-                  <h3 className="font-extrabold text-base text-[#0F172A]">{portal.title}</h3>
-                  <p className="text-xs text-[#475569] leading-relaxed">{portal.subtitle}</p>
+                  <div>
+                    <h3 className="font-heading text-xl font-extrabold text-[#2B2350]">
+                      {portal.title}
+                    </h3>
+                    <p className="text-xs text-[#6B6590] mt-1.5 leading-relaxed font-body">
+                      {portal.subtitle}
+                    </p>
+                  </div>
 
-                  <div className="pt-2 space-y-1.5 border-t border-[#E2E8F0]">
+                  {/* Features with Red Check marks */}
+                  <div className="pt-3 space-y-2 border-t border-[#2B2350]/15">
                     {portal.features.map((feat, idx) => (
-                      <div key={idx} className="text-[11px] text-[#0F172A] font-medium flex items-center">
-                        <span className="w-1.5 h-1.5 rounded-full bg-[#1E40AF] mr-1.5" />
+                      <div key={idx} className="text-xs text-[#2B2350] font-medium flex items-center space-x-2">
+                        <RedCheck className="w-3.5 h-3.5 shrink-0" />
                         <span>{feat}</span>
                       </div>
                     ))}
                   </div>
                 </div>
 
-                <Link to={portal.path}>
-                  <Button className="w-full bg-[#1E40AF] hover:bg-[#1E3A8A] text-white font-bold text-xs py-2.5 rounded-xl shadow-xs">
-                    Access Portal
-                    <ArrowRight className="w-3.5 h-3.5 ml-1.5" />
-                  </Button>
+                {/* Enter Button */}
+                <Link to={portal.path} className="pt-2">
+                  <button className="w-full bg-[#6C4DFF] hover:bg-[#5A3DEB] text-white font-mono font-bold text-xs py-3 rounded-2xl shadow-[0_4px_12px_rgba(108,77,255,0.25)] flex items-center justify-center space-x-2 transition-all group">
+                    <span>ENTER {portal.title.toUpperCase()}</span>
+                    <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                  </button>
                 </Link>
-              </Card>
+              </div>
             );
           })}
         </div>
       </main>
 
       {/* Footer */}
-      <footer className="max-w-7xl w-full mx-auto flex items-center justify-between text-xs text-[#64748B] py-4 border-t border-[#E2E8F0]">
-        <span>© 2026 AssessIQ Inc. All rights reserved. SOC2 & ISO 27001 Certified Enterprise Platform.</span>
-        <span>Oracle Health & Epic Systems Architecture Grade</span>
+      <footer className="max-w-7xl w-full mx-auto flex flex-col sm:flex-row items-center justify-between text-xs font-mono text-[#6B6590] py-4 border-t-2 border-dashed border-[#2B2350]/20 gap-3">
+        <div className="flex items-center space-x-2">
+          <span>Candidate Signature:</span>
+          <span className="border-b border-[#2B2350] w-36 inline-block" />
+        </div>
+        <div className="flex items-center space-x-4">
+          <span>DATE: {new Date().toISOString().slice(0, 10)}</span>
+          <span>•</span>
+          <div className="flex items-center space-x-1.5">
+            {['A', 'B', 'C', 'D'].map((b) => (
+              <span key={b} className="w-4 h-4 rounded-full border border-[#2B2350]/40 text-[9px] flex items-center justify-center font-mono">
+                {b}
+              </span>
+            ))}
+          </div>
+          <span>•</span>
+          <span>ASSESSIQ VERIFIED</span>
+        </div>
       </footer>
     </div>
   );

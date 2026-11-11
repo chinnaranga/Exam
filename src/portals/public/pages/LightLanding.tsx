@@ -1,89 +1,74 @@
 import React from 'react';
 import AnnouncementBar from '@/components/layout/AnnouncementBar';
 import LandingNavbar from '@/components/layout/LandingNavbar';
-import LandingFooter from '@/components/layout/LandingFooter';
 import StickyMobileCTA from '@/components/layout/StickyMobileCTA';
 import BackToTop from '@/components/layout/BackToTop';
 import CookieNotice from '@/components/layout/CookieNotice';
 
-import HeroSection from '@/components/sections/HeroSection';
-import BuiltForSection from '@/components/sections/BuiltForSection';
-import ProblemSolutionSection from '@/components/sections/ProblemSolutionSection';
-import HowItWorksSection from '@/components/sections/HowItWorksSection';
-import FeaturesBentoSection from '@/components/sections/FeaturesBentoSection';
-import RoleTabsSection from '@/components/sections/RoleTabsSection';
-import UseCasesSection from '@/components/sections/UseCasesSection';
-import ResultsRoiSection from '@/components/sections/ResultsRoiSection';
-import ComparisonTableSection from '@/components/sections/ComparisonTableSection';
-import IntegrationsSection from '@/components/sections/IntegrationsSection';
-import SecurityTrustSection from '@/components/sections/SecurityTrustSection';
-import TestimonialsSection from '@/components/sections/TestimonialsSection';
-import FounderNoteSection from '@/components/sections/FounderNoteSection';
-import PricingSection from '@/components/sections/PricingSection';
-import FaqSection from '@/components/sections/FaqSection';
-import FinalCtaSection from '@/components/sections/FinalCtaSection';
+import Q1Hero from '@/components/sections/Q1Hero';
+import Q2Problem from '@/components/sections/Q2Problem';
+import Q3WhatItDoes from '@/components/sections/Q3WhatItDoes';
+import Q4HowItWorks from '@/components/sections/Q4HowItWorks';
+import Q5WhoItsFor from '@/components/sections/Q5WhoItsFor';
+import Q6TrustSecurity from '@/components/sections/Q6TrustSecurity';
+import Q7PricingFaq from '@/components/sections/Q7PricingFaq';
+import Q8FinalCtaFooter from '@/components/sections/Q8FinalCtaFooter';
 
 export const LightLanding: React.FC = () => {
   return (
-    <div className="min-h-screen bg-white font-sans text-[#1E293B] selection:bg-[#EFF6FF] selection:text-[#2563EB] antialiased">
-      {/* 0. Announcement Bar */}
+    <div className="min-h-screen bg-white font-body text-[#2B2350] selection:bg-[#FFF3A3] selection:text-[#2B2350] antialiased pencil-cursor pb-12">
+      {/* 0. Top Announcement Bar */}
       <AnnouncementBar />
 
-      {/* 1. Sticky Navbar */}
+      {/* Floating Condensed Navbar */}
       <LandingNavbar />
 
-      <main>
-        {/* 2. Hero Section */}
-        <HeroSection />
+      <main className="max-w-[1300px] mx-auto pt-2 space-y-2">
+        {/* Q1. Hero (Periwinkle Sheet #C9CCFF) */}
+        <Q1Hero />
 
-        {/* 3. Built For Strip */}
-        <BuiltForSection />
+        {/* Perforated Divider */}
+        <div className="mx-8 border-b-2 border-dashed border-[#2B2350]/15 my-2" />
 
-        {/* 4. Problem -> Solution (3 Before/After Cards) */}
-        <ProblemSolutionSection />
+        {/* Q2. The Problem (Lemon Sheet #FFF3A3) */}
+        <Q2Problem />
 
-        {/* 5. How It Works (4 Steps) */}
-        <HowItWorksSection />
+        {/* Perforated Divider */}
+        <div className="mx-8 border-b-2 border-dashed border-[#2B2350]/15 my-2" />
 
-        {/* 6. Product Features Bento Grid */}
-        <FeaturesBentoSection />
+        {/* Q3. What It Does (White Sheet with Pastel Bento Tiles) */}
+        <Q3WhatItDoes />
 
-        {/* 7. Role-Based Experience Tabs */}
-        <RoleTabsSection />
+        {/* Perforated Divider */}
+        <div className="mx-8 border-b-2 border-dashed border-[#2B2350]/15 my-2" />
 
-        {/* 8. Use Cases (4 Cards) */}
-        <UseCasesSection />
+        {/* Q4. How It Works (Mint Sheet #B8F0D2) */}
+        <Q4HowItWorks />
 
-        {/* 9. Results & ROI (Count-ups + Interactive Calculator) */}
-        <ResultsRoiSection />
+        {/* Perforated Divider */}
+        <div className="mx-8 border-b-2 border-dashed border-[#2B2350]/15 my-2" />
 
-        {/* 10. Comparison Table */}
-        <ComparisonTableSection />
+        {/* Q5. Who It's For (Coral Sheet #FFB5A7) */}
+        <Q5WhoItsFor />
 
-        {/* 11. Integrations Stack */}
-        <IntegrationsSection />
+        {/* Perforated Divider */}
+        <div className="mx-8 border-b-2 border-dashed border-[#2B2350]/15 my-2" />
 
-        {/* 12. Security & Trust Badges */}
-        <SecurityTrustSection />
+        {/* Q6. Trust and Security (Sky Sheet #BFE6FF) */}
+        <Q6TrustSecurity />
 
-        {/* 13. Testimonials */}
-        <TestimonialsSection />
+        {/* Perforated Divider */}
+        <div className="mx-8 border-b-2 border-dashed border-[#2B2350]/15 my-2" />
 
-        {/* 14. Founder Note */}
-        <FounderNoteSection />
+        {/* Q7. Pricing and FAQ (White Sheet #FFFFFF) */}
+        <Q7PricingFaq />
 
-        {/* 15. Pricing (Monthly/Annual Toggle, 3 Tiers) */}
-        <PricingSection />
+        {/* Perforated Divider */}
+        <div className="mx-8 border-b-2 border-dashed border-[#2B2350]/15 my-2" />
 
-        {/* 16. FAQ Accordion (6 Items) */}
-        <FaqSection />
-
-        {/* 17. Final CTA */}
-        <FinalCtaSection />
+        {/* Q8. Final CTA + Footer (Lemon Sheet #FFF3A3) */}
+        <Q8FinalCtaFooter />
       </main>
-
-      {/* 18. Light Footer */}
-      <LandingFooter />
 
       {/* Extras: Sticky Mobile CTA, Back to Top, Cookie Notice */}
       <StickyMobileCTA />

@@ -1,122 +1,132 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Card } from '@/shared/components/ui/card';
-import { Button } from '@/shared/components/ui/button';
 import BrandLogo from "@/shared/components/BrandLogo";
-import { ShieldCheck, Sparkles, Building2, UserCheck, ArrowRight, Lock, CheckCircle2 } from 'lucide-react';
+import { Sparkles, ArrowRight, ShieldCheck, CheckCircle2 } from 'lucide-react';
+import {
+  RedCheck,
+  RedCircle,
+  RedUnderline,
+  CropMarks,
+  MarginNote,
+  OmrBubble,
+} from '@/components/marks';
 
 export const Welcome: React.FC = () => {
   return (
-    <div className="min-h-screen bg-[#F8FAFC] text-[#0F172A] flex flex-col justify-between p-6 font-sans">
+    <div className="min-h-screen bg-white font-body text-[#2B2350] selection:bg-[#FFF3A3] selection:text-[#2B2350] antialiased pencil-cursor flex flex-col justify-between p-4 sm:p-6 lg:p-8">
       {/* Header Bar */}
-      <header className="max-w-7xl w-full mx-auto flex items-center justify-between py-4 border-b border-[#E2E8F0]">
-        <Link to="/" className="flex items-center space-x-3">
-          <BrandLogo size="md" variant="light" />
+      <header className="max-w-7xl w-full mx-auto flex items-center justify-between py-4 border-b-2 border-dashed border-[#2B2350]/20">
+        <Link to="/" className="flex items-center space-x-3 group">
+          <div className="w-8 h-8 rounded-lg bg-[#6C4DFF] text-white flex items-center justify-center shadow-xs group-hover:bg-[#5A3DEB] transition-colors">
+            <Sparkles className="w-4 h-4 fill-white" />
+          </div>
+          <span className="font-heading text-xl font-extrabold tracking-tight text-[#2B2350]">
+            Assess<span className="text-[#6C4DFF]">IQ</span>
+          </span>
         </Link>
         <div className="flex items-center space-x-3">
-          <Link to="/auth/login">
-            <Button variant="outline" className="border-[#E2E8F0] text-[#0F172A] hover:bg-[#F1F5F9] text-xs font-semibold">
-              Sign In
-            </Button>
+          <Link
+            to="/auth/login"
+            className="text-xs font-mono font-bold text-[#6B6590] hover:text-[#6C4DFF] transition-colors"
+          >
+            SIGN IN
           </Link>
           <Link to="/auth/register">
-            <Button className="bg-[#1E40AF] hover:bg-[#1E3A8A] text-white text-xs font-semibold shadow-xs">
-              Provision Tenant
-            </Button>
+            <button className="bg-[#6C4DFF] hover:bg-[#5A3DEB] text-white font-mono font-bold text-xs px-4 py-2 rounded-xl shadow-xs transition-colors">
+              START PILOT
+            </button>
           </Link>
         </div>
       </header>
 
-      {/* Main Hero Section */}
-      <main className="max-w-6xl w-full mx-auto my-auto py-12 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+      {/* Main Welcome Sheet */}
+      <main className="max-w-5xl w-full mx-auto my-auto py-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
         <div className="lg:col-span-7 space-y-6">
-          <div className="inline-flex items-center space-x-2 px-3 py-1.5 rounded-full bg-blue-50 border border-blue-200 text-[#1E40AF] text-xs font-semibold uppercase tracking-wider">
-            <Sparkles className="w-3.5 h-3.5" />
-            <span>AssessIQ — Enterprise AI Assessment Platform</span>
+          <div className="inline-flex items-center space-x-2 px-3.5 py-1 rounded-full bg-[#FFF3A3] border border-[#2B2350] shadow-[2px_2px_0px_#2B2350] text-xs font-mono font-bold uppercase text-[#2B2350]">
+            <span className="w-2 h-2 rounded-full bg-[#10B981] animate-pulse" />
+            <span>EXAM BRIEF // WELCOME CANDIDATE</span>
           </div>
 
-          <h1 className="text-4xl sm:text-5xl font-extrabold text-[#0F172A] tracking-tight leading-tight">
-            Intelligent Assessments. Trusted Outcomes.
+          <h1 className="font-heading text-4xl sm:text-5xl lg:text-6xl font-extrabold text-[#2B2350] tracking-tight leading-tight">
+            Exams that mark <span className="relative inline-block px-1">themselves<RedUnderline /></span>
           </h1>
 
-          <p className="text-[#475569] text-base leading-relaxed max-w-2xl">
-            AssessIQ is the mission-critical Enterprise AI Assessment Operating System engineered for Universities, Government Examination Boards, and Global Corporate Enterprise.
+          <p className="text-base sm:text-lg text-[#6B6590] font-body leading-relaxed max-w-xl">
+            AssessIQ is the smart assessment platform built for universities, certification bodies, and healthcare teams who want reliable, cheat-resistant tests.
           </p>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
             {[
-              'Multi-Tenant Domain Isolation',
-              'Argon2id & Dual Token Rotation',
-              '15 Granular Role Permission Matrix',
-              'Real-Time Live Proctor Streaming',
+              'Zero-Distraction Test Window',
+              'Offline Autosave & Sync',
+              'Fast Human-in-the-Loop AI Grading',
+              'Live Video & Screen Monitoring',
             ].map((feature, idx) => (
-              <div key={idx} className="flex items-center space-x-2.5 text-xs text-[#475569]">
-                <CheckCircle2 className="w-4 h-4 text-[#15803D] shrink-0" />
+              <div key={idx} className="flex items-center space-x-2.5 text-xs text-[#2B2350] font-medium">
+                <RedCheck className="w-4 h-4 shrink-0" />
                 <span>{feature}</span>
               </div>
             ))}
           </div>
 
-          <div className="flex flex-wrap gap-4 pt-4">
+          <div className="flex flex-wrap items-center gap-4 pt-4">
             <Link to="/auth/register">
-              <Button size="lg" className="bg-[#1E40AF] hover:bg-[#1E3A8A] text-white font-bold px-8 py-6 shadow-xs">
-                Start Enterprise Onboarding
-                <ArrowRight className="w-4 h-4 ml-2" />
-              </Button>
+              <button className="bg-[#6C4DFF] hover:bg-[#5A3DEB] text-white font-mono font-bold text-xs px-6 py-3.5 rounded-2xl shadow-[0_4px_14px_rgba(108,77,255,0.3)] flex items-center space-x-2 transition-all group">
+                <span>CREATE INSTITUTION ACCOUNT</span>
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              </button>
             </Link>
-            <Link to="/auth/login">
-              <Button size="lg" variant="outline" className="border-[#E2E8F0] text-[#0F172A] hover:bg-[#F1F5F9] px-8 py-6">
-                Institutional SSO Login
-              </Button>
+            <Link to="/auth">
+              <button className="bg-white border-2 border-[#2B2350] hover:bg-[#FFF3A3]/30 text-[#2B2350] font-mono font-bold text-xs px-6 py-3.5 rounded-2xl shadow-[3px_3px_0px_#2B2350] transition-all">
+                SELECT PORTAL →
+              </button>
             </Link>
           </div>
         </div>
 
-        {/* Right Feature Card */}
-        <div className="lg:col-span-5">
-          <Card className="border-[#E2E8F0] p-8 shadow-xs bg-white space-y-6">
-            <div className="flex items-center justify-between border-b border-[#E2E8F0] pb-4">
-              <div className="flex items-center space-x-3">
-                <ShieldCheck className="w-6 h-6 text-[#1E40AF]" />
-                <h2 className="text-lg font-bold text-[#0F172A]">Identity Gateway Security</h2>
-              </div>
-              <span className="text-xs text-[#15803D] font-mono flex items-center font-bold">
-                <span className="w-2 h-2 rounded-full bg-[#15803D] mr-1.5 animate-pulse" />
-                SOC2 / GDPR Ready
+        {/* Right Side: Visual Exam Paper Card */}
+        <div className="lg:col-span-5 relative">
+          <div className="p-8 rounded-3xl bg-[#FFF3A3]/45 border-2 border-[#2B2350] shadow-[8px_8px_0px_#2B2350] space-y-5 rotate-1 hover:rotate-0 transition-transform">
+            <CropMarks />
+
+            <div className="flex items-center justify-between border-b-2 border-dashed border-[#2B2350]/20 pb-3">
+              <span className="font-mono text-xs font-bold uppercase tracking-wider text-[#2B2350]">
+                ANSWER SHEET // DEMO
               </span>
+              <div className="flex items-center space-x-1">
+                {['A', 'B', 'C', 'D'].map((b, i) => (
+                  <OmrBubble key={b} letter={b} selected={i === 2} size="sm" />
+                ))}
+              </div>
             </div>
 
-            <div className="space-y-3">
-              {[
-                { title: 'Super & Platform Admins', desc: 'Global telemetry, tenant limits & LLM gateways' },
-                { title: 'Organization & Campus Deans', desc: 'Departmental scoping, user rosters & reporting' },
-                { title: 'Faculty & Item Authors', desc: 'Item bank creation, blueprints & manual essay grading' },
-                { title: 'Invigilators & Proctors', desc: 'Live multi-candidate video grids & anomaly logs' },
-                { title: 'Students & Candidates', desc: 'Secure test-runner engine with auto-save buffers' },
-              ].map((roleItem, i) => (
-                <div key={i} className="p-3 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0] flex items-start space-x-3">
-                  <div className="p-2 rounded-lg bg-blue-50 text-[#1E40AF] text-xs font-bold font-mono mt-0.5">
-                    0{i + 1}
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-xs text-[#0F172A]">{roleItem.title}</h3>
-                    <p className="text-[11px] text-[#475569] mt-0.5">{roleItem.desc}</p>
-                  </div>
-                </div>
-              ))}
+            <div className="space-y-3 font-mono text-xs">
+              <div className="flex justify-between items-center text-[#6B6590]">
+                <span>Status:</span>
+                <span className="text-[#10B981] font-bold">READY FOR EXAM</span>
+              </div>
+              <div className="flex justify-between items-center text-[#6B6590]">
+                <span>Score Transcripts:</span>
+                <span className="text-[#2B2350] font-bold">INSTANT AI</span>
+              </div>
+              <div className="flex justify-between items-center text-[#6B6590]">
+                <span>Proctoring:</span>
+                <span className="text-[#2B2350] font-bold">SECURE SENTINEL</span>
+              </div>
             </div>
-          </Card>
+
+            <div className="pt-3 border-t-2 border-dashed border-[#2B2350]/20 flex items-center justify-between">
+              <MarginNote className="-rotate-3">pilot ready</MarginNote>
+              <span className="font-mono text-[10px] uppercase text-[#6B6590]">FREE PILOT FOR DESIGN PARTNERS</span>
+            </div>
+          </div>
         </div>
       </main>
 
       {/* Footer */}
-      <footer className="max-w-7xl w-full mx-auto flex items-center justify-between text-xs text-[#64748B] py-4 border-t border-[#E2E8F0]">
+      <footer className="max-w-7xl w-full mx-auto flex items-center justify-between text-xs font-mono text-[#6B6590] py-4 border-t-2 border-dashed border-[#2B2350]/20">
         <span>© 2026 AssessIQ Inc. All rights reserved.</span>
-        <div className="flex space-x-4">
-          <Link to="/auth/login" className="hover:text-[#0F172A]">Privacy Policy</Link>
-          <Link to="/auth/login" className="hover:text-[#0F172A]">Security SLA</Link>
-          <Link to="/auth/login" className="hover:text-[#0F172A]">Compliance Docs</Link>
-        </div>
+        <span>EXAM PORTAL BRIEF</span>
       </footer>
     </div>
   );

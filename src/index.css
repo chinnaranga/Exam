@@ -1,8 +1,59 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Caveat:wght@600;700&family=DM+Mono:ital,wght@0,400;0,500;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,400..700;1,9..40,400..700&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:root {
+  /* AssessIQ "THE ANSWER SHEET" Palette */
+  --ink-plum: #2B2350;
+  --ink-secondary: #6B6590;
+  --brand-violet: #6C4DFF;
+  --brand-violet-hover: #5A3DEB;
+  --red-pen: #FF4D5E;
+  
+  --sheet-periwinkle: #C9CCFF;
+  --sheet-lemon: #FFF3A3;
+  --sheet-coral: #FFB5A7;
+  --sheet-mint: #B8F0D2;
+  --sheet-sky: #BFE6FF;
+  --sheet-white: #FFFFFF;
+}
+
+.font-heading {
+  font-family: 'Bricolage Grotesque', sans-serif;
+  letter-spacing: -0.04em;
+  font-weight: 800;
+}
+
+.font-body {
+  font-family: 'DM Sans', sans-serif;
+}
+
+.font-mono {
+  font-family: 'DM Mono', monospace;
+}
+
+.font-handwriting {
+  font-family: 'Caveat', cursive;
+}
+
+@keyframes wiggle {
+  0%, 100% { transform: rotate(-4deg); }
+  50% { transform: rotate(4deg); }
+}
+
+.animate-wiggle:hover {
+  animation: wiggle 0.4s ease-in-out infinite;
+}
+
+/* Custom pencil cursor for desktop */
+@media (pointer: fine) {
+  .pencil-cursor {
+    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'%3E%3Ccircle cx='10' cy='10' r='4' fill='%236C4DFF'/%3E%3Ccircle cx='10' cy='10' r='8' stroke='%236C4DFF' stroke-width='1.5' stroke-opacity='0.3' fill='none'/%3E%3C/svg%3E") 10 10, auto;
+  }
+}
+
 
 :root {
   /* AssessIQ Enterprise Design System Tokens */

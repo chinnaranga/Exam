@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
-import { Card } from '@/shared/components/ui/card';
-import { Button } from '@/shared/components/ui/button';
-import { Input } from '@/shared/components/ui/input';
-import { Label } from '@/shared/components/ui/label';
+import { useNavigate, Link } from 'react-router-dom';
 import BrandLogo from "@/shared/components/BrandLogo";
-import { UserCheck, ShieldCheck, ArrowRight, Lock, Building2 } from 'lucide-react';
+import { UserCheck, Sparkles, ArrowRight, Lock, Building2 } from 'lucide-react';
 import { toast } from 'sonner';
+import {
+  RedCheck,
+  RedCircle,
+  CropMarks,
+  MarginNote,
+} from '@/components/marks';
 
 export const InvitationAccept: React.FC = () => {
   const navigate = useNavigate();
@@ -32,56 +34,93 @@ export const InvitationAccept: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#FAFBFC] font-sans text-[#111827] flex items-center justify-center p-4">
-      <Card className="max-w-md w-full p-8 rounded-2xl bg-white border border-[#E5E7EB] shadow-xs space-y-6">
-        <div className="flex justify-center">
-          <BrandLogo size="lg" variant="light" />
-        </div>
-
-        <div className="text-center space-y-2">
-          <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-blue-50 text-[#2563EB] text-xs font-mono font-bold uppercase border border-blue-100">
-            <Building2 className="w-3.5 h-3.5" />
-            <span>MIT Tenant Membership Invitation</span>
+    <div className="min-h-screen bg-white font-body text-[#2B2350] selection:bg-[#FFF3A3] selection:text-[#2B2350] antialiased pencil-cursor flex flex-col justify-between p-4 sm:p-6 lg:p-8">
+      {/* Header Bar */}
+      <header className="max-w-7xl w-full mx-auto flex items-center justify-between py-4 border-b-2 border-dashed border-[#2B2350]/20">
+        <Link to="/" className="flex items-center space-x-3 group">
+          <div className="w-8 h-8 rounded-lg bg-[#6C4DFF] text-white flex items-center justify-center shadow-xs group-hover:bg-[#5A3DEB] transition-colors">
+            <Sparkles className="w-4 h-4 fill-white" />
           </div>
-          <h1 className="text-2xl font-bold text-[#111827]">Accept Invitation</h1>
-          <p className="text-xs text-[#6B7280]">
-            You were invited to join <strong>Massachusetts Institute of Technology</strong> as role <strong>FACULTY</strong>.
-          </p>
-        </div>
+          <span className="font-heading text-xl font-extrabold tracking-tight text-[#2B2350]">
+            Assess<span className="text-[#6C4DFF]">IQ</span>
+          </span>
+        </Link>
+        <Link
+          to="/auth/login"
+          className="text-xs font-mono font-bold text-[#6B6590] hover:text-[#6C4DFF] transition-colors"
+        >
+          ← SIGN IN
+        </Link>
+      </header>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="space-y-1.5">
-            <Label className="text-xs text-[#111827] uppercase font-medium">Your Full Legal Name</Label>
-            <Input
-              type="text"
-              placeholder="Dr. Arthur Vance"
-              value={fullName}
-              onChange={(e) => setFullName(e.target.value)}
-              className="bg-[#FAFBFC] border-[#E5E7EB] text-[#111827] text-xs"
-            />
-          </div>
+      {/* Main Card */}
+      <main className="max-w-md w-full mx-auto my-auto py-10">
+        <div className="relative p-8 rounded-3xl bg-white border-2 border-[#2B2350] shadow-[8px_8px_0px_#2B2350] space-y-6">
+          <CropMarks />
 
-          <div className="space-y-1.5">
-            <Label className="text-xs text-[#111827] uppercase font-medium">Create Secure Password</Label>
-            <Input
-              type="password"
-              placeholder="••••••••••••"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="bg-[#FAFBFC] border-[#E5E7EB] text-[#111827] text-xs font-mono"
-            />
+          <div className="border-b-2 border-dashed border-[#2B2350]/20 pb-4">
+            <span className="text-[10px] font-mono font-bold uppercase tracking-wider bg-[#FFF3A3] text-[#2B2350] px-3 py-1 rounded-full border border-[#2B2350]">
+              FORM 08 // ROSTER INVITATION
+            </span>
+            <h1 className="font-heading text-2xl font-extrabold text-[#2B2350] mt-2">
+              Accept <span className="relative inline-block px-1">Invitation<RedCircle className="scale-110" /></span>
+            </h1>
+            <p className="text-xs text-[#6B6590] font-body mt-1">
+              You were invited to join <strong>Massachusetts Institute of Technology</strong> with role <strong>FACULTY</strong>.
+            </p>
           </div>
 
-          <Button type="submit" className="w-full bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-bold py-2.5 rounded-xl shadow-xs" disabled={isSubmitting}>
-            {isSubmitting ? 'Activating Account...' : 'Accept Invitation & Complete Profile'}
-            <ArrowRight className="w-4 h-4 ml-2" />
-          </Button>
-        </form>
+          <form onSubmit={handleSubmit} className="space-y-4 font-mono text-xs">
+            <div className="space-y-1.5">
+              <label className="uppercase text-[#2B2350] text-[10px] font-bold tracking-wider">
+                Full Legal Name
+              </label>
+              <input
+                type="text"
+                placeholder="Dr. Arthur Vance"
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+                className="w-full bg-[#FFF3A3]/20 border-2 border-[#2B2350]/30 focus:border-[#6C4DFF] focus:bg-white rounded-xl px-3.5 py-2.5 text-xs text-[#2B2350] font-body outline-none"
+              />
+            </div>
 
-        <div className="pt-4 border-t border-[#F1F5F9] text-center text-[11px] font-mono text-[#9CA3AF]">
-          Powered by examify-vanguard Enterprise Identity Engine
+            <div className="space-y-1.5">
+              <label className="uppercase text-[#2B2350] text-[10px] font-bold tracking-wider">
+                Create Secure Password
+              </label>
+              <div className="relative">
+                <Lock className="w-4 h-4 text-[#6B6590] absolute left-3.5 top-3" />
+                <input
+                  type="password"
+                  placeholder="••••••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full bg-[#FFF3A3]/20 border-2 border-[#2B2350]/30 focus:border-[#6C4DFF] focus:bg-white rounded-xl pl-10 pr-3 py-2.5 text-xs text-[#2B2350] font-body outline-none"
+                />
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="w-full mt-4 bg-[#6C4DFF] hover:bg-[#5A3DEB] text-white font-mono font-bold text-xs py-3.5 rounded-2xl shadow-[0_4px_14px_rgba(108,77,255,0.3)] flex items-center justify-center space-x-2 transition-all group disabled:opacity-50"
+            >
+              <span>{isSubmitting ? 'ACTIVATING MEMBERSHIP...' : 'ACCEPT INVITATION & ENTER'}</span>
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            </button>
+          </form>
+
+          <div className="flex justify-center">
+            <MarginNote className="-rotate-2">faculty pass</MarginNote>
+          </div>
         </div>
-      </Card>
+      </main>
+
+      {/* Footer */}
+      <footer className="max-w-7xl w-full mx-auto flex items-center justify-between text-xs font-mono text-[#6B6590] py-4 border-t-2 border-dashed border-[#2B2350]/20">
+        <span>© 2026 AssessIQ Inc. All rights reserved.</span>
+        <span>FORM 08 VERIFIED</span>
+      </footer>
     </div>
   );
 };

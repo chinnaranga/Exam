@@ -3,16 +3,18 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { Card } from '@/shared/components/ui/card';
-import { Button } from '@/shared/components/ui/button';
-import { Input } from '@/shared/components/ui/input';
-import { Label } from '@/shared/components/ui/label';
-import { Checkbox } from '@/shared/components/ui/checkbox';
 import BrandLogo from "@/shared/components/BrandLogo";
 import { authService } from "@/shared/services/authService";
 import { useAuthStore } from "@/shared/stores/authStore";
 import { toast } from 'sonner';
-import { Building2, User, Mail, Lock, ShieldCheck, ArrowRight } from 'lucide-react';
+import { Building2, User, Mail, Lock, Sparkles, ArrowRight } from 'lucide-react';
+import {
+  RedCheck,
+  RedCircle,
+  CropMarks,
+  MarginNote,
+  OmrBubble,
+} from '@/components/marks';
 
 const registerSchema = z.object({
   firstName: z.string().min(2, 'First name is required'),
@@ -68,89 +70,184 @@ export const Register: React.FC = () => {
         domainSlug: values.domainSlug,
       });
       setSession(session);
-      toast.success('Enterprise Tenant Provisioned Successfully!', {
-        description: `Organization "${values.organizationName}" registered.`,
+      toast.success('Institution Account Created', {
+        description: `Welcome to AssessIQ, ${values.firstName}!`,
       });
-      navigate('/dashboard');
-    } catch (err: any) {
-      toast.error('Registration Failed', { description: err.message });
+      navigate('/org-admin/dashboard');
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Unable to create institutional account.';
+      toast.error('Registration Failed', {
+        description: message,
+      });
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-[#FAFBFC] font-sans text-[#111827] flex items-center justify-center p-6">
-      <Card className="p-8 max-w-xl w-full rounded-2xl bg-white border border-[#E5E7EB] shadow-xs space-y-6">
-        <div className="text-center space-y-2">
-          <div className="flex justify-center mb-1">
-            <BrandLogo size="lg" variant="light" />
+    <div className="min-h-screen bg-white font-body text-[#2B2350] selection:bg-[#FFF3A3] selection:text-[#2B2350] antialiased pencil-cursor flex flex-col justify-between p-4 sm:p-6 lg:p-8">
+      {/* Header Bar */}
+      <header className="max-w-7xl w-full mx-auto flex items-center justify-between py-4 border-b-2 border-dashed border-[#2B2350]/20">
+        <Link to="/" className="flex items-center space-x-3 group">
+          <div className="w-8 h-8 rounded-lg bg-[#6C4DFF] text-white flex items-center justify-center shadow-xs group-hover:bg-[#5A3DEB] transition-colors">
+            <Sparkles className="w-4 h-4 fill-white" />
           </div>
-          <h2 className="text-2xl font-bold text-[#111827] tracking-tight">Provision Enterprise Tenant</h2>
-          <p className="text-xs text-[#6B7280]">Setup your institutional testing workspace in under 60 seconds</p>
-        </div>
-
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="space-y-1.5">
-              <Label className="text-xs text-[#111827] uppercase font-medium">First Name</Label>
-              <Input placeholder="Eleanor" className="bg-[#FAFBFC] border-[#E5E7EB] text-[#111827] text-xs" {...register('firstName')} />
-              {errors.firstName && <p className="text-xs text-red-500">{errors.firstName.message}</p>}
-            </div>
-            <div className="space-y-1.5">
-              <Label className="text-xs text-[#111827] uppercase font-medium">Last Name</Label>
-              <Input placeholder="Vance" className="bg-[#FAFBFC] border-[#E5E7EB] text-[#111827] text-xs" {...register('lastName')} />
-              {errors.lastName && <p className="text-xs text-red-500">{errors.lastName.message}</p>}
-            </div>
-          </div>
-
-          <div className="space-y-1.5">
-            <Label className="text-xs text-[#111827] uppercase font-medium">Work / Institutional Email</Label>
-            <Input type="email" placeholder="admin@university.edu" className="bg-[#FAFBFC] border-[#E5E7EB] text-[#111827] text-xs" {...register('email')} />
-            {errors.email && <p className="text-xs text-red-500">{errors.email.message}</p>}
-          </div>
-
-          <div className="space-y-1.5">
-            <Label className="text-xs text-[#111827] uppercase font-medium">Organization / University Name</Label>
-            <Input placeholder="Harvard Extension School" onChange={handleOrgNameChange} className="bg-[#FAFBFC] border-[#E5E7EB] text-[#111827] text-xs" />
-            {errors.organizationName && <p className="text-xs text-red-500">{errors.organizationName.message}</p>}
-          </div>
-
-          <div className="space-y-1.5">
-            <Label className="text-xs text-[#111827] uppercase font-medium">Subdomain Identifier</Label>
-            <div className="flex items-center space-x-2">
-              <Input placeholder="harvard-ext" className="bg-[#FAFBFC] border-[#E5E7EB] text-[#111827] text-xs font-mono" {...register('domainSlug')} />
-              <span className="text-xs text-[#6B7280] font-mono shrink-0">.examify-vanguard.com</span>
-            </div>
-            {errors.domainSlug && <p className="text-xs text-red-500">{errors.domainSlug.message}</p>}
-          </div>
-
-          <div className="space-y-1.5">
-            <Label className="text-xs text-[#111827] uppercase font-medium">Master Password</Label>
-            <Input type="password" placeholder="••••••••••••" className="bg-[#FAFBFC] border-[#E5E7EB] text-[#111827] text-xs font-mono" {...register('password')} />
-            {errors.password && <p className="text-xs text-red-500">{errors.password.message}</p>}
-          </div>
-
-          <div className="flex items-center space-x-2 pt-2">
-            <Checkbox id="terms" onCheckedChange={(val) => setValue('acceptTerms', !!val)} />
-            <label htmlFor="terms" className="text-xs text-[#6B7280] cursor-pointer">
-              I agree to the <Link to="#" className="text-[#2563EB] font-bold hover:underline">Enterprise SLA & Security Policies</Link>
-            </label>
-          </div>
-          {errors.acceptTerms && <p className="text-xs text-red-500">{errors.acceptTerms.message}</p>}
-
-          <Button type="submit" className="w-full bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-bold text-xs py-2.5 rounded-xl shadow-xs mt-4" disabled={isLoading}>
-            {isLoading ? 'Provisioning Tenant...' : 'Register Enterprise Tenant'}
-          </Button>
-        </form>
-
-        <div className="pt-4 border-t border-[#F1F5F9] text-center text-xs text-[#6B7280]">
-          <span>Already registered? </span>
-          <Link to="/auth/login" className="text-[#2563EB] font-bold hover:underline">
-            Sign In Here
+          <span className="font-heading text-xl font-extrabold tracking-tight text-[#2B2350]">
+            Assess<span className="text-[#6C4DFF]">IQ</span>
+          </span>
+        </Link>
+        <div className="flex items-center space-x-3">
+          <Link
+            to="/auth/login"
+            className="text-xs font-mono font-bold text-[#6B6590] hover:text-[#6C4DFF] transition-colors"
+          >
+            HAVE AN ACCOUNT? SIGN IN →
           </Link>
         </div>
-      </Card>
+      </header>
+
+      {/* Main Form Container */}
+      <main className="max-w-2xl w-full mx-auto my-auto py-10">
+        <div className="relative p-8 sm:p-10 rounded-3xl bg-white border-2 border-[#2B2350] shadow-[8px_8px_0px_#2B2350] space-y-6">
+          <CropMarks />
+
+          <div className="flex items-center justify-between border-b-2 border-dashed border-[#2B2350]/20 pb-4">
+            <div>
+              <span className="text-[11px] font-mono font-bold uppercase tracking-wider bg-[#FFF3A3] text-[#2B2350] px-3 py-1 rounded-full border border-[#2B2350]">
+                FORM 02 // INSTITUTION ENROLLMENT
+              </span>
+              <h1 className="font-heading text-3xl font-extrabold text-[#2B2350] mt-2">
+                Register Your <span className="relative inline-block px-1">Campus<RedCircle className="scale-110" /></span>
+              </h1>
+              <p className="text-xs text-[#6B6590] font-body mt-1">
+                Start your pilot. Free for approved design partners.
+              </p>
+            </div>
+            <MarginNote className="-rotate-6 hidden sm:inline-block">fast setup</MarginNote>
+          </div>
+
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 font-mono text-xs">
+            {/* First and Last Name */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-1">
+                <label className="uppercase text-[#2B2350] text-[10px] font-bold">First Name</label>
+                <div className="relative">
+                  <User className="w-4 h-4 text-[#6B6590] absolute left-3 top-2.5" />
+                  <input
+                    {...register('firstName')}
+                    placeholder="Jane"
+                    className="w-full bg-[#FFF3A3]/20 border-2 border-[#2B2350]/30 focus:border-[#6C4DFF] focus:bg-white rounded-xl pl-9 pr-3 py-2 text-xs text-[#2B2350] font-body outline-none"
+                  />
+                </div>
+                {errors.firstName && <p className="text-[#FF4D5E] text-[10px]">{errors.firstName.message}</p>}
+              </div>
+
+              <div className="space-y-1">
+                <label className="uppercase text-[#2B2350] text-[10px] font-bold">Last Name</label>
+                <div className="relative">
+                  <User className="w-4 h-4 text-[#6B6590] absolute left-3 top-2.5" />
+                  <input
+                    {...register('lastName')}
+                    placeholder="Doe"
+                    className="w-full bg-[#FFF3A3]/20 border-2 border-[#2B2350]/30 focus:border-[#6C4DFF] focus:bg-white rounded-xl pl-9 pr-3 py-2 text-xs text-[#2B2350] font-body outline-none"
+                  />
+                </div>
+                {errors.lastName && <p className="text-[#FF4D5E] text-[10px]">{errors.lastName.message}</p>}
+              </div>
+            </div>
+
+            {/* Institutional Email */}
+            <div className="space-y-1">
+              <label className="uppercase text-[#2B2350] text-[10px] font-bold">Institutional Email</label>
+              <div className="relative">
+                <Mail className="w-4 h-4 text-[#6B6590] absolute left-3 top-2.5" />
+                <input
+                  {...register('email')}
+                  type="email"
+                  placeholder="dean@university.edu"
+                  className="w-full bg-[#FFF3A3]/20 border-2 border-[#2B2350]/30 focus:border-[#6C4DFF] focus:bg-white rounded-xl pl-9 pr-3 py-2 text-xs text-[#2B2350] font-body outline-none"
+                />
+              </div>
+              {errors.email && <p className="text-[#FF4D5E] text-[10px]">{errors.email.message}</p>}
+            </div>
+
+            {/* Organization Name */}
+            <div className="space-y-1">
+              <label className="uppercase text-[#2B2350] text-[10px] font-bold">Organization / University Name</label>
+              <div className="relative">
+                <Building2 className="w-4 h-4 text-[#6B6590] absolute left-3 top-2.5" />
+                <input
+                  {...register('organizationName')}
+                  onChange={handleOrgNameChange}
+                  placeholder="Oxford Assessment Institute"
+                  className="w-full bg-[#FFF3A3]/20 border-2 border-[#2B2350]/30 focus:border-[#6C4DFF] focus:bg-white rounded-xl pl-9 pr-3 py-2 text-xs text-[#2B2350] font-body outline-none"
+                />
+              </div>
+              {errors.organizationName && <p className="text-[#FF4D5E] text-[10px]">{errors.organizationName.message}</p>}
+            </div>
+
+            {/* Domain Slug */}
+            <div className="space-y-1">
+              <label className="uppercase text-[#2B2350] text-[10px] font-bold">Workspace URL Slug</label>
+              <div className="flex items-center">
+                <span className="bg-slate-100 border-2 border-r-0 border-[#2B2350]/30 rounded-l-xl px-3 py-2 text-xs text-[#6B6590]">
+                  assessiq.io/
+                </span>
+                <input
+                  {...register('domainSlug')}
+                  placeholder="oxford"
+                  className="w-full bg-[#FFF3A3]/20 border-2 border-[#2B2350]/30 focus:border-[#6C4DFF] focus:bg-white rounded-r-xl px-3 py-2 text-xs text-[#2B2350] font-body outline-none"
+                />
+              </div>
+              {errors.domainSlug && <p className="text-[#FF4D5E] text-[10px]">{errors.domainSlug.message}</p>}
+            </div>
+
+            {/* Password */}
+            <div className="space-y-1">
+              <label className="uppercase text-[#2B2350] text-[10px] font-bold">Password</label>
+              <div className="relative">
+                <Lock className="w-4 h-4 text-[#6B6590] absolute left-3 top-2.5" />
+                <input
+                  type="password"
+                  {...register('password')}
+                  placeholder="••••••••••••"
+                  className="w-full bg-[#FFF3A3]/20 border-2 border-[#2B2350]/30 focus:border-[#6C4DFF] focus:bg-white rounded-xl pl-9 pr-3 py-2 text-xs text-[#2B2350] font-body outline-none"
+                />
+              </div>
+              {errors.password && <p className="text-[#FF4D5E] text-[10px]">{errors.password.message}</p>}
+            </div>
+
+            {/* Terms Checkbox */}
+            <div className="flex items-center space-x-2 pt-2">
+              <input
+                type="checkbox"
+                id="terms"
+                {...register('acceptTerms')}
+                className="w-4 h-4 accent-[#6C4DFF] rounded border-2 border-[#2B2350]"
+              />
+              <label htmlFor="terms" className="text-[11px] text-[#6B6590] font-body">
+                I agree to the pilot terms of service and evaluation privacy charter.
+              </label>
+            </div>
+            {errors.acceptTerms && <p className="text-[#FF4D5E] text-[10px]">{errors.acceptTerms.message}</p>}
+
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="w-full mt-4 bg-[#6C4DFF] hover:bg-[#5A3DEB] text-white font-mono font-bold text-xs py-3.5 rounded-2xl shadow-[0_4px_14px_rgba(108,77,255,0.3)] flex items-center justify-center space-x-2 transition-all group disabled:opacity-50"
+            >
+              <span>{isLoading ? 'ENROLLING INSTITUTION...' : 'ENROLL INSTITUTION & START PILOT'}</span>
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            </button>
+          </form>
+        </div>
+      </main>
+
+      {/* Footer */}
+      <footer className="max-w-7xl w-full mx-auto flex items-center justify-between text-xs font-mono text-[#6B6590] py-4 border-t-2 border-dashed border-[#2B2350]/20">
+        <span>© 2026 AssessIQ Inc. All rights reserved.</span>
+        <span>FORM 02 VERIFIED</span>
+      </footer>
     </div>
   );
 };
