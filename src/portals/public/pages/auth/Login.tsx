@@ -7,6 +7,7 @@ import BrandLogo from "@/shared/components/BrandLogo";
 import { authService } from "@/shared/services/authService";
 import { useAuthStore } from "@/shared/stores/authStore";
 import { SystemRole } from "@/shared/types/auth";
+import { getRoleHomeDashboard } from "@/shared/utils/rbac";
 import { toast } from 'sonner';
 import { Lock, Mail, Sparkles, ArrowRight, CheckCircle2 } from 'lucide-react';
 import {
@@ -62,7 +63,11 @@ export const Login: React.FC = () => {
         description: `Welcome back, ${session.user.firstName}! Active Role: ${session.user.roles[0]?.roleName}`,
       });
 
-      navigate(from, { replace: true });
+      const userRole = session.user.roles[0]?.roleName;
+      const roleHome = getRoleHomeDashboard(userRole);
+      const destination = (!from || from === '/dashboard' || from === '/auth/login' || from === '/auth') ? roleHome : from;
+
+      navigate(destination, { replace: true });
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Invalid email or password.';
       toast.error('Authentication Failed', {

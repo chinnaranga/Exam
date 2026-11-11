@@ -7,6 +7,7 @@ import { TooltipProvider } from '@/shared/components/ui/tooltip';
 
 // Shared Layout & Pages
 import Layout from '@/shared/components/Layout';
+import RoleAwareDashboardRedirect from '@/shared/components/RoleAwareDashboardRedirect';
 import Index from '@/portals/public/pages/Index';
 import Exams from '@/shared/pages/Exams';
 import SecuritySettings from '@/shared/pages/SecuritySettings';
@@ -96,7 +97,8 @@ const App: React.FC = () => (
 
             {/* Shared Authenticated Layout Shell */}
             <Route element={<Layout />}>
-              <Route path="/dashboard" element={<Index />} />
+              <Route path="/dashboard" element={<RoleAwareDashboardRedirect />} />
+              <Route path="/overview" element={<Index />} />
               <Route path="/exams" element={<Exams />} />
               <Route path="/settings" element={<SecuritySettings />} />
               <Route path="/auth/sessions" element={<SessionsPage />} />

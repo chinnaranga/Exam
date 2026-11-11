@@ -1,6 +1,9 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import BrandLogo from "@/shared/components/BrandLogo";
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuthStore } from "@/shared/stores/authStore";
+import { authService } from "@/shared/services/authService";
+import { SystemRole } from "@/shared/types/auth";
+import { toast } from 'sonner';
 import {
   UserCheck,
   Brain,
@@ -10,25 +13,46 @@ import {
   ArrowRight,
   Code,
   Sparkles,
+  Zap,
+  CheckCircle2,
 } from 'lucide-react';
 import {
-  RedCircle,
-  RedUnderline,
   RedCheck,
   OmrBubble,
-  MarginNote,
-  StickerBadge,
   CropMarks,
 } from '@/components/marks';
 
 export const PortalSelection: React.FC = () => {
-  const portals = [
+  const navigate = useNavigate();
+  const { user, isAuthenticated, setSession } = useAuthStore();
+  const [loadingPortal, setLoadingPortal] = useState<string | null>(null);
+
+  const activeRole = user?.roles?.[0]?.roleName;
+
+  const portals: {
+    id: string;
+    bubble: string;
+    title: string;
+    subtitle: string;
+    path: string;
+    dashboardPath: string;
+    demoEmail: string;
+    role: SystemRole;
+    icon: React.ComponentType<{ className?: string }>;
+    sheetColor: string;
+    tagBg: string;
+    features: string[];
+    note: string;
+  }[] = [
     {
       id: 'student',
       bubble: 'A',
       title: 'Student Portal',
       subtitle: 'Zero-distraction test runner with offline autosave and verifiable digital score sheets.',
       path: '/student/login',
+      dashboardPath: '/student/dashboard',
+      demoEmail: 'student@mit.edu',
+      role: 'STUDENT',
       icon: UserCheck,
       sheetColor: 'bg-[#C9CCFF]/35 hover:bg-[#C9CCFF]/50 border-[#2B2350]',
       tagBg: 'bg-[#C9CCFF] text-[#2B2350]',
@@ -41,6 +65,9 @@ export const PortalSelection: React.FC = () => {
       title: 'Coding Platform',
       subtitle: 'Polyglot coding assessments, 14 execution runtimes, judge cluster telemetry & sandbox.',
       path: '/coding/login',
+      dashboardPath: '/coding/dashboard',
+      demoEmail: 'coding.admin@assessiq.com',
+      role: 'SUPER_ADMIN',
       icon: Code,
       sheetColor: 'bg-[#FFF3A3]/45 hover:bg-[#FFF3A3]/65 border-[#2B2350]',
       tagBg: 'bg-[#FFF3A3] text-[#2B2350]',
@@ -53,6 +80,9 @@ export const PortalSelection: React.FC = () => {
       title: 'Faculty Portal',
       subtitle: 'AI item bank authoring, IRT calibration, essay rubric grading & exam blueprints.',
       path: '/faculty/login',
+      dashboardPath: '/faculty/dashboard',
+      demoEmail: 'faculty@mit.edu',
+      role: 'FACULTY',
       icon: Brain,
       sheetColor: 'bg-[#B8F0D2]/45 hover:bg-[#B8F0D2]/65 border-[#2B2350]',
       tagBg: 'bg-[#B8F0D2] text-[#2B2350]',
@@ -65,6 +95,9 @@ export const PortalSelection: React.FC = () => {
       title: 'Invigilator Portal',
       subtitle: 'Real-time multi-candidate video grids, WASM computer vision gaze tracking & alerts.',
       path: '/invigilator/login',
+      dashboardPath: '/invigilator/dashboard',
+      demoEmail: 'invigilator@mit.edu',
+      role: 'INVIGILATOR',
       icon: Video,
       sheetColor: 'bg-[#FFB5A7]/35 hover:bg-[#FFB5A7]/50 border-[#2B2350]',
       tagBg: 'bg-[#FFB5A7] text-[#2B2350]',
@@ -77,6 +110,9 @@ export const PortalSelection: React.FC = () => {
       title: 'Organization Admin',
       subtitle: 'Campus, department, program management, custom branding & role provisioning.',
       path: '/org-admin/login',
+      dashboardPath: '/org-admin/dashboard',
+      demoEmail: 'admin@mit.edu',
+      role: 'ORGANIZATION_ADMIN',
       icon: Building2,
       sheetColor: 'bg-[#BFE6FF]/40 hover:bg-[#BFE6FF]/60 border-[#2B2350]',
       tagBg: 'bg-[#BFE6FF] text-[#2B2350]',
@@ -89,6 +125,9 @@ export const PortalSelection: React.FC = () => {
       title: 'Super Admin Portal',
       subtitle: 'Global multi-tenant infrastructure control plane, RLS isolation & AI risk engine.',
       path: '/super-admin/login',
+      dashboardPath: '/super-admin/dashboard',
+      demoEmail: 'superadmin@assessiq.com',
+      role: 'SUPER_ADMIN',
       icon: Server,
       sheetColor: 'bg-white hover:bg-slate-50 border-[#2B2350]',
       tagBg: 'bg-[#E2E8F0] text-[#2B2350]',
@@ -96,6 +135,29 @@ export const PortalSelection: React.FC = () => {
       note: 'root clearance',
     },
   ];
+
+  const handleFastLaunch = async (portal: typeof portals[0]) => {
+    setLoadingPortal(portal.id);
+    try {
+      const session = await authService.login({
+        email: portal.demoEmail,
+        password: 'Password123!',
+        rememberMe: true,
+      });
+
+      setSession(session);
+      toast.success('Clearance Granted', {
+        description: `Dispatched as ${session.user.firstName} ${session.user.lastName} (${portal.role})`,
+      });
+
+      navigate(portal.dashboardPath, { replace: true });
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Fast authentication failed.';
+      toast.error('Dispatch Failed', { description: message });
+    } finally {
+      setLoadingPortal(null);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-white font-body text-[#2B2350] selection:bg-[#FFF3A3] selection:text-[#2B2350] antialiased pencil-cursor flex flex-col justify-between p-4 sm:p-6 lg:p-8">
@@ -110,6 +172,12 @@ export const PortalSelection: React.FC = () => {
           </span>
         </Link>
         <div className="flex items-center space-x-3">
+          {isAuthenticated && user && (
+            <span className="hidden sm:inline-flex text-[10px] font-mono font-bold uppercase tracking-wider bg-emerald-50 text-emerald-800 px-3 py-1 rounded-full border border-emerald-300 items-center">
+              <CheckCircle2 className="w-3 h-3 mr-1 text-emerald-600" />
+              ACTIVE: {user.firstName} ({activeRole})
+            </span>
+          )}
           <span className="text-[11px] font-mono font-bold uppercase tracking-wider bg-[#FFF3A3] text-[#2B2350] px-3 py-1 rounded-full border border-[#2B2350]">
             FORM 01 // ROLE DISPATCH
           </span>
@@ -122,52 +190,54 @@ export const PortalSelection: React.FC = () => {
         </div>
       </header>
 
-      {/* Main Container */}
-      <main className="max-w-6xl w-full mx-auto my-auto py-10 space-y-10">
-        {/* Title Area */}
-        <div className="text-center space-y-3 relative">
-          <div className="inline-flex items-center space-x-2 px-3.5 py-1 rounded-full bg-white border border-[#2B2350] shadow-[2px_2px_0px_#2B2350] text-xs font-mono font-bold uppercase text-[#2B2350]">
-            <span className="w-2 h-2 rounded-full bg-[#FF4D5E] animate-pulse" />
-            <span>Select Your Graded Workspace</span>
+      {/* Main Grid */}
+      <main className="max-w-7xl w-full mx-auto my-auto py-8 space-y-6">
+        <div className="text-center max-w-2xl mx-auto space-y-2">
+          <div className="inline-flex items-center space-x-1.5 text-xs font-mono font-bold text-[#6C4DFF] bg-[#C9CCFF]/40 px-3 py-1 rounded-full border border-[#2B2350]">
+            <span>STATION ASSIGNMENT SHEET</span>
           </div>
-
-          <h1 className="font-heading text-4xl sm:text-5xl lg:text-6xl font-extrabold text-[#2B2350] tracking-tight">
-            Choose your <span className="relative inline-block px-1">station<RedCircle className="scale-110" /></span>
+          <h1 className="font-heading text-3xl sm:text-5xl font-extrabold text-[#2B2350] tracking-tight">
+            Select Your Role Gateway
           </h1>
-
-          <div className="flex items-center justify-center gap-2">
-            <p className="text-sm sm:text-base text-[#6B6590] max-w-xl mx-auto font-body">
-              Every participant enters a tailored, zero-leak testing environment.
-            </p>
-            <MarginNote className="-rotate-3 hidden sm:inline-block">fill one bubble</MarginNote>
-          </div>
+          <p className="text-xs sm:text-sm text-[#6B6590] font-body">
+            Choose your assessment station to enter your authorized workspace. Each portal enforces strict RBAC clearance boundaries.
+          </p>
         </div>
 
-        {/* 6 Cards Grid (3x2) */}
+        {/* 6 Grid Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {portals.map((portal) => {
             const Icon = portal.icon;
+            const isCurrentlyActive = isAuthenticated && activeRole === portal.role;
+            const isBusy = loadingPortal === portal.id;
+
             return (
               <div
                 key={portal.id}
-                className={`relative rounded-3xl border-2 p-6 flex flex-col justify-between space-y-5 transition-all duration-200 shadow-[4px_4px_0px_#2B2350] hover:shadow-[8px_8px_0px_#2B2350] hover:-translate-y-1 ${portal.sheetColor}`}
+                className={`relative p-6 rounded-3xl border-2 transition-all flex flex-col justify-between space-y-5 shadow-[4px_4px_0px_#2B2350] hover:shadow-[6px_6px_0px_#2B2350] ${portal.sheetColor}`}
               >
                 <CropMarks />
 
                 <div className="space-y-4">
-                  {/* Top Row: OMR Bubble + Tag */}
+                  {/* Top Bar with OMR Bubble and Role Badge */}
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-2.5">
-                      <div className="w-8 h-8 rounded-full border-2 border-[#2B2350] bg-white font-mono text-xs font-bold flex items-center justify-center shadow-xs">
-                        {portal.bubble}
-                      </div>
-                      <div className="p-2 rounded-xl bg-white border border-[#2B2350]/30 shadow-xs">
-                        <Icon className="w-4 h-4 text-[#2B2350]" />
+                    <div className="flex items-center space-x-2">
+                      <OmrBubble letter={portal.bubble} selected size="sm" />
+                      <span className={`text-[10px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded-full border border-[#2B2350] ${portal.tagBg}`}>
+                        {portal.note}
+                      </span>
+                    </div>
+
+                    <div className="flex items-center space-x-2">
+                      {isCurrentlyActive && (
+                        <span className="text-[9px] font-mono font-bold uppercase tracking-wider bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full border border-emerald-400">
+                          LOGGED IN
+                        </span>
+                      )}
+                      <div className="w-8 h-8 rounded-xl bg-white border border-[#2B2350] flex items-center justify-center shadow-xs">
+                        <Icon className="w-4 h-4 text-[#6C4DFF]" />
                       </div>
                     </div>
-                    <span className={`text-[10px] font-mono font-bold uppercase px-2.5 py-0.5 rounded-full border border-[#2B2350]/30 ${portal.tagBg}`}>
-                      {portal.note}
-                    </span>
                   </div>
 
                   <div>
@@ -190,13 +260,25 @@ export const PortalSelection: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Enter Button */}
-                <Link to={portal.path} className="pt-2">
-                  <button className="w-full bg-[#6C4DFF] hover:bg-[#5A3DEB] text-white font-mono font-bold text-xs py-3 rounded-2xl shadow-[0_4px_12px_rgba(108,77,255,0.25)] flex items-center justify-center space-x-2 transition-all group">
-                    <span>ENTER {portal.title.toUpperCase()}</span>
-                    <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                {/* Actions: 1-Click Fast Launch + Standard Sign In */}
+                <div className="space-y-2 pt-2">
+                  <button
+                    type="button"
+                    onClick={() => handleFastLaunch(portal)}
+                    disabled={isBusy}
+                    className="w-full bg-[#FFF3A3] hover:bg-[#FFE680] text-[#2B2350] border-2 border-[#2B2350] font-mono font-bold text-xs py-2 rounded-xl shadow-[2px_2px_0px_#2B2350] flex items-center justify-center space-x-1.5 transition-transform hover:-translate-y-0.5 cursor-pointer disabled:opacity-50"
+                  >
+                    <Zap className="w-3.5 h-3.5 text-[#6C4DFF] fill-[#6C4DFF]" />
+                    <span>{isBusy ? 'LAUNCHING...' : '⚡ 1-CLICK INSTANT DISPATCH'}</span>
                   </button>
-                </Link>
+
+                  <Link to={portal.path} className="block">
+                    <button className="w-full bg-[#6C4DFF] hover:bg-[#5A3DEB] text-white font-mono font-bold text-xs py-2.5 rounded-xl shadow-[0_4px_12px_rgba(108,77,255,0.25)] flex items-center justify-center space-x-2 transition-all group cursor-pointer">
+                      <span>SIGN IN FORM</span>
+                      <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                    </button>
+                  </Link>
+                </div>
               </div>
             );
           })}
@@ -219,8 +301,6 @@ export const PortalSelection: React.FC = () => {
               </span>
             ))}
           </div>
-          <span>•</span>
-          <span>ASSESSIQ VERIFIED</span>
         </div>
       </footer>
     </div>

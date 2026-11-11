@@ -83,8 +83,8 @@ export const FacultyDashboard: React.FC = () => {
           <p className="text-xs text-[#6B7280] leading-relaxed">
             Construct domain-weighted examination blueprints with automated shuffle and anti-cheating variant generation.
           </p>
-          <Link to="/student/exams">
-            <Button className="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs py-2.5 rounded-xl shadow-xs">
+          <Link to="/faculty/exams">
+            <Button className="w-full bg-[#6C4DFF] hover:bg-[#5A3DEB] text-white font-bold text-xs py-2.5 rounded-xl shadow-xs">
               Build Examination Blueprint
             </Button>
           </Link>

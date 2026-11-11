@@ -15,7 +15,7 @@ import {
 export const SuperAdminLayout: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { logout } = useAuthStore();
+  const { user, logout } = useAuthStore();
   const currentPath = location.pathname;
 
   const menuItems = [
@@ -40,7 +40,9 @@ export const SuperAdminLayout: React.FC = () => {
         </div>
 
         <div className="flex items-center space-x-4 text-xs font-sans">
-          <span className="font-bold text-slate-200">Alex Vance (Super Admin)</span>
+          <span className="font-bold text-slate-200">
+            {user ? `${user.firstName} ${user.lastName} (${user.roles[0]?.roleName || 'SUPER_ADMIN'})` : 'Root Sentinel (SUPER ADMIN)'}
+          </span>
           <Button onClick={() => { logout(); navigate('/super-admin/login'); }} variant="ghost" size="sm" className="text-red-400 hover:bg-slate-800 text-xs">
             <LogOut className="w-3.5 h-3.5 mr-1" /> Sign Out
           </Button>

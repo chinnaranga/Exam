@@ -1,9 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import BrandLogo from "@/shared/components/BrandLogo";
 import { authService } from "@/shared/services/authService";
 import { useAuthStore } from "@/shared/stores/authStore";
 import { SystemRole } from "@/shared/types/auth";
@@ -14,6 +13,9 @@ import {
   ArrowRight,
   Sparkles,
   LucideIcon,
+  CheckCircle2,
+  AlertTriangle,
+  Zap,
 } from 'lucide-react';
 import {
   RedCheck,
@@ -55,10 +57,14 @@ export const PortalAuthLayout: React.FC<PortalAuthLayoutProps> = ({
   icon: Icon,
 }) => {
   const navigate = useNavigate();
-  const setSession = useAuthStore((state) => state.setSession);
+  const { user, isAuthenticated, setSession } = useAuthStore();
   const [isLoading, setIsLoading] = useState(false);
 
-  const { register, handleSubmit, formState: { errors } } = useForm<LoginFormValues>({
+  const activeRole = user?.roles?.[0]?.roleName;
+  const isAlreadyThisRole = isAuthenticated && activeRole === role;
+  const isDifferentRole = isAuthenticated && activeRole && activeRole !== role;
+
+  const { register, handleSubmit, setValue, reset, formState: { errors } } = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
       email: defaultEmail,
@@ -67,21 +73,30 @@ export const PortalAuthLayout: React.FC<PortalAuthLayoutProps> = ({
     },
   });
 
-  const onSubmit = async (values: LoginFormValues) => {
+  // Keep form synchronized whenever switching portal login pages
+  useEffect(() => {
+    reset({
+      email: defaultEmail,
+      password: 'Password123!',
+      rememberMe: true,
+    });
+  }, [defaultEmail, reset]);
+
+  const executeLogin = async (email: string, pass: string, remember = true) => {
     setIsLoading(true);
     try {
       const session = await authService.login({
-        email: values.email,
-        password: values.password,
-        rememberMe: values.rememberMe,
+        email,
+        password: pass,
+        rememberMe: remember,
       });
 
       setSession(session);
       toast.success('Identity Verified', {
-        description: `Welcome to ${portalTitle}. Role: ${role}`,
+        description: `Welcome to ${portalTitle}. Active Persona: ${session.user.roles[0]?.roleName}`,
       });
 
-      navigate(redirectPath);
+      navigate(redirectPath, { replace: true });
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Invalid institutional credentials.';
       toast.error('Verification Failed', {
@@ -90,6 +105,16 @@ export const PortalAuthLayout: React.FC<PortalAuthLayoutProps> = ({
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const onSubmit = async (values: LoginFormValues) => {
+    await executeLogin(values.email, values.password, values.rememberMe);
+  };
+
+  const handleInstantDemoAuth = async () => {
+    setValue('email', defaultEmail);
+    setValue('password', 'Password123!');
+    await executeLogin(defaultEmail, 'Password123!', true);
   };
 
   return (
@@ -180,6 +205,56 @@ export const PortalAuthLayout: React.FC<PortalAuthLayoutProps> = ({
               </div>
             </div>
 
+            {/* Persona Switch Alert if logged in with another role */}
+            {isDifferentRole && (
+              <div className="p-3.5 rounded-2xl bg-amber-50 border-2 border-amber-300 text-amber-900 text-xs font-mono space-y-1">
+                <div className="flex items-center font-bold">
+                  <AlertTriangle className="w-4 h-4 mr-1.5 text-amber-600 shrink-0" />
+                  <span>Switching Persona Detected</span>
+                </div>
+                <p className="text-[11px] text-amber-800 font-body">
+                  Active session is <strong>{user?.firstName} {user?.lastName} [{activeRole}]</strong>. Signing in below will switch your session to <strong>{role}</strong>.
+                </p>
+              </div>
+            )}
+
+            {/* Already authenticated in correct role shortcut */}
+            {isAlreadyThisRole && (
+              <div className="p-3.5 rounded-2xl bg-emerald-50 border-2 border-emerald-300 text-emerald-900 text-xs font-mono space-y-2">
+                <div className="flex items-center justify-between font-bold">
+                  <span className="flex items-center">
+                    <CheckCircle2 className="w-4 h-4 mr-1.5 text-emerald-600 shrink-0" />
+                    Active Session: {user?.firstName} {user?.lastName} [{role}]
+                  </span>
+                  <span className="text-[9px] bg-emerald-200 text-emerald-900 px-2 py-0.5 rounded-full font-bold">READY</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => navigate(redirectPath)}
+                  className="w-full bg-[#10B981] hover:bg-[#059669] text-white font-mono font-bold text-xs py-2 rounded-xl flex items-center justify-center space-x-1.5 transition-colors cursor-pointer"
+                >
+                  <span>GO TO {portalTitle.toUpperCase()} DASHBOARD →</span>
+                </button>
+              </div>
+            )}
+
+            {/* 1-Click Fast Auth Button */}
+            <button
+              type="button"
+              onClick={handleInstantDemoAuth}
+              disabled={isLoading}
+              className="w-full bg-[#FFF3A3] hover:bg-[#FFE680] text-[#2B2350] border-2 border-[#2B2350] font-mono font-bold text-xs py-2.5 rounded-2xl shadow-[2px_2px_0px_#2B2350] flex items-center justify-center space-x-2 transition-transform hover:-translate-y-0.5 cursor-pointer disabled:opacity-50"
+            >
+              <Zap className="w-3.5 h-3.5 text-[#6C4DFF] fill-[#6C4DFF]" />
+              <span>⚡ 1-CLICK INSTANT DEMO SIGN-IN ({defaultEmail})</span>
+            </button>
+
+            <div className="flex items-center gap-3 my-1">
+              <div className="flex-1 border-b border-[#2B2350]/20" />
+              <span className="text-[10px] font-mono text-[#6B6590] uppercase font-bold">OR ENTER CREDENTIALS</span>
+              <div className="flex-1 border-b border-[#2B2350]/20" />
+            </div>
+
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 text-xs font-mono">
               <div className="space-y-1.5">
                 <label className="uppercase text-[#2B2350] text-[10px] font-bold tracking-wider">
@@ -219,7 +294,7 @@ export const PortalAuthLayout: React.FC<PortalAuthLayoutProps> = ({
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full mt-2 bg-[#6C4DFF] hover:bg-[#5A3DEB] text-white font-mono font-bold text-xs py-3.5 rounded-2xl shadow-[0_4px_14px_rgba(108,77,255,0.3)] flex items-center justify-center space-x-2 transition-all group disabled:opacity-50"
+                className="w-full mt-2 bg-[#6C4DFF] hover:bg-[#5A3DEB] text-white font-mono font-bold text-xs py-3.5 rounded-2xl shadow-[0_4px_14px_rgba(108,77,255,0.3)] flex items-center justify-center space-x-2 transition-all group disabled:opacity-50 cursor-pointer"
               >
                 <span>{isLoading ? 'VERIFYING CREDENTIALS...' : `SIGN IN TO ${portalTitle.toUpperCase()}`}</span>
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />

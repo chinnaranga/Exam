@@ -13,7 +13,7 @@ import {
 export const InvigilatorLayout: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { logout } = useAuthStore();
+  const { user, logout } = useAuthStore();
   const currentPath = location.pathname;
 
   const menuItems = [
@@ -37,7 +37,9 @@ export const InvigilatorLayout: React.FC = () => {
         </div>
 
         <div className="flex items-center space-x-4 text-xs font-sans">
-          <span className="font-bold text-[#0F172A]">Sarah Jenkins (Invigilator)</span>
+          <span className="font-bold text-[#0F172A]">
+            {user ? `${user.firstName} ${user.lastName} (${user.roles[0]?.roleName || 'INVIGILATOR'})` : 'Marcus Brody (INVIGILATOR)'}
+          </span>
           <Button onClick={() => { logout(); navigate('/invigilator/login'); }} variant="ghost" size="sm" className="text-red-600 hover:bg-red-50 text-xs">
             <LogOut className="w-3.5 h-3.5 mr-1" /> Sign Out
           </Button>

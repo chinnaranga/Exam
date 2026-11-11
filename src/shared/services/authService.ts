@@ -81,7 +81,14 @@ const DEMO_INSTITUTIONAL_ACCOUNTS: Record<
   string,
   { role: SystemRole; firstName: string; lastName: string; orgId: string }
 > = {
+  // Student Accounts
   'student@mit.edu': {
+    role: 'STUDENT',
+    firstName: 'Jane',
+    lastName: 'Doe',
+    orgId: 'org_mit_01',
+  },
+  'candidate@mit.edu': {
     role: 'STUDENT',
     firstName: 'Jane',
     lastName: 'Doe',
@@ -93,10 +100,26 @@ const DEMO_INSTITUTIONAL_ACCOUNTS: Record<
     lastName: 'Chen',
     orgId: 'org_mit_01',
   },
+
+  // Faculty Accounts
   'faculty@mit.edu': {
     role: 'FACULTY',
     firstName: 'Arthur',
     lastName: 'Vance',
+    orgId: 'org_mit_01',
+  },
+  'professor@mit.edu': {
+    role: 'FACULTY',
+    firstName: 'Arthur',
+    lastName: 'Vance',
+    orgId: 'org_mit_01',
+  },
+
+  // Invigilator / Proctor Accounts
+  'invigilator@mit.edu': {
+    role: 'INVIGILATOR',
+    firstName: 'Marcus',
+    lastName: 'Brody',
     orgId: 'org_mit_01',
   },
   'proctor@mit.edu': {
@@ -105,16 +128,50 @@ const DEMO_INSTITUTIONAL_ACCOUNTS: Record<
     lastName: 'Brody',
     orgId: 'org_mit_01',
   },
+  'chief.proctor@mit.edu': {
+    role: 'INVIGILATOR',
+    firstName: 'Marcus',
+    lastName: 'Brody',
+    orgId: 'org_mit_01',
+  },
+
+  // Organization Admin Accounts
   'admin@mit.edu': {
     role: 'ORGANIZATION_ADMIN',
     firstName: 'Eleanor',
     lastName: 'Rousseau',
     orgId: 'org_mit_01',
   },
+  'orgadmin@mit.edu': {
+    role: 'ORGANIZATION_ADMIN',
+    firstName: 'Eleanor',
+    lastName: 'Rousseau',
+    orgId: 'org_mit_01',
+  },
+
+  // Super Admin Accounts
+  'superadmin@assessiq.com': {
+    role: 'SUPER_ADMIN',
+    firstName: 'Root',
+    lastName: 'Sentinel',
+    orgId: 'org_platform_01',
+  },
   'root@assessiq.com': {
     role: 'SUPER_ADMIN',
     firstName: 'Root',
     lastName: 'Sentinel',
+    orgId: 'org_platform_01',
+  },
+  'coding.admin@assessiq.com': {
+    role: 'SUPER_ADMIN',
+    firstName: 'Alex',
+    lastName: 'Compiler',
+    orgId: 'org_platform_01',
+  },
+  'operations@assessiq.com': {
+    role: 'SUPER_ADMIN',
+    firstName: 'DevOps',
+    lastName: 'Commander',
     orgId: 'org_platform_01',
   },
 };

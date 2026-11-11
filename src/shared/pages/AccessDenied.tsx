@@ -1,7 +1,8 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuthStore } from "@/shared/stores/authStore";
-import { ShieldAlert, ArrowLeft, Lock, Sparkles } from 'lucide-react';
+import { getRoleHomeDashboard } from "@/shared/utils/rbac";
+import { ShieldAlert, ArrowLeft, Lock, Sparkles, LayoutGrid, ArrowRight } from 'lucide-react';
 import {
   RedCircle,
   CropMarks,
@@ -11,6 +12,8 @@ import {
 export const AccessDenied: React.FC = () => {
   const navigate = useNavigate();
   const user = useAuthStore((state) => state.user);
+  const userRole = user?.roles?.[0]?.roleName;
+  const authorizedDashboard = getRoleHomeDashboard(userRole);
 
   return (
     <div className="min-h-screen bg-[#FAFAF7] font-body text-[#2B2350] selection:bg-[#FFF3A3] selection:text-[#2B2350] antialiased pencil-cursor flex flex-col justify-between p-4 sm:p-6 lg:p-8">
@@ -67,19 +70,32 @@ export const AccessDenied: React.FC = () => {
             <MarginNote className="-rotate-2">clearance required</MarginNote>
           </div>
 
-          <div className="flex flex-col sm:flex-row gap-3 pt-2">
-            <button
-              onClick={() => navigate(-1)}
-              className="w-full sm:w-1/2 bg-white border-2 border-[#2B2350] text-[#2B2350] font-mono font-bold text-xs py-3 rounded-2xl shadow-[2px_2px_0px_#2B2350] flex items-center justify-center space-x-1"
-            >
-              <ArrowLeft className="w-3.5 h-3.5" />
-              <span>GO BACK</span>
-            </button>
-            <Link to="/" className="w-full sm:w-1/2">
-              <button className="w-full bg-[#6C4DFF] hover:bg-[#5A3DEB] text-white font-mono font-bold text-xs py-3 rounded-2xl shadow-[0_4px_12px_rgba(108,77,255,0.25)]">
-                RETURN TO HOME
+          <div className="flex flex-col gap-2.5 pt-2">
+            {userRole && authorizedDashboard !== '/auth/access-denied' && (
+              <button
+                onClick={() => navigate(authorizedDashboard)}
+                className="w-full bg-[#6C4DFF] hover:bg-[#5A3DEB] text-white font-mono font-bold text-xs py-3 rounded-2xl shadow-[0_4px_12px_rgba(108,77,255,0.25)] flex items-center justify-center space-x-2 cursor-pointer"
+              >
+                <span>OPEN YOUR {userRole} WORKSPACE</span>
+                <ArrowRight className="w-3.5 h-3.5" />
               </button>
-            </Link>
+            )}
+
+            <div className="flex flex-col sm:flex-row gap-2.5">
+              <button
+                onClick={() => navigate(-1)}
+                className="w-full sm:w-1/2 bg-white border-2 border-[#2B2350] text-[#2B2350] font-mono font-bold text-xs py-3 rounded-2xl shadow-[2px_2px_0px_#2B2350] flex items-center justify-center space-x-1 cursor-pointer"
+              >
+                <ArrowLeft className="w-3.5 h-3.5" />
+                <span>GO BACK</span>
+              </button>
+              <Link to="/auth" className="w-full sm:w-1/2">
+                <button className="w-full bg-[#FFF3A3] hover:bg-[#FFE680] text-[#2B2350] border-2 border-[#2B2350] font-mono font-bold text-xs py-3 rounded-2xl shadow-[2px_2px_0px_#2B2350] flex items-center justify-center space-x-1 cursor-pointer">
+                  <LayoutGrid className="w-3.5 h-3.5" />
+                  <span>SWITCH ROLE</span>
+                </button>
+              </Link>
+            </div>
           </div>
         </div>
       </main>

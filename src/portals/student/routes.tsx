@@ -34,6 +34,16 @@ import StudentProfilePreferences from './pages/profile/StudentProfilePreferences
 import StudentProfilePrivacy from './pages/profile/StudentProfilePrivacy';
 
 const STUDENT_ALLOWED_ROLES = ['STUDENT', 'CANDIDATE', 'ORGANIZATION_ADMIN', 'SUPER_ADMIN'];
+const EXAM_RUNNER_ALLOWED_ROLES = [
+  'STUDENT',
+  'CANDIDATE',
+  'INVIGILATOR',
+  'PROCTOR',
+  'CHIEF_PROCTOR',
+  'FACULTY',
+  'ORGANIZATION_ADMIN',
+  'SUPER_ADMIN',
+];
 
 export const StudentRoutes = (
   <>
@@ -52,7 +62,7 @@ export const StudentRoutes = (
       path="/student/exams/runner"
       element={
         <AuthGuard>
-          <RoleGuard allowedRoles={STUDENT_ALLOWED_ROLES}>
+          <RoleGuard allowedRoles={EXAM_RUNNER_ALLOWED_ROLES}>
             <StudentExamRunner />
           </RoleGuard>
         </AuthGuard>

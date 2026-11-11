@@ -20,6 +20,37 @@ export function hasRole(user: UserProfile | null, allowedRoles: SystemRole[]): b
 }
 
 /**
+ * Resolves the primary dashboard route for a given user role
+ */
+export function getRoleHomeDashboard(role?: SystemRole | string): string {
+  if (!role) return '/auth/login';
+
+  switch (role) {
+    case 'STUDENT':
+    case 'CANDIDATE':
+      return '/student/dashboard';
+    case 'INVIGILATOR':
+    case 'PROCTOR':
+    case 'CHIEF_PROCTOR':
+      return '/invigilator/dashboard';
+    case 'FACULTY':
+    case 'PROFESSOR':
+    case 'INSTRUCTOR':
+    case 'TEACHING_ASSISTANT':
+    case 'EXAM_CREATOR':
+      return '/faculty/dashboard';
+    case 'ORGANIZATION_ADMIN':
+    case 'CAMPUS_ADMIN':
+      return '/org-admin/dashboard';
+    case 'SUPER_ADMIN':
+    case 'PLATFORM_ADMIN':
+      return '/super-admin/dashboard';
+    default:
+      return '/dashboard';
+  }
+}
+
+/**
  * Validates whether user has access to a specific organization tenant
  */
 export function canAccessTenant(user: UserProfile | null, tenantId: string): boolean {
