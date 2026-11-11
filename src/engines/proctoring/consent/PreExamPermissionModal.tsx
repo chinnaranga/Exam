@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { DetectionOverlay } from '@/engines/proctoring/object-detection/DetectionOverlay';
 import { DetectedObject } from '@/engines/proctoring/object-detection/types/object.types';
+import { IdentityVerificationStep } from './IdentityVerificationStep';
 
 export interface PreExamPermissionModalProps {
   onPermissionsGranted: () => void;
@@ -35,6 +36,7 @@ export const PreExamPermissionModal: React.FC<PreExamPermissionModalProps> = ({ 
   const [audioVerified, setAudioVerified] = useState<boolean>(false);
   const [pipelineClearance, setPipelineClearance] = useState<boolean>(false);
   const [fullscreenEngaged, setFullscreenEngaged] = useState<boolean>(false);
+  const [identityVerified, setIdentityVerified] = useState<boolean>(false);
 
   const [detectedObjects, setDetectedObjects] = useState<DetectedObject[]>([]);
   const [objectDetectedName, setObjectDetectedName] = useState<string | null>(null);
@@ -204,7 +206,8 @@ export const PreExamPermissionModal: React.FC<PreExamPermissionModalProps> = ({ 
     objectScanVerified &&
     audioVerified &&
     pipelineClearance &&
-    fullscreenEngaged;
+    fullscreenEngaged &&
+    identityVerified;
 
   return (
     <div style={{ backgroundColor: '#FFFFFF', border: '1px solid #CBD5E1', borderRadius: '16px', padding: '2rem', maxWidth: '780px', margin: '0 auto', boxShadow: '0 4px 12px rgba(0,0,0,0.08)' }}>
@@ -418,7 +421,29 @@ export const PreExamPermissionModal: React.FC<PreExamPermissionModalProps> = ({ 
             {pipelineClearance ? '✓ ISSUED' : 'PENDING'}
           </span>
         </div>
+
+        {/* Module 8: Biometric ID & Dynamic Liveness */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', backgroundColor: identityVerified ? '#F0FDF4' : '#F8FAFC', padding: '0.7rem 1rem', borderRadius: '8px', border: identityVerified ? '1px solid #BBF7D0' : '1px solid #E2E8F0' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+            <UserCheck size={16} style={{ color: identityVerified ? '#16A34A' : '#64748B' }} />
+            <span style={{ fontWeight: 600, fontSize: '0.82rem', color: '#0F172A' }}>Module 8: Biometric ID Check & Liveness Challenge</span>
+          </div>
+          <span style={{ fontSize: '0.75rem', fontWeight: 700, color: identityVerified ? '#15803D' : '#DC2626' }}>
+            {identityVerified ? '✓ VERIFIED' : 'ACTION REQUIRED'}
+          </span>
+        </div>
       </div>
+
+      {/* Pre-Exam Identity Verification Flow */}
+      {cameraVerified && !identityVerified && (
+        <div style={{ marginBottom: '1.5rem' }}>
+          <IdentityVerificationStep
+            onComplete={() => {
+              setIdentityVerified(true);
+            }}
+          />
+        </div>
+      )}
 
       {/* Action Footer */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '1.25rem', borderTop: '1px solid #E2E8F0' }}>

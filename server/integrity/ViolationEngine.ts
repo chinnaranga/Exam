@@ -15,6 +15,7 @@ export type ServerEnforcementAction = 'LOG_ONLY' | 'WARNING_TOAST' | 'OVERLAY' |
 export interface RecordedViolation {
   id: string;
   ruleId: string;
+  type: string;
   name: string;
   severity: ViolationSeverityTier;
   pointsAdded: number;
@@ -98,6 +99,15 @@ export class ViolationEngine {
       this.sessions.set(sessionId, state);
     }
     return state;
+  }
+
+  public getSessionState(sessionId: string): { points: number; isTerminated: boolean; violations: RecordedViolation[] } {
+    const session = this.getOrCreateSession(sessionId);
+    return {
+      points: session.currentPoints,
+      isTerminated: session.status === 'TERMINATED',
+      violations: session.violations,
+    };
   }
 
   /**
@@ -213,6 +223,7 @@ export class ViolationEngine {
       const recorded: RecordedViolation = {
         id: `v_${now}_${Math.random().toString(36).substring(2, 7)}`,
         ruleId: rule.ruleId,
+        type: rule.ruleId,
         name: rule.name,
         severity: 'CRITICAL',
         pointsAdded: rule.points,
@@ -270,6 +281,7 @@ export class ViolationEngine {
     const recorded: RecordedViolation = {
       id: `v_${now}_${Math.random().toString(36).substring(2, 7)}`,
       ruleId: rule.ruleId,
+      type: rule.ruleId,
       name: rule.name,
       severity: rule.severity,
       pointsAdded: rule.points,
@@ -506,3 +518,4 @@ export class ViolationEngine {
 
 export const violationEngine = new ViolationEngine();
 export default violationEngine;
+

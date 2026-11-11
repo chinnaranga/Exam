@@ -146,3 +146,4 @@ export const LockdownTerminatedScreen: React.FC<LockdownTerminatedScreenProps> =
 };
 
 export default LockdownTerminatedScreen;
+

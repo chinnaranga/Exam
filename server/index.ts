@@ -6,6 +6,7 @@ import { HumanReviewAPI } from './integrity/HumanReviewAPI';
 import { EnterpriseOperationsController } from './operations/controllers/EnterpriseOperationsController';
 import { examSessionAuthority } from './integrity/ExamSessionAuthority';
 import { violationEngine } from './integrity/ViolationEngine';
+import { identityVerificationService } from './identity/IdentityVerificationService';
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -20,6 +21,8 @@ app.use('/api/session', examSessionAuthority.router);
 app.use('/api/v1/session', examSessionAuthority.router);
 app.use('/api/session', violationEngine.router);
 app.use('/api/v1/session', violationEngine.router);
+app.use('/api/session', identityVerificationService.router);
+app.use('/api/v1/session', identityVerificationService.router);
 
 // Phase 4 Enterprise Integrity Intelligence Platform APIs
 const humanReviewAPI = new HumanReviewAPI();

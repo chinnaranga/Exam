@@ -117,25 +117,26 @@ export class ExamSessionAuthority {
    * Initialize a new authoritative exam session with server-calculated deadline and secret key.
    */
   public startSession(params: {
-    sessionId: string;
+    sessionId?: string;
     durationSeconds: number;
     candidateId?: string;
     examId?: string;
     sessionSecret?: string;
     nowMs?: number;
   }): ExamSessionState {
+    const sessionId = params.sessionId || `sess_${Date.now()}_${crypto.randomBytes(4).toString('hex')}`;
     const startedAt = params.nowMs || Date.now();
     const deadline = startedAt + params.durationSeconds * 1000;
     const sessionSecret = params.sessionSecret || crypto.randomBytes(32).toString('hex');
 
     // Clean up existing timer if session re-initialized
-    const existing = this.sessions.get(params.sessionId);
+    const existing = this.sessions.get(sessionId);
     if (existing?.autoSubmitTimer) {
       clearTimeout(existing.autoSubmitTimer);
     }
 
     const session: ExamSessionState = {
-      id: params.sessionId,
+      id: sessionId,
       candidateId: params.candidateId,
       examId: params.examId,
       startedAt,
@@ -152,7 +153,7 @@ export class ExamSessionAuthority {
     // Genesis ledger entry
     this.appendLedgerRecord(session, {
       type: 'SESSION_INITIALIZED',
-      sessionId: params.sessionId,
+      sessionId,
       startedAt,
       deadline,
       durationSeconds: params.durationSeconds,
@@ -161,10 +162,10 @@ export class ExamSessionAuthority {
     // Schedule authoritative server auto-submit at exact deadline
     const delayMs = Math.max(0, deadline - Date.now());
     session.autoSubmitTimer = setTimeout(() => {
-      this.triggerServerAutoSubmit(params.sessionId);
+      this.triggerServerAutoSubmit(sessionId);
     }, delayMs);
 
-    this.sessions.set(params.sessionId, session);
+    this.sessions.set(sessionId, session);
     return session;
   }
 

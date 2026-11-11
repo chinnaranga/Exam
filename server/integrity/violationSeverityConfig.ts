@@ -103,6 +103,16 @@ export const VIOLATION_SEVERITY_TABLE: Record<string, ViolationRuleDefinition> =
     description: 'Invalid HMAC signature or sequence gap detected on client security events.',
     invigilatorAlert: true,
   },
+  CONCURRENT_SESSION_BLOCKED: {
+    ruleId: 'CONCURRENT_SESSION_BLOCKED',
+    name: 'Concurrent Session Attempted',
+    severity: 'CRITICAL',
+    points: 8,
+    isInstantKill: true,
+    alertUser: true,
+    description: 'A second examination login was attempted for the same candidate while an active session exists.',
+    invigilatorAlert: true,
+  },
 
   // ─── HIGH (3 Points) ────────────────────────────────────────────────────────
   FULLSCREEN_EXIT_EXTENDED: {
@@ -113,6 +123,36 @@ export const VIOLATION_SEVERITY_TABLE: Record<string, ViolationRuleDefinition> =
     isInstantKill: false,
     alertUser: true,
     description: 'Candidate exited fullscreen mode and failed to return within 10 seconds.',
+    invigilatorAlert: true,
+  },
+  REVERIFY_CHALLENGE_TIMEOUT: {
+    ruleId: 'REVERIFY_CHALLENGE_TIMEOUT',
+    name: 'Re-Verification Timeout (>10s)',
+    severity: 'HIGH',
+    points: 3,
+    isInstantKill: false,
+    alertUser: true,
+    description: 'Candidate missed or failed to respond to the 10-second mid-exam liveness challenge.',
+    invigilatorAlert: true,
+  },
+  REVERIFY_CHALLENGE_FAILED: {
+    ruleId: 'REVERIFY_CHALLENGE_FAILED',
+    name: 'Re-Verification Challenge Failed',
+    severity: 'HIGH',
+    points: 3,
+    isInstantKill: false,
+    alertUser: true,
+    description: 'Candidate attempted but failed to complete the requested mid-exam liveness challenge.',
+    invigilatorAlert: true,
+  },
+  DEVICE_FINGERPRINT_CHANGED: {
+    ruleId: 'DEVICE_FINGERPRINT_CHANGED',
+    name: 'Device Fingerprint Changed',
+    severity: 'HIGH',
+    points: 3,
+    isInstantKill: false,
+    alertUser: true,
+    description: 'Hardware or browser fingerprint changed mid-exam, indicating possible environment swap.',
     invigilatorAlert: true,
   },
   MULTIPLE_MONITORS: {
@@ -176,6 +216,26 @@ export const VIOLATION_SEVERITY_TABLE: Record<string, ViolationRuleDefinition> =
     alertUser: true,
     description: 'Human speech frequencies detected by local microphone audio analysis.',
     invigilatorAlert: false,
+  },
+  IP_ADDRESS_CHANGED: {
+    ruleId: 'IP_ADDRESS_CHANGED',
+    name: 'Client IP Address Changed',
+    severity: 'MEDIUM',
+    points: 2,
+    isInstantKill: false,
+    alertUser: true,
+    description: 'Network IP address changed mid-session, prompting re-verification.',
+    invigilatorAlert: true,
+  },
+  TYPING_RHYTHM_DEVIATION: {
+    ruleId: 'TYPING_RHYTHM_DEVIATION',
+    name: 'Typing Rhythm Deviation (>65%)',
+    severity: 'MEDIUM',
+    points: 2,
+    isInstantKill: false,
+    alertUser: true,
+    description: 'Keystroke interval rhythm diverged significantly from pre-exam baseline (flagged for human review, never auto-terminate).',
+    invigilatorAlert: true,
   },
 
   // ─── LOW (1 Point, Log Only — No User Alert) ─────────────────────────────────
@@ -273,3 +333,4 @@ export function resolveViolationRule(eventTypeOrRule: string): ViolationRuleDefi
     invigilatorAlert: false,
   };
 }
+

@@ -100,3 +100,4 @@ export const CriticalAlertOverlay: React.FC<CriticalAlertOverlayProps> = ({
 };
 
 export default CriticalAlertOverlay;
+

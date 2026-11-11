@@ -56,6 +56,9 @@ import { useNavigationSentinel } from '@/engines/exam-security/navigation/hooks/
 import { useFullscreen } from '@/engines/exam-security/fullscreen/hooks/useFullscreen';
 import { FullscreenOverlay } from '@/engines/exam-security/fullscreen/components/FullscreenOverlay';
 import { BrowserCompatibility } from '@/engines/exam-security/fullscreen/utils/BrowserCompatibility';
+import { ReverifyLivenessModal } from '@/engines/exam-security/ui/ReverifyLivenessModal';
+import { useServerViolationSentinel } from '@/engines/exam-security/hooks/useServerViolationSentinel';
+import { ViolationToast, CriticalAlertOverlay, LockdownTerminatedScreen } from '@/engines/exam-security/ui';
 
 interface QuestionItem {
   id: number;
@@ -200,12 +203,67 @@ const StudentExamRunnerContent: React.FC = () => {
     };
   }, []);
 
-  // Security Violation Threshold Counter Engine (Max 3 Attempts)
+  // Server-authoritative violation sentinel & weighted points engine
+  const examSessionId = 'sess_demo_candidate';
+  const {
+    points,
+    activeWarning,
+    criticalAlert,
+    isLockdownTerminated,
+    reportViolation,
+    dismissWarning,
+    dismissCriticalAlert,
+  } = useServerViolationSentinel({
+    sessionId: examSessionId,
+    pollIntervalMs: 5000,
+  });
+
+  // Re-verification State (Random 10s biometric challenges mid-exam)
+  const [reverifyPrompt, setReverifyPrompt] = useState<{
+    active: boolean;
+    challengeId: string;
+    challengeType: 'TURN_HEAD_LEFT' | 'TURN_HEAD_RIGHT' | 'BLINK_TWICE' | 'SMILE' | 'STATIC_GAZE' | 'AUDIO_PHRASE';
+    instructions: string;
+    nonce: string;
+  } | null>(null);
+
+  // Bind session & schedule random mid-exam re-verification
+  useEffect(() => {
+    if (!examStarted) return;
+
+    const deviceFingerprint = `${navigator.userAgent}-${window.screen.width}x${window.screen.height}-${navigator.hardwareConcurrency || 4}`;
+    fetch(`/api/v1/session/${examSessionId}/identity/bind`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        candidateId: 'cand_student_01',
+        deviceFingerprint,
+        durationSeconds: 3600,
+      }),
+    }).catch(() => {});
+
+    // Schedule mid-exam random re-verification prompt (e.g. at 45s for demo)
+    const reverifyTimer = setTimeout(() => {
+      setReverifyPrompt({
+        active: true,
+        challengeId: `ch_mid_${Date.now()}`,
+        challengeType: 'TURN_HEAD_RIGHT',
+        instructions: 'Random Biometric Audit: Turn your head right and center your face in the camera.',
+        nonce: Math.random().toString(36).substring(2, 10),
+      });
+    }, 45000);
+
+    return () => clearTimeout(reverifyTimer);
+  }, [examStarted]);
+
+  // Security Violation Counter with Server Integration
   const [violationCount, setViolationCount] = useState<number>(0);
   const [isTerminated, setIsTerminated] = useState<boolean>(false);
 
-  const triggerViolation = (reason: string) => {
-    if (isTerminated) return;
+  const triggerViolation = (reason: string, violationType: string = 'WINDOW_SWITCH') => {
+    if (isTerminated || isLockdownTerminated) return;
+
+    reportViolation(violationType, { reason });
 
     setViolationCount((prev) => {
       const nextCount = prev + 1;
@@ -734,9 +792,48 @@ const StudentExamRunnerContent: React.FC = () => {
         />
       )}
 
+      {/* 10-second Re-Verification Modal */}
+      {reverifyPrompt && (
+        <ReverifyLivenessModal
+          isOpen={reverifyPrompt.active}
+          sessionId={examSessionId}
+          challengeId={reverifyPrompt.challengeId}
+          challengeType={reverifyPrompt.challengeType}
+          instructions={reverifyPrompt.instructions}
+          nonce={reverifyPrompt.nonce}
+          onSuccess={(score) => {
+            setReverifyPrompt(null);
+            toast.success('Identity Re-verified', { description: `Face match score: ${score}%` });
+          }}
+          onTimeout={() => {
+            setReverifyPrompt(null);
+            reportViolation('REVERIFY_CHALLENGE_TIMEOUT');
+            toast.error('Re-verification Timed Out', { description: 'HIGH Violation (3 points) applied.' });
+          }}
+          onFailure={(reason) => {
+            setReverifyPrompt(null);
+            reportViolation('REVERIFY_CHALLENGE_FAILED', { reason });
+          }}
+        />
+      )}
+
+      {/* Violation Toast & Alerts */}
+      {activeWarning && (
+        <ViolationToast warning={activeWarning} onDismiss={dismissWarning} />
+      )}
+      {criticalAlert && (
+        <CriticalAlertOverlay alert={criticalAlert} onAcknowledge={dismissCriticalAlert} />
+      )}
+      {isLockdownTerminated && (
+        <LockdownTerminatedScreen
+          reason="Maximum violation points exceeded or critical identity anomaly detected."
+          onSubmitFinal={handleSubmitFinal}
+        />
+      )}
+
       {/* Footer Status */}
       <footer className="bg-white border-t border-[#E2E8F0] py-3 px-6 text-xs text-[#64748B] flex justify-between font-mono">
-        <span>WASM Proctoring: Active • Gaze Target: Center</span>
+        <span>WASM Proctoring: Active • Gaze Target: Center • Risk Points: {points}/8</span>
         <span>Keyboard Shortcuts: Alt+N (Next), Alt+P (Prev), Alt+M (Mark)</span>
       </footer>
     </div>
