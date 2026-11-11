@@ -194,3 +194,4 @@ export const Q7PricingFaq: React.FC = () => {
 };
 
 export default Q7PricingFaq;
+

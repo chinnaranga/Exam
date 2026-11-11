@@ -57,3 +57,4 @@ export const SECURITY_ITEMS: SecurityBadgeItem[] = [
     description: 'Formally aligning all policies, operational procedures, and infrastructure with international ISMS requirements.',
   },
 ];
+

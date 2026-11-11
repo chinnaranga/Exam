@@ -71,3 +71,4 @@ export const PRICING_TIERS: PricingTier[] = [
     ctaHref: '#demo',
   },
 ];
+

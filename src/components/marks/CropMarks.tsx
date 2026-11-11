@@ -35,3 +35,4 @@ export const CropMarks: React.FC = () => {
 };
 
 export default CropMarks;
+

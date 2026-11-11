@@ -1,43 +1,79 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Card } from '@/shared/components/ui/card';
-import { Button } from '@/shared/components/ui/button';
-import { Lock, ShieldAlert, Mail } from 'lucide-react';
+import { ShieldX, Sparkles, Mail } from 'lucide-react';
+import {
+  RedCircle,
+  CropMarks,
+  MarginNote,
+} from '@/components/marks';
 
 export const AccountLocked: React.FC = () => {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#0a0f1d] via-[#111827] to-[#1e1b4b] flex items-center justify-center p-4">
-      <Card className="glass-card border-red-500/20 p-8 max-w-md w-full text-center shadow-2xl backdrop-blur-xl bg-surface/30">
-        <div className="mx-auto w-14 h-14 rounded-full bg-red-500/10 border border-red-500/30 text-red-400 flex items-center justify-center mb-4">
-          <Lock className="w-7 h-7" />
-        </div>
+    <div className="min-h-screen bg-[#FAFAF7] font-body text-[#2B2350] selection:bg-[#FFF3A3] selection:text-[#2B2350] antialiased pencil-cursor flex flex-col justify-between p-4 sm:p-6 lg:p-8">
+      {/* Header Bar */}
+      <header className="max-w-7xl w-full mx-auto flex items-center justify-between py-4 border-b-2 border-dashed border-[#2B2350]/20">
+        <Link to="/" className="flex items-center space-x-3 group">
+          <div className="w-8 h-8 rounded-lg bg-[#6C4DFF] text-white flex items-center justify-center shadow-xs group-hover:bg-[#5A3DEB] transition-colors">
+            <Sparkles className="w-4 h-4 fill-white" />
+          </div>
+          <span className="font-heading text-xl font-extrabold tracking-tight text-[#2B2350]">
+            Assess<span className="text-[#6C4DFF]">IQ</span>
+          </span>
+        </Link>
+        <Link
+          to="/"
+          className="text-xs font-mono font-bold text-[#6B6590] hover:text-[#6C4DFF] transition-colors"
+        >
+          ← HOME
+        </Link>
+      </header>
 
-        <h1 className="text-2xl font-bold text-white tracking-tight">Account Temporarily Locked</h1>
-        <p className="text-xs text-gray-400 mt-2">
-          Too many invalid login attempts were detected on your identity. For enterprise security, access is throttled for 15 minutes.
-        </p>
+      {/* Main Sheet Card */}
+      <main className="max-w-md w-full mx-auto my-auto py-10 text-center">
+        <div className="relative p-8 rounded-3xl bg-white border-2 border-[#2B2350] shadow-[8px_8px_0px_#2B2350] space-y-5">
+          <CropMarks />
 
-        <div className="my-4 p-3 rounded-xl bg-surface-dark/80 border border-white/5 text-xs text-left text-gray-300">
-          <p className="font-semibold text-white mb-1 flex items-center">
-            <ShieldAlert className="w-3.5 h-3.5 text-red-400 mr-1.5" />
-            Security Throttling Rule
-          </p>
-          <p className="text-gray-400">Lockout Duration: 15 minutes • Risk Score: High • IP Logged</p>
-        </div>
+          <div className="w-14 h-14 mx-auto rounded-2xl bg-[#FFB5A7]/60 border-2 border-[#2B2350] text-[#FF4D5E] flex items-center justify-center shadow-xs">
+            <ShieldX className="w-7 h-7" />
+          </div>
 
-        <div className="space-y-3 pt-2">
-          <Link to="/auth/forgot-password">
-            <Button className="w-full bg-primary hover:bg-primary-dark text-white font-semibold">
-              Unlock via Password Reset
-            </Button>
-          </Link>
-          <Link to="/auth/login">
-            <Button variant="outline" className="w-full">
-              Return to Login Screen
-            </Button>
-          </Link>
+          <div className="space-y-2 border-b-2 border-dashed border-[#2B2350]/20 pb-4">
+            <span className="text-[10px] font-mono font-bold uppercase tracking-wider bg-[#FFB5A7]/70 text-[#2B2350] px-3 py-1 rounded-full border border-[#2B2350]">
+              SECURITY HOLD // ACCOUNT LOCKED
+            </span>
+            <h1 className="font-heading text-3xl font-extrabold text-[#2B2350] mt-2">
+              Station <span className="relative inline-block px-1">Locked<RedCircle className="scale-110" /></span>
+            </h1>
+            <p className="text-xs text-[#6B6590] font-body leading-relaxed">
+              Your account has been temporarily restricted due to consecutive failed sign-in attempts or an exam integrity hold.
+            </p>
+          </div>
+
+          <div className="flex justify-center">
+            <MarginNote className="-rotate-2">contact proctor</MarginNote>
+          </div>
+
+          <div className="space-y-3 pt-2">
+            <Link to="/auth/forgot-password" className="inline-block w-full">
+              <button className="w-full bg-[#6C4DFF] hover:bg-[#5A3DEB] text-white font-mono font-bold text-xs py-3.5 rounded-2xl shadow-[0_4px_12px_rgba(108,77,255,0.25)]">
+                RESET ACCESS KEY
+              </button>
+            </Link>
+            <a href="mailto:support@assessiq.com" className="inline-block w-full">
+              <button className="w-full bg-white border-2 border-[#2B2350] text-[#2B2350] font-mono font-bold text-xs py-3 rounded-2xl shadow-[2px_2px_0px_#2B2350] flex items-center justify-center space-x-1.5">
+                <Mail className="w-3.5 h-3.5" />
+                <span>CONTACT EXAM INTEGRITY DESK</span>
+              </button>
+            </a>
+          </div>
         </div>
-      </Card>
+      </main>
+
+      {/* Footer */}
+      <footer className="max-w-7xl w-full mx-auto flex items-center justify-between text-xs font-mono text-[#6B6590] py-4 border-t-2 border-dashed border-[#2B2350]/20">
+        <span>© 2026 AssessIQ Inc. All rights reserved.</span>
+        <span>SECURITY LOCK SENTINEL</span>
+      </footer>
     </div>
   );
 };

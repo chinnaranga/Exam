@@ -32,3 +32,4 @@ export const RedCheck: React.FC<RedCheckProps> = ({ className = '', size = 24, d
 };
 
 export default RedCheck;
+

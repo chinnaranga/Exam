@@ -43,3 +43,4 @@ export const COMPARISON_ROWS: ComparisonRow[] = [
     traditional: '4 to 8 weeks',
   },
 ];
+

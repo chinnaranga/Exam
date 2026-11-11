@@ -74,3 +74,4 @@ export const SecurityTrustSection: React.FC = () => {
 };
 
 export default SecurityTrustSection;
+

@@ -39,3 +39,4 @@ export const RedArrow: React.FC<RedArrowProps> = ({ className = '', delay = 0.2 
 };
 
 export default RedArrow;
+

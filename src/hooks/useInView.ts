@@ -24,3 +24,4 @@ export function useInView(options?: IntersectionObserverInit) {
 
   return { ref, isInView };
 }
+

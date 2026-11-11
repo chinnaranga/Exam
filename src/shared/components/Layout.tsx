@@ -12,11 +12,11 @@ const Layout = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#FAFBFC] font-sans text-[#111827] flex flex-col">
+    <div className="min-h-screen bg-[#FAFAF7] font-body text-[#2B2350] selection:bg-[#FFF3A3] selection:text-[#2B2350] antialiased pencil-cursor flex flex-col">
       <Navbar />
       <div className="flex flex-1">
         <Sidebar />
-        <main className="flex-1 p-8 overflow-y-auto">
+        <main className="flex-1 p-6 sm:p-8 overflow-y-auto">
           <Outlet />
         </main>
       </div>

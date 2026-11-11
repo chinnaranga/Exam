@@ -16,7 +16,7 @@ import Q8FinalCtaFooter from '@/components/sections/Q8FinalCtaFooter';
 
 export const LightLanding: React.FC = () => {
   return (
-    <div className="min-h-screen bg-white font-body text-[#2B2350] selection:bg-[#FFF3A3] selection:text-[#2B2350] antialiased pencil-cursor pb-12">
+    <div className="min-h-screen bg-transparent font-body text-[#2B2350] selection:bg-[#FFF3A3] selection:text-[#2B2350] antialiased pencil-cursor pb-12">
       {/* 0. Top Announcement Bar */}
       <AnnouncementBar />
 

@@ -26,3 +26,4 @@ export const cardHover = {
   rest: { y: 0, transition: { duration: 0.2, ease: 'easeOut' } },
   hover: { y: -4, transition: { duration: 0.2, ease: 'easeOut' } },
 };
+

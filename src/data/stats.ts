@@ -43,3 +43,4 @@ export const ROI_DEFAULTS = {
   gradingHoursPerExam: 40,
   averageExamsPerYear: 6,
 };
+

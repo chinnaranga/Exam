@@ -47,3 +47,4 @@ export const CookieNotice: React.FC = () => {
 };
 
 export default CookieNotice;
+

@@ -34,3 +34,4 @@ export const StickerBadge: React.FC<StickerBadgeProps> = ({
 };
 
 export default StickerBadge;
+

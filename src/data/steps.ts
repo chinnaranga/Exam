@@ -31,3 +31,4 @@ export const HOW_IT_WORKS_STEPS: StepItem[] = [
     outcome: 'Outcome: Turnaround time cut from weeks to minutes.',
   },
 ];
+

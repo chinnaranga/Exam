@@ -11,3 +11,4 @@ export const FOUNDER_NOTE = {
   authorCredentials: 'Former EdTech Engineering Lead & University Lecturer',
   avatarPlaceholder: 'AM',
 };
+

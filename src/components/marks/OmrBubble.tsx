@@ -49,3 +49,4 @@ export const OmrBubble: React.FC<OmrBubbleProps> = ({
 };
 
 export default OmrBubble;
+

@@ -40,3 +40,4 @@ export const FounderNoteSection: React.FC = () => {
 };
 
 export default FounderNoteSection;
+

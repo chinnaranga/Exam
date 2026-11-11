@@ -18,6 +18,55 @@
   --sheet-mint: #B8F0D2;
   --sheet-sky: #BFE6FF;
   --sheet-white: #FFFFFF;
+  
+  /* System UI Semantic Tokens */
+  --primary: #6C4DFF;
+  --primary-hover: #5A3DEB;
+  --secondary: #C9CCFF;
+  --accent: #FF4D5E;
+  --success: #10B981;
+  --warning: #F59E0B;
+  --error: #FF4D5E;
+  --background: #FAFAF7;
+  --surface: #FFFFFF;
+  --surface-secondary: #F4F2FF;
+  --border: #2B2350;
+  
+  --divider: rgba(43, 35, 80, 0.15);
+  --text-primary: #2B2350;
+  --text-secondary: #6B6590;
+  --text-muted: #9490B8;
+  --disabled: #D8D5EC;
+  
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+}
+
+@layer base {
+  * {
+    border-color: rgba(43, 35, 80, 0.2);
+  }
+  
+  body {
+    font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background-color: #FAFAF7;
+    background-image: radial-gradient(rgba(43, 35, 80, 0.08) 1.2px, transparent 1.2px);
+    background-size: 24px 24px;
+    background-attachment: fixed;
+    color: #2B2350;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Bricolage Grotesque', sans-serif;
+    color: #2B2350;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+  }
 }
 
 .font-heading {
@@ -54,80 +103,33 @@
   }
 }
 
-
-:root {
-  /* AssessIQ Enterprise Design System Tokens */
-  --primary: #0F6CBD;
-  --primary-hover: #0A5BA8;
-  --secondary: #14B8A6;
-  --accent: #2563EB;
-  --success: #16A34A;
-  --warning: #F59E0B;
-  --error: #DC2626;
-  --background: #F8FAFC;
-  --surface: #FFFFFF;
-  --surface-secondary: #F1F5F9;
-  --border: #E2E8F0;
-  --divider: #CBD5E1;
-  --text-primary: #0F172A;
-  --text-secondary: #64748B;
-  --text-muted: #94A3B8;
-  --disabled: #CBD5E1;
-  
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 16px;
-  --radius-xl: 20px;
-}
-
-@layer base {
-  * {
-    border-color: var(--border);
-  }
-  
-  body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    background-color: #F8FAFC;
-    color: #0F172A;
-    min-height: 100vh;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-  }
-
-  h1, h2, h3, h4, h5, h6 {
-    font-family: 'Manrope', 'Inter', sans-serif;
-    color: #0F172A;
-    font-weight: 700;
-    letter-spacing: -0.02em;
-  }
-}
-
 @layer components {
-  /* Enterprise Card Styling */
+  /* Answer Sheet Paper Card Styling */
   .enterprise-card {
     background-color: #FFFFFF;
-    border: 1px solid #E2E8F0;
-    border-radius: 16px;
-    box-shadow: 0 1px 3px 0 rgba(15, 23, 42, 0.03), 0 1px 2px -1px rgba(15, 23, 42, 0.03);
-    transition: border-color 200ms ease-in-out, box-shadow 200ms ease-in-out;
+    border: 2px solid #2B2350;
+    border-radius: 20px;
+    box-shadow: 4px 4px 0px #2B2350;
+    transition: transform 150ms ease, box-shadow 150ms ease;
   }
 
   .enterprise-card:hover {
-    border-color: #CBD5E1;
-    box-shadow: 0 4px 6px -1px rgba(15, 23, 42, 0.05), 0 2px 4px -2px rgba(15, 23, 42, 0.05);
+    transform: translateY(-2px);
+    box-shadow: 6px 6px 0px #2B2350;
   }
 
-  /* Enterprise Buttons */
+  /* Answer Sheet Buttons */
   .btn-enterprise-primary {
-    background-color: #0F6CBD;
+    background-color: #6C4DFF;
     color: #FFFFFF;
-    font-weight: 600;
-    font-size: 0.95rem;
+    font-family: 'DM Mono', monospace;
+    font-weight: 700;
+    font-size: 0.85rem;
     padding: 0.65rem 1.25rem;
-    border-radius: 10px;
-    border: 1px solid transparent;
-    box-shadow: 0 1px 2px rgba(15, 108, 189, 0.15);
-    transition: all 200ms ease-in-out;
+    border-radius: 14px;
+    border: 2px solid #2B2350;
+    box-shadow: 3px 3px 0px #2B2350;
+    transition: all 150ms ease;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -136,20 +138,22 @@
   }
 
   .btn-enterprise-primary:hover {
-    background-color: #0A5BA8;
-    box-shadow: 0 2px 4px rgba(10, 91, 168, 0.2);
+    background-color: #5A3DEB;
+    transform: translateY(-1px);
+    box-shadow: 4px 4px 0px #2B2350;
   }
 
   .btn-enterprise-secondary {
     background-color: #FFFFFF;
-    color: #0F172A;
-    font-weight: 600;
-    font-size: 0.95rem;
+    color: #2B2350;
+    font-family: 'DM Mono', monospace;
+    font-weight: 700;
+    font-size: 0.85rem;
     padding: 0.65rem 1.25rem;
-    border-radius: 10px;
-    border: 1px solid #CBD5E1;
-    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
-    transition: all 200ms ease-in-out;
+    border-radius: 14px;
+    border: 2px solid #2B2350;
+    box-shadow: 3px 3px 0px #2B2350;
+    transition: all 150ms ease;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -158,64 +162,69 @@
   }
 
   .btn-enterprise-secondary:hover {
-    background-color: #F8FAFC;
-    border-color: #94A3B8;
+    background-color: #FFF3A3;
+    transform: translateY(-1px);
+    box-shadow: 4px 4px 0px #2B2350;
   }
 
-  /* Enterprise Badges */
+  /* Badges */
   .badge-enterprise-success {
-    background-color: #F0FDF4;
-    color: #16A34A;
-    border: 1px solid #BBF7D0;
-    font-weight: 600;
+    background-color: #B8F0D2;
+    color: #2B2350;
+    border: 1.5px solid #2B2350;
+    font-family: 'DM Mono', monospace;
+    font-weight: 700;
     font-size: 0.75rem;
     padding: 0.2rem 0.6rem;
-    border-radius: 6px;
+    border-radius: 8px;
     display: inline-flex;
     align-items: center;
     gap: 0.35rem;
   }
 
   .badge-enterprise-warning {
-    background-color: #FFFBEB;
-    color: #D97706;
-    border: 1px solid #FDE68A;
-    font-weight: 600;
+    background-color: #FFF3A3;
+    color: #2B2350;
+    border: 1.5px solid #2B2350;
+    font-family: 'DM Mono', monospace;
+    font-weight: 700;
     font-size: 0.75rem;
     padding: 0.2rem 0.6rem;
-    border-radius: 6px;
+    border-radius: 8px;
     display: inline-flex;
     align-items: center;
     gap: 0.35rem;
   }
 
   .badge-enterprise-error {
-    background-color: #FEF2F2;
-    color: #DC2626;
-    border: 1px solid #FECACA;
-    font-weight: 600;
+    background-color: #FFB5A7;
+    color: #2B2350;
+    border: 1.5px solid #2B2350;
+    font-family: 'DM Mono', monospace;
+    font-weight: 700;
     font-size: 0.75rem;
     padding: 0.2rem 0.6rem;
-    border-radius: 6px;
+    border-radius: 8px;
     display: inline-flex;
     align-items: center;
     gap: 0.35rem;
   }
 
   .badge-enterprise-info {
-    background-color: #F0F9FF;
-    color: #0284C7;
-    border: 1px solid #BAE6FD;
-    font-weight: 600;
+    background-color: #BFE6FF;
+    color: #2B2350;
+    border: 1.5px solid #2B2350;
+    font-family: 'DM Mono', monospace;
+    font-weight: 700;
     font-size: 0.75rem;
     padding: 0.2rem 0.6rem;
-    border-radius: 6px;
+    border-radius: 8px;
     display: inline-flex;
     align-items: center;
     gap: 0.35rem;
   }
 
-  /* Table Styling */
+  /* Answer Sheet Table */
   .enterprise-table {
     width: 100%;
     border-collapse: separate;
@@ -223,23 +232,24 @@
   }
 
   .enterprise-table th {
-    background-color: #F8FAFC;
-    color: #475569;
-    font-size: 0.85rem;
-    font-weight: 600;
+    background-color: #FFF3A3;
+    color: #2B2350;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.8rem;
+    font-weight: 700;
     padding: 0.75rem 1rem;
     text-align: left;
-    border-bottom: 1px solid #E2E8F0;
+    border-bottom: 2px solid #2B2350;
   }
 
   .enterprise-table td {
     padding: 0.85rem 1rem;
-    font-size: 0.9rem;
-    color: #0F172A;
-    border-bottom: 1px solid #F1F5F9;
+    font-size: 0.85rem;
+    color: #2B2350;
+    border-bottom: 1px dashed rgba(43, 35, 80, 0.2);
   }
 
   .enterprise-table tr:hover td {
-    background-color: #F8FAFC;
+    background-color: rgba(201, 204, 255, 0.2);
   }
 }

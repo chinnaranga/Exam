@@ -71,3 +71,4 @@ export const UseCasesSection: React.FC = () => {
 };
 
 export default UseCasesSection;
+

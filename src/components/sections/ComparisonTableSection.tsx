@@ -64,3 +64,4 @@ export const ComparisonTableSection: React.FC = () => {
 };
 
 export default ComparisonTableSection;
+

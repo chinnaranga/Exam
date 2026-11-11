@@ -211,3 +211,4 @@ export const Q1Hero: React.FC = () => {
 };
 
 export default Q1Hero;
+

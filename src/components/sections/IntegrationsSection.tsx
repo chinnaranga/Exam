@@ -48,3 +48,4 @@ export const IntegrationsSection: React.FC = () => {
 };
 
 export default IntegrationsSection;
+

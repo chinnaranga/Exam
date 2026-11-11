@@ -33,3 +33,4 @@ export const RedStrike: React.FC<RedStrikeProps> = ({ children, className = '', 
 };
 
 export default RedStrike;
+

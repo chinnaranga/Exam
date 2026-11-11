@@ -22,3 +22,4 @@ export const MarginNote: React.FC<MarginNoteProps> = ({
 };
 
 export default MarginNote;
+

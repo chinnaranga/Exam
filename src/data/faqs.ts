@@ -35,3 +35,4 @@ export const FAQS: FaqItem[] = [
       'Most departments and testing teams launch their first pilot exam in less than 24 hours. Because AssessIQ runs entirely in the browser, students and faculty do not need to install browser extensions, desktop apps, or kernel-level drivers.',
   },
 ];
+

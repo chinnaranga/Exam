@@ -29,3 +29,4 @@ export function useCountUp(end: number, duration = 1500, startAnimation = true):
 
   return count;
 }
+
