@@ -19,13 +19,13 @@ import PortalSelection from '@/portals/public/pages/auth/PortalSelection';
 import FacultyLogin from '@/portals/faculty/pages/auth/FacultyLogin';
 import InvigilatorLogin from '@/portals/invigilator/pages/auth/InvigilatorLogin';
 import OrgAdminLogin from '@/portals/org-admin/pages/auth/OrgAdminLogin';
-import SuperAdminLogin from './portals/super-admin/auth/SuperAdminLogin';
+import SuperAdminLogin from '@/portals/super-admin/pages/auth/SuperAdminLogin';
 import CodingLogin from './portals/coding/auth/CodingLogin';
 
 // Dedicated Enterprise Portals & Workspaces
-import AdminLanding from './portals/admin/AdminLanding';
-import AdminDashboard from './portals/admin/AdminDashboard';
-import ProductionDashboard from './pages/admin/ProductionDashboard';
+import AdminLanding from '@/portals/super-admin/pages/AdminLanding';
+import AdminDashboard from '@/portals/super-admin/pages/AdminDashboard';
+import ProductionDashboard from '@/portals/super-admin/pages/ProductionDashboard';
 
 import FacultyLanding from '@/portals/faculty/pages/FacultyLanding';
 import FacultyDashboard from '@/portals/faculty/pages/FacultyDashboard';
@@ -66,10 +66,10 @@ import OrgAdminUsers from '@/portals/org-admin/pages/OrgAdminUsers';
 import OrgAdminStructure from '@/portals/org-admin/pages/OrgAdminStructure';
 import OrgAdminAssessments from '@/portals/org-admin/pages/OrgAdminAssessments';
 
-import SuperAdminLayout from './portals/super-admin/shell/SuperAdminLayout';
-import SuperAdminTenants from './portals/super-admin/SuperAdminTenants';
-import SuperAdminSecurity from './portals/super-admin/SuperAdminSecurity';
-import SuperAdminPlatform from './portals/super-admin/SuperAdminPlatform';
+import SuperAdminLayout from '@/portals/super-admin/layout/SuperAdminLayout';
+import SuperAdminTenants from '@/portals/super-admin/pages/SuperAdminTenants';
+import SuperAdminSecurity from '@/portals/super-admin/pages/SuperAdminSecurity';
+import SuperAdminPlatform from '@/portals/super-admin/pages/SuperAdminPlatform';
 
 // Phase 6 Enterprise Operations Command Center
 import { EnterpriseCommandCenter } from './modules/enterprise-operations/EnterpriseCommandCenter';
@@ -100,14 +100,14 @@ import PrivacyPage from '@/shared/pages/me/PrivacyPage';
 import ActivityPage from '@/shared/pages/me/ActivityPage';
 
 // Enterprise Security Center Pages
-import SecurityCenterPage from './pages/security/SecurityCenterPage';
+import SecurityCenterPage from '@/portals/super-admin/pages/SecurityCenterPage';
 import MfaWizardPage from '@/shared/pages/MfaWizardPage';
-import CompliancePage from './pages/security/CompliancePage';
+import CompliancePage from '@/portals/super-admin/pages/CompliancePage';
 
 // Enterprise Integration & Developer Platform Pages
-import IntegrationsPage from './pages/developer/IntegrationsPage';
-import WebhooksPage from './pages/developer/WebhooksPage';
-import JobQueuePage from './pages/developer/JobQueuePage';
+import IntegrationsPage from '@/portals/super-admin/pages/IntegrationsPage';
+import WebhooksPage from '@/portals/super-admin/pages/WebhooksPage';
+import JobQueuePage from '@/portals/super-admin/pages/JobQueuePage';
 
 // Phase 1 Enterprise Auth & Security Screens
 import Welcome from '@/portals/public/pages/auth/Welcome';
@@ -131,9 +131,9 @@ import DevicesPage from '@/shared/pages/DevicesPage';
 import FirstLoginWizard from '@/portals/public/pages/auth/FirstLoginWizard';
 
 // Admin Authorization Pages
-import RolesPage from './pages/admin/RolesPage';
-import PermissionsPage from './pages/admin/PermissionsPage';
-import PoliciesPage from './pages/admin/PoliciesPage';
+import RolesPage from '@/portals/super-admin/pages/RolesPage';
+import PermissionsPage from '@/portals/super-admin/pages/PermissionsPage';
+import PoliciesPage from '@/portals/super-admin/pages/PoliciesPage';
 
 // Guards
 import AuthGuard from "@/shared/guards/AuthGuard";
