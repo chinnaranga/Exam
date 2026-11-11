@@ -1,9 +1,9 @@
 import React from 'react';
-import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { Card } from '@/shared/components/ui/card';
+import { Button } from '@/shared/components/ui/button';
 import { Brain } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { useQuestionBank, useExams } from '@/hooks/useApiQueries';
+import { useQuestionBank, useExams } from '@/shared/hooks/useApiQueries';
 
 export const FacultyDashboard: React.FC = () => {
   const { data: questionsData, isLoading: isQuestionsLoading } = useQuestionBank({ page: 1, pageSize: 10 });

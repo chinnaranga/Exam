@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card } from '@/components/ui/card';
+import { Card } from '@/shared/components/ui/card';
 import { TimelineActivityItem } from '@/portals/coding/types/codingDashboard';
 import { Clock, CheckCircle2, User, FileCode2, BookOpen, Server } from 'lucide-react';
 

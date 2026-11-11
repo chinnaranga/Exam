@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Card } from '@/components/ui/card';
+import { Card } from '@/shared/components/ui/card';
 import { useOrganizationStore } from "@/shared/stores/organizationStore";
 import { Building2, ChevronRight, ChevronDown, BookOpen, GraduationCap, Folder, Layers } from 'lucide-react';
 

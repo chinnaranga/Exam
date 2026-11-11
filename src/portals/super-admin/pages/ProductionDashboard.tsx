@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { Card } from '@/shared/components/ui/card';
+import { Button } from '@/shared/components/ui/button';
 import { HealthService, SystemHealthStatus } from '@/server/health/health.service';
 import { Activity, Server, Database, Cpu, ShieldCheck, CheckCircle2, RefreshCw } from 'lucide-react';
 import { toast } from 'sonner';

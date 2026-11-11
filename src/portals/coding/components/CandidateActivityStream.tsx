@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card } from '@/components/ui/card';
+import { Card } from '@/shared/components/ui/card';
 import { CandidateActivityEvent } from '@/portals/coding/types/codingDashboard';
 import { Activity, CheckCircle2, AlertTriangle, Send, Terminal, Clock, Save, RefreshCw } from 'lucide-react';
 

@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { Card } from '@/shared/components/ui/card';
+import { Button } from '@/shared/components/ui/button';
+import { Input } from '@/shared/components/ui/input';
+import { Label } from '@/shared/components/ui/label';
 import {
   Dialog,
   DialogContent,
@@ -10,10 +10,10 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
+} from '@/shared/components/ui/dialog';
 import { Building2, Plus, ShieldCheck, CheckCircle2, Key, Globe, Layers } from 'lucide-react';
 import { toast } from 'sonner';
-import { useOrganizations } from '@/hooks/useApiQueries';
+import { useOrganizations } from '@/shared/hooks/useApiQueries';
 
 export const SuperAdminTenants: React.FC = () => {
   const { data: orgsData, isLoading } = useOrganizations({ page: 1, pageSize: 10 });

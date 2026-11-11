@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { PermissionToken, SystemRole } from '../../types/auth';
+import { PermissionToken, SystemRole } from '@/shared/types/auth';
 
 export interface AuthenticatedRequest extends Request {
   user?: {

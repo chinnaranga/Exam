@@ -1,9 +1,9 @@
 import React from 'react';
-import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { Card } from '@/shared/components/ui/card';
+import { Button } from '@/shared/components/ui/button';
 import { Sparkles, Brain, Play } from 'lucide-react';
 import { toast } from 'sonner';
-import { useQuestionBank } from '@/hooks/useApiQueries';
+import { useQuestionBank } from '@/shared/hooks/useApiQueries';
 
 export const StudentPractice: React.FC = () => {
   const { data: questionsData, isLoading } = useQuestionBank({ page: 1, pageSize: 10 });

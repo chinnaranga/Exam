@@ -1,5 +1,5 @@
 import { Server as SocketIOServer } from 'socket.io';
-import { UnifiedIntegrityEvent, PipelineAlert, RiskDimensionScore } from './types/pipeline.types';
+import { UnifiedIntegrityEvent, PipelineAlert, RiskDimensionScore } from '../types/pipeline.types';
 
 export class PipelineWebSocketPublisher {
   private io: SocketIOServer | null = null;

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { Card } from '@/shared/components/ui/card';
+import { Button } from '@/shared/components/ui/button';
 import { useAuthStore } from "@/shared/stores/authStore";
 import { ShieldAlert, ArrowLeft, Lock } from 'lucide-react';
 

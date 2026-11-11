@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card } from '@/components/ui/card';
+import { Card } from '@/shared/components/ui/card';
 import { NotificationItem } from '@/portals/coding/types/codingDashboard';
 import { Bell, AlertTriangle, CheckCircle2, Info, XCircle } from 'lucide-react';
 

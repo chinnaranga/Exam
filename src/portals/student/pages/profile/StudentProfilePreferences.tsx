@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
+import { Card } from '@/shared/components/ui/card';
+import { Button } from '@/shared/components/ui/button';
+import { Label } from '@/shared/components/ui/label';
 import { Globe, Clock, Moon, Bell, CheckCircle2 } from 'lucide-react';
 import { toast } from 'sonner';
 

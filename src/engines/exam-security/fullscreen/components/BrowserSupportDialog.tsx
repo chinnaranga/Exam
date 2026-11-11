@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card } from '@/components/ui/card';
+import { Card } from '@/shared/components/ui/card';
 import { AlertCircle } from 'lucide-react';
 
 export const BrowserSupportDialog: React.FC = () => {

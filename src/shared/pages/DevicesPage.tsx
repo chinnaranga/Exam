@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Switch } from '@/components/ui/switch';
+import { Card } from '@/shared/components/ui/card';
+import { Button } from '@/shared/components/ui/button';
+import { Switch } from '@/shared/components/ui/switch';
 import { DeviceSessionService, UserDevice } from '@/server/auth/services/device_session.service';
 import { ShieldCheck, ShieldAlert, Laptop, Smartphone, Trash2, CheckCircle2 } from 'lucide-react';
 import { toast } from 'sonner';

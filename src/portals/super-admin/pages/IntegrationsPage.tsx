@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { Card } from '@/shared/components/ui/card';
+import { Button } from '@/shared/components/ui/button';
 import { IntegrationPlatformService, IntegrationConnector } from '@/server/integration/integration_platform.service';
 import { Layers, CheckCircle2, XCircle, RefreshCw, Power } from 'lucide-react';
 import { toast } from 'sonner';

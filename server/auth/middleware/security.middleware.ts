@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import crypto from 'crypto';
 import { JwtService, JwtPayload } from '../tokens/jwt.service';
 import { SessionService } from '../sessions/session.service';
-import { PermissionToken, SystemRole } from '../../../types/auth';
+import { PermissionToken, SystemRole } from '@/shared/types/auth';
 
 export interface ProtectedRequest extends Request {
   correlationId?: string;

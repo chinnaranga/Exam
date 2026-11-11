@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { Card } from '@/shared/components/ui/card';
+import { Button } from '@/shared/components/ui/button';
 import BrandLogo from "@/shared/components/BrandLogo";
 import { Mail, CheckCircle2, ShieldCheck, ArrowRight, RefreshCw } from 'lucide-react';
 import { toast } from 'sonner';

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card } from '@/components/ui/card';
+import { Card } from '@/shared/components/ui/card';
 import { ProblemRepoSummary } from '@/portals/coding/types/codingDashboard';
 import { FileCode2, CheckCircle2, Clock, Archive, Sparkles, Layers, PieChart } from 'lucide-react';
 

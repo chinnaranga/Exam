@@ -1,6 +1,6 @@
 import React from 'react';
-import { Card } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
+import { Card } from '@/shared/components/ui/card';
+import { Input } from '@/shared/components/ui/input';
 import { DashboardFilterState } from '@/portals/coding/types/codingDashboard';
 import { Search, Filter, Building2, Code, FileCode2, SlidersHorizontal, RefreshCw } from 'lucide-react';
 

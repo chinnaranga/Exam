@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { Card } from '@/shared/components/ui/card';
+import { Button } from '@/shared/components/ui/button';
 import { DeviceSessionService, ActiveSession } from '@/server/auth/services/device_session.service';
 import { Monitor, Smartphone, ShieldAlert, LogOut, CheckCircle2, Globe, Clock, RefreshCw } from 'lucide-react';
 import { toast } from 'sonner';

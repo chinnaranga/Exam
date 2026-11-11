@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card } from '@/components/ui/card';
+import { Card } from '@/shared/components/ui/card';
 import { SubmissionAnalyticsData } from '@/portals/coding/types/codingDashboard';
 import { CheckCircle2, XCircle, AlertTriangle, Clock, Cpu, FileCode, HelpCircle, Layers } from 'lucide-react';
 

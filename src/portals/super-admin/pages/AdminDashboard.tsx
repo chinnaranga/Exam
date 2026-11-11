@@ -1,9 +1,9 @@
 import React from 'react';
-import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { Card } from '@/shared/components/ui/card';
+import { Button } from '@/shared/components/ui/button';
 import { Server, Cpu, ShieldCheck, Activity, Users, Radio, Lock, CheckCircle2, ArrowRight, FileText } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { useOrganizations, useAuditLogs } from '@/hooks/useApiQueries';
+import { useOrganizations, useAuditLogs } from '@/shared/hooks/useApiQueries';
 import { useOrganizationStore } from "@/shared/stores/organizationStore";
 
 export const AdminDashboard: React.FC = () => {

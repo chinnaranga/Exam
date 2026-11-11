@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Bell, Shield, Building2, User, LogOut, KeyRound, ChevronDown, CheckCircle2 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/shared/components/ui/button';
 import BrandLogo from "@/shared/components/BrandLogo";
 import { useAuthStore } from "@/shared/stores/authStore";
 import { MOCK_ORGANIZATIONS } from "@/shared/services/authService";
@@ -13,7 +13,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+} from '@/shared/components/ui/dropdown-menu';
 
 export const Navbar: React.FC = () => {
   const navigate = useNavigate();

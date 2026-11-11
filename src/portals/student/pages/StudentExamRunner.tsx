@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useTransition } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
+import { Card } from '@/shared/components/ui/card';
+import { Button } from '@/shared/components/ui/button';
+import { Badge } from '@/shared/components/ui/badge';
+import { Progress } from '@/shared/components/ui/progress';
 import {
   Dialog,
   DialogContent,
@@ -12,7 +12,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
+} from '@/shared/components/ui/dialog';
 import BrandLogo from "@/shared/components/BrandLogo";
 import {
   Clock,
@@ -44,7 +44,6 @@ import { AttentionEngine } from '@/engines/proctoring/attention/AttentionEngine'
 import { ObjectDetectionEngine } from '@/engines/proctoring/object-detection/ObjectDetectionEngine';
 import { AudioEngine } from '@/engines/proctoring/audio/AudioEngine';
 import { PipelineEngine } from '@/engines/proctoring/pipeline/PipelineEngine';
-import { EnterpriseCommandCenter } from '@/portals/operations/pages/EnterpriseCommandCenter';
 import { ExamSecurityProvider } from '@/engines/exam-security/providers/ExamSecurityProvider';
 import { BrowserEventProvider } from '@/engines/exam-security/browser/BrowserEventProvider';
 import { KeyboardProvider } from '@/engines/exam-security/keyboard/KeyboardProvider';

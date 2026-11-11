@@ -1,8 +1,8 @@
 import React from 'react';
-import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { Card } from '@/shared/components/ui/card';
+import { Button } from '@/shared/components/ui/button';
 import { Radio, AlertTriangle, Video } from 'lucide-react';
-import { useCandidates, useExams } from '@/hooks/useApiQueries';
+import { useCandidates, useExams } from '@/shared/hooks/useApiQueries';
 
 export const InvigilatorDashboard: React.FC = () => {
   const { data: candidatesData, isLoading: isCandidatesLoading } = useCandidates({ page: 1, pageSize: 10 });

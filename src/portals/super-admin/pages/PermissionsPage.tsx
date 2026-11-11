@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Card } from '@/components/ui/card';
+import { Card } from '@/shared/components/ui/card';
 import { AuthorizationService, PermissionItem } from '@/server/auth/services/authorization.service';
 import { Key, ShieldCheck, Check, X } from 'lucide-react';
 

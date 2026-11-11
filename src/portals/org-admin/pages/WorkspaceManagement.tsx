@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { Card } from '@/shared/components/ui/card';
+import { Button } from '@/shared/components/ui/button';
+import { Input } from '@/shared/components/ui/input';
+import { Label } from '@/shared/components/ui/label';
 import { OrgHierarchyService, WorkspaceItem } from '@/server/organization/org_hierarchy.service';
 import { LayoutGrid, Plus, Users, ShieldCheck } from 'lucide-react';
 import { toast } from 'sonner';

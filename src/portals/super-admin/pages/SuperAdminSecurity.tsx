@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card } from '@/components/ui/card';
+import { Card } from '@/shared/components/ui/card';
 import { ShieldCheck, Cpu } from 'lucide-react';
 
 export const SuperAdminSecurity: React.FC = () => {

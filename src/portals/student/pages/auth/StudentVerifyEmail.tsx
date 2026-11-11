@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { StudentAuthLayout } from '../../layout/StudentAuthLayout';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/shared/components/ui/button';
 import { Mail, CheckCircle2 } from 'lucide-react';
 import { toast } from 'sonner';
 

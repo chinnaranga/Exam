@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { Card } from '@/shared/components/ui/card';
+import { Button } from '@/shared/components/ui/button';
 import { SecurityCenterService, ComplianceFramework } from '@/server/security/security_center.service';
 import { ShieldCheck, FileCheck, CheckCircle2, Download } from 'lucide-react';
 import { toast } from 'sonner';

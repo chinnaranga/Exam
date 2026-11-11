@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import BrandLogo from "@/shared/components/BrandLogo";
-import { Card } from '@/components/ui/card';
+import { Card } from '@/shared/components/ui/card';
 import { ShieldCheck, GraduationCap } from 'lucide-react';
 
 interface StudentAuthLayoutProps {

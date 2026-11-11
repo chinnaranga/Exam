@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { Card } from '@/shared/components/ui/card';
+import { Button } from '@/shared/components/ui/button';
+import { Input } from '@/shared/components/ui/input';
 import { SecurityCenterService } from '@/server/security/security_center.service';
 import { ShieldCheck, QrCode, Key, CheckCircle2, Lock } from 'lucide-react';
 import { toast } from 'sonner';

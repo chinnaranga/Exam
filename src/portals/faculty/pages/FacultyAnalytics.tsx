@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card } from '@/components/ui/card';
+import { Card } from '@/shared/components/ui/card';
 import { BarChart3, TrendingUp, Brain } from 'lucide-react';
 
 export const FacultyAnalytics: React.FC = () => {

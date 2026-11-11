@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { Card } from '@/shared/components/ui/card';
+import { Button } from '@/shared/components/ui/button';
+import { Input } from '@/shared/components/ui/input';
+import { Label } from '@/shared/components/ui/label';
 import { UserCenterService, ApiKeyItem } from '@/server/identity/user_center.service';
 import { Key, Plus, Trash2, ShieldCheck, Copy } from 'lucide-react';
 import { toast } from 'sonner';

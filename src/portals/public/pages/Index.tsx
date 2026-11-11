@@ -2,7 +2,7 @@ import React from 'react';
 import { EnterpriseLayout } from '@/shared/components/EnterpriseLayout';
 import { BookOpen, Users, ShieldCheck, ArrowRight, Building2, Brain } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { useExams, useCandidates, useQuestionBank, useOrganizations } from '@/hooks/useApiQueries';
+import { useExams, useCandidates, useQuestionBank, useOrganizations } from '@/shared/hooks/useApiQueries';
 
 export const IndexPage: React.FC = () => {
   const { data: examsData, isLoading: isExamsLoading } = useExams({ page: 1, pageSize: 10 });

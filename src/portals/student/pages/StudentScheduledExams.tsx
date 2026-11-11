@@ -1,9 +1,9 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { Card } from '@/shared/components/ui/card';
+import { Button } from '@/shared/components/ui/button';
 import { Clock, Play, Shield, Calendar, BookOpen, AlertCircle } from 'lucide-react';
-import { useExams } from '@/hooks/useApiQueries';
+import { useExams } from '@/shared/hooks/useApiQueries';
 
 export const StudentScheduledExams: React.FC = () => {
   const navigate = useNavigate();

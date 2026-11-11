@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card } from '@/components/ui/card';
+import { Card } from '@/shared/components/ui/card';
 import { Activity, Server } from 'lucide-react';
 
 export const SuperAdminPlatform: React.FC = () => {

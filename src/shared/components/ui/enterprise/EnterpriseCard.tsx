@@ -1,5 +1,5 @@
 import React from 'react';
-import { DESIGN_TOKENS } from '@/lib/design-tokens';
+import { DESIGN_TOKENS } from '@/shared/lib/design-system/tokens';
 
 export interface EnterpriseCardProps {
   children: React.ReactNode;

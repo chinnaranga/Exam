@@ -1,7 +1,7 @@
 
-import { Card } from "@/components/ui/card";
+import { Card } from "@/shared/components/ui/card";
 import { User, UserPlus, Filter } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/shared/components/ui/button";
 
 const Users = () => {
   const users = [

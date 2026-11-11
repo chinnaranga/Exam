@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Card } from '@/components/ui/card';
+import { Card } from '@/shared/components/ui/card';
 import { UserCenterService, ActivityLogItem } from '@/server/identity/user_center.service';
 import { Clock, ShieldCheck, Key, Laptop, Globe } from 'lucide-react';
 

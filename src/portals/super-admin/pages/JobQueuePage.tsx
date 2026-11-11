@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { Card } from '@/shared/components/ui/card';
+import { Button } from '@/shared/components/ui/button';
 import { IntegrationPlatformService, JobQueueMetrics } from '@/server/integration/integration_platform.service';
 import { Cpu, RefreshCw, CheckCircle2, AlertTriangle, Play } from 'lucide-react';
 import { toast } from 'sonner';

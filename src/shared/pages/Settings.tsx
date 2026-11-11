@@ -1,8 +1,8 @@
 
-import { Card } from "@/components/ui/card";
+import { Card } from "@/shared/components/ui/card";
 import { Bell, Eye, Lock, UserCog } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Switch } from "@/components/ui/switch";
+import { Button } from "@/shared/components/ui/button";
+import { Switch } from "@/shared/components/ui/switch";
 import { useState } from "react";
 import { toast } from "sonner";
 

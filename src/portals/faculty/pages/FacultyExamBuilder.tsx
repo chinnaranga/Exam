@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { Card } from '@/shared/components/ui/card';
+import { Button } from '@/shared/components/ui/button';
+import { Input } from '@/shared/components/ui/input';
+import { Label } from '@/shared/components/ui/label';
 import {
   Dialog,
   DialogContent,
@@ -11,10 +11,10 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog';
+} from '@/shared/components/ui/dialog';
 import { Plus, BookOpen } from 'lucide-react';
 import { toast } from 'sonner';
-import { useExams } from '@/hooks/useApiQueries';
+import { useExams } from '@/shared/hooks/useApiQueries';
 
 interface BlueprintItem {
   id: string | number;

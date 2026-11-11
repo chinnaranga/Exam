@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card } from '@/components/ui/card';
+import { Card } from '@/shared/components/ui/card';
 import { SystemServiceHealth } from '@/portals/coding/types/codingDashboard';
 import { ShieldCheck, CheckCircle2, AlertTriangle, XCircle, Activity, Server, Cpu, Database, HardDrive, Zap } from 'lucide-react';
 

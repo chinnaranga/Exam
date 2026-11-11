@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/shared/components/ui/button';
 import BrandLogo from "@/shared/components/BrandLogo";
 import { GraduationCap, BookOpen, Brain, Sparkles, ArrowRight, CheckCircle2 } from 'lucide-react';
 

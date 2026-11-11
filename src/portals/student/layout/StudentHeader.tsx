@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import BrandLogo from "@/shared/components/BrandLogo";
-import { Button } from '@/components/ui/button';
+import { Button } from '@/shared/components/ui/button';
 import { useAuthStore } from "@/shared/stores/authStore";
 import {
   Bell,
@@ -23,7 +23,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+} from '@/shared/components/ui/dropdown-menu';
 import { toast } from 'sonner';
 
 interface StudentHeaderProps {

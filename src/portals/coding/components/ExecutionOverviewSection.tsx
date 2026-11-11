@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { Card } from '@/shared/components/ui/card';
+import { Button } from '@/shared/components/ui/button';
 import { Activity, Clock, Cpu, BarChart3, TrendingUp, Filter } from 'lucide-react';
 
 export const ExecutionOverviewSection: React.FC = () => {

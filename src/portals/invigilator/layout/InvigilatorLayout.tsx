@@ -1,7 +1,7 @@
 import React from 'react';
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import BrandLogo from "@/shared/components/BrandLogo";
-import { Button } from '@/components/ui/button';
+import { Button } from '@/shared/components/ui/button';
 import { useAuthStore } from "@/shared/stores/authStore";
 import {
   Video,

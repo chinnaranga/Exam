@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { Card } from '@/shared/components/ui/card';
+import { Button } from '@/shared/components/ui/button';
 import { SecurityCenterService, SecurityMetricScore, SecurityAlertItem } from '@/server/security/security_center.service';
 import { ShieldCheck, AlertTriangle, Lock, Cpu, ArrowRight, ShieldAlert } from 'lucide-react';
 import { Link } from 'react-router-dom';

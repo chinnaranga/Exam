@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card } from '@/components/ui/card';
+import { Card } from '@/shared/components/ui/card';
 import { GraduationCap, Building2, BookOpen } from 'lucide-react';
 
 export const StudentProfileAcademic: React.FC = () => {

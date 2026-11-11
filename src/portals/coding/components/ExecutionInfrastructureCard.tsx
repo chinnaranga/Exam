@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card } from '@/components/ui/card';
+import { Card } from '@/shared/components/ui/card';
 import { InfrastructureStatus } from '@/portals/coding/types/codingDashboard';
 import { Server, Cpu, Database, Wifi, CheckCircle2, AlertTriangle, Layers, Clock, ShieldCheck } from 'lucide-react';
 

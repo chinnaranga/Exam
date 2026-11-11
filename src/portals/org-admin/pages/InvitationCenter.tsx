@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { Card } from '@/shared/components/ui/card';
+import { Button } from '@/shared/components/ui/button';
 import InvitationModal from '../components/InvitationModal';
 import { UserPlus, Mail, CheckCircle2, Clock, Trash2, Send, ShieldCheck } from 'lucide-react';
 import { toast } from 'sonner';

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card } from '@/components/ui/card';
+import { Card } from '@/shared/components/ui/card';
 import { LanguageMetric } from '@/portals/coding/types/codingDashboard';
 import { Terminal, Code, Cpu, Clock, CheckCircle } from 'lucide-react';
 
