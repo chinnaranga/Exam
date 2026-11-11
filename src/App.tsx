@@ -178,7 +178,7 @@ const GlobalTabPresence = () => {
   return null;
 };
 
-import ProctoringSuitePage from './pages/proctoring/ProctoringSuitePage';
+import ProctoringSuitePage from '@/engines/proctoring/pages/ProctoringSuitePage';
 
 const App = () => (
   <QueryClientProvider client={queryClient}>

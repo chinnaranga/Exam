@@ -36,27 +36,27 @@ import {
   ListFilter,
 } from 'lucide-react';
 import { toast } from 'sonner';
-import { PreExamPermissionModal } from '@/components/proctoring/consent/PreExamPermissionModal';
-import { ConsentManager } from '@/components/proctoring/consent/ConsentManager';
-import { CameraManager } from '@/components/proctoring/camera/CameraManager';
-import { FaceEngine } from '@/components/proctoring/face/FaceEngine';
-import { AttentionEngine } from '@/components/proctoring/attention/AttentionEngine';
-import { ObjectDetectionEngine } from '@/components/proctoring/object-detection/ObjectDetectionEngine';
-import { AudioEngine } from '@/components/proctoring/audio/AudioEngine';
-import { PipelineEngine } from '@/components/proctoring/pipeline/PipelineEngine';
+import { PreExamPermissionModal } from '@/engines/proctoring/consent/PreExamPermissionModal';
+import { ConsentManager } from '@/engines/proctoring/consent/ConsentManager';
+import { CameraManager } from '@/engines/proctoring/camera/CameraManager';
+import { FaceEngine } from '@/engines/proctoring/face/FaceEngine';
+import { AttentionEngine } from '@/engines/proctoring/attention/AttentionEngine';
+import { ObjectDetectionEngine } from '@/engines/proctoring/object-detection/ObjectDetectionEngine';
+import { AudioEngine } from '@/engines/proctoring/audio/AudioEngine';
+import { PipelineEngine } from '@/engines/proctoring/pipeline/PipelineEngine';
 import { EnterpriseCommandCenter } from '@/modules/enterprise-operations/EnterpriseCommandCenter';
-import { ExamSecurityProvider } from '@/modules/exam-security/providers/ExamSecurityProvider';
-import { BrowserEventProvider } from '@/modules/exam-security/browser/BrowserEventProvider';
-import { KeyboardProvider } from '@/modules/exam-security/keyboard/KeyboardProvider';
-import { MouseProvider } from '@/modules/exam-security/mouse/MouseProvider';
-import { ClipboardProvider } from '@/modules/exam-security/clipboard/ClipboardProvider';
-import { FullscreenProvider } from '@/modules/exam-security/fullscreen/FullscreenProvider';
-import { FocusProvider } from '@/modules/exam-security/focus/FocusProvider';
-import { NavigationProvider } from '@/modules/exam-security/navigation/NavigationProvider';
-import { useNavigationSentinel } from '@/modules/exam-security/navigation/hooks/useNavigationSentinel';
-import { useFullscreen } from '@/modules/exam-security/fullscreen/hooks/useFullscreen';
-import { FullscreenOverlay } from '@/modules/exam-security/fullscreen/components/FullscreenOverlay';
-import { BrowserCompatibility } from '@/modules/exam-security/fullscreen/utils/BrowserCompatibility';
+import { ExamSecurityProvider } from '@/engines/exam-security/providers/ExamSecurityProvider';
+import { BrowserEventProvider } from '@/engines/exam-security/browser/BrowserEventProvider';
+import { KeyboardProvider } from '@/engines/exam-security/keyboard/KeyboardProvider';
+import { MouseProvider } from '@/engines/exam-security/mouse/MouseProvider';
+import { ClipboardProvider } from '@/engines/exam-security/clipboard/ClipboardProvider';
+import { FullscreenProvider } from '@/engines/exam-security/fullscreen/FullscreenProvider';
+import { FocusProvider } from '@/engines/exam-security/focus/FocusProvider';
+import { NavigationProvider } from '@/engines/exam-security/navigation/NavigationProvider';
+import { useNavigationSentinel } from '@/engines/exam-security/navigation/hooks/useNavigationSentinel';
+import { useFullscreen } from '@/engines/exam-security/fullscreen/hooks/useFullscreen';
+import { FullscreenOverlay } from '@/engines/exam-security/fullscreen/components/FullscreenOverlay';
+import { BrowserCompatibility } from '@/engines/exam-security/fullscreen/utils/BrowserCompatibility';
 
 interface QuestionItem {
   id: number;

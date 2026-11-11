@@ -15,8 +15,8 @@ import {
   VideoOff,
   Scan,
 } from 'lucide-react';
-import { DetectionOverlay } from '@/components/proctoring/object-detection/DetectionOverlay';
-import { DetectedObject } from '@/components/proctoring/object-detection/types/object.types';
+import { DetectionOverlay } from '@/engines/proctoring/object-detection/DetectionOverlay';
+import { DetectedObject } from '@/engines/proctoring/object-detection/types/object.types';
 
 export interface PreExamPermissionModalProps {
   onPermissionsGranted: () => void;
