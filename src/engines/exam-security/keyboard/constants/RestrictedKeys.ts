@@ -18,5 +18,13 @@ export const DEFAULT_RESTRICTED_SHORTCUTS: KeyboardShortcutRule[] = [
   { id: 'ctrl_tab', name: 'Switch Tab (Ctrl+Tab)', keyCombination: 'Ctrl+Tab', action: 'BLOCK', preventDefault: true, stopPropagation: true, severity: 'HIGH', description: 'Prevent tab navigation.' },
   { id: 'ctrl_shift_tab', name: 'Switch Tab Backward (Ctrl+Shift+Tab)', keyCombination: 'Ctrl+Shift+Tab', action: 'BLOCK', preventDefault: true, stopPropagation: true, severity: 'HIGH', description: 'Prevent tab navigation.' },
   { id: 'alt_tab', name: 'Task Switcher (Alt+Tab)', keyCombination: 'Alt+Tab', action: 'WARN_ONLY', preventDefault: false, stopPropagation: false, severity: 'HIGH', description: 'Detect operating system task switching.' },
+  { id: 'printscreen_attempt', name: 'Print Screen Capture (PrintScreen)', keyCombination: 'PrintScreen', action: 'BLOCK', preventDefault: true, stopPropagation: true, severity: 'HIGH', description: 'Prevent full screen capture.' },
+  { id: 'ctrl_f_find', name: 'Find in Page (Ctrl+F)', keyCombination: 'Ctrl+F', action: 'BLOCK', preventDefault: true, stopPropagation: true, severity: 'HIGH', description: 'Prevent in-page search bar.' },
+  { id: 'cmd_f_find', name: 'Find in Page (Cmd+F)', keyCombination: 'Meta+F', action: 'BLOCK', preventDefault: true, stopPropagation: true, severity: 'HIGH', description: 'Prevent in-page search bar on macOS.' },
+  { id: 'cmd_p_print', name: 'Print Page (Cmd+P)', keyCombination: 'Meta+P', action: 'BLOCK', preventDefault: true, stopPropagation: true, severity: 'HIGH', description: 'Prevent printing exam screens on macOS.' },
+  { id: 'cmd_s_save', name: 'Save Page (Cmd+S)', keyCombination: 'Meta+S', action: 'BLOCK', preventDefault: true, stopPropagation: true, severity: 'HIGH', description: 'Prevent saving page on macOS.' },
+  { id: 'cmd_u_source', name: 'View Page Source (Cmd+U)', keyCombination: 'Meta+U', action: 'BLOCK', preventDefault: true, stopPropagation: true, severity: 'HIGH', description: 'Prevent viewing page source on macOS.' },
+  { id: 'meta_tab', name: 'Window App Switcher (Cmd/Win+Tab)', keyCombination: 'Meta+Tab', action: 'BLOCK', preventDefault: true, stopPropagation: true, severity: 'HIGH', description: 'Prevent switching applications.' },
+  { id: 'meta_d_desktop', name: 'Show Desktop (Win+D)', keyCombination: 'Meta+D', action: 'BLOCK', preventDefault: true, stopPropagation: true, severity: 'HIGH', description: 'Prevent minimizing to desktop.' },
   { id: 'escape_key', name: 'Escape Key (Escape)', keyCombination: 'Escape', action: 'WARN_ONLY', preventDefault: false, stopPropagation: false, severity: 'LOW', description: 'Detect exiting fullscreen.' },
 ];

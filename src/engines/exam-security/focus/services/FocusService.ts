@@ -6,6 +6,8 @@ import { FocusState } from '../types/FocusState';
 
 export class FocusService {
   private isListening = false;
+  private pollIntervalId: ReturnType<typeof setInterval> | null = null;
+  private wasFocused = true;
   public readonly policyService: FocusPolicyService;
   public readonly dispatcher: FocusDispatcher;
   public readonly analyticsService: FocusAnalyticsService;
@@ -25,15 +27,34 @@ export class FocusService {
   public start(): void {
     if (this.isListening || typeof window === 'undefined') return;
     this.isListening = true;
+    this.wasFocused = typeof document !== 'undefined' && document.hasFocus ? document.hasFocus() : true;
 
     window.addEventListener('focus', this.handleFocus);
     window.addEventListener('blur', this.handleBlur);
     document.addEventListener('visibilitychange', this.handleVisibilityChange);
+
+    // 500ms document.hasFocus() polling sentinel (do not rely only on blur events)
+    this.pollIntervalId = setInterval(() => {
+      if (!this.isListening || typeof document === 'undefined') return;
+      const currentlyFocused = document.hasFocus ? document.hasFocus() : true;
+      if (!currentlyFocused && this.wasFocused) {
+        this.wasFocused = false;
+        this.handleBlur();
+      } else if (currentlyFocused && !this.wasFocused) {
+        this.wasFocused = true;
+        this.handleFocus();
+      }
+    }, 500);
   }
 
   public stop(): void {
     if (!this.isListening || typeof window === 'undefined') return;
     this.isListening = false;
+
+    if (this.pollIntervalId) {
+      clearInterval(this.pollIntervalId);
+      this.pollIntervalId = null;
+    }
 
     window.removeEventListener('focus', this.handleFocus);
     window.removeEventListener('blur', this.handleBlur);
@@ -41,11 +62,13 @@ export class FocusService {
   }
 
   private handleFocus = () => {
+    this.wasFocused = true;
     this.emitStateChange('FOCUSED', 'focus', 'Window focus restored');
   };
 
   private handleBlur = () => {
-    this.emitStateChange('UNFOCUSED', 'blur', 'Window focus lost');
+    this.wasFocused = false;
+    this.emitStateChange('UNFOCUSED', 'blur', 'Window focus lost (detected via 500ms hasFocus poller)');
   };
 
   private handleVisibilityChange = () => {

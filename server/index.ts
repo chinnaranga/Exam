@@ -14,6 +14,18 @@ const PORT = process.env.PORT || 3001;
 
 app.use(express.json());
 
+// Strict Enterprise Exam Security Headers & CSP Middleware
+app.use((_req, res, next) => {
+  res.setHeader(
+    'Content-Security-Policy',
+    "default-src 'self'; script-src 'self' 'unsafe-eval' https://cdn.gpteng.co; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: blob:; connect-src 'self' ws: wss:; font-src 'self' data: https://fonts.gstatic.com; object-src 'none'; media-src 'self' blob:; frame-ancestors 'none';"
+  );
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('X-Frame-Options', 'DENY');
+  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+  next();
+});
+
 // API Namespaces
 app.use('/api/v1/auth', authRoutes);
 

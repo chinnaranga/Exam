@@ -63,6 +63,7 @@ import { TamperResistantWatermark } from '@/engines/exam-security/watermark/Tamp
 import { useHashChainedAutosave } from '@/engines/exam-security/autosave/useHashChainedAutosave';
 import { useOfflineLimitSentinel } from '@/engines/exam-security/offline/useOfflineLimitSentinel';
 import { OfflinePausedScreen } from '@/engines/exam-security/offline/OfflinePausedScreen';
+import { useHardenedSecuritySentinel } from '@/engines/exam-security/hooks/useHardenedSecuritySentinel';
 
 interface QuestionItem {
   id: number;
@@ -229,6 +230,27 @@ const StudentExamRunnerContent: React.FC = () => {
         description: `Reconnected after ${duration}s. Resuming examination.`,
       });
     },
+  });
+
+  // Layer 1 and Layer 2 Hardened Security Sentinel
+  useHardenedSecuritySentinel({
+    sessionId: examSessionId,
+    requireSecureClient: false, // Set true for high-stakes lockdown client exams
+    reportViolation: async (type, payload) => {
+      reportViolation(type, payload);
+    },
+    onViolationDetected: (evt) => {
+      if (evt.severity === 'CRITICAL') {
+        toast.error(`Critical Violation: ${evt.type}`, {
+          description: evt.reason,
+        });
+      } else if (evt.severity === 'HIGH' || evt.severity === 'MEDIUM') {
+        toast.warning(`Security Alert: ${evt.type}`, {
+          description: evt.reason,
+        });
+      }
+    },
+    enabled: examStarted && !isTerminated && !isLockdownTerminated,
   });
 
   // Re-verification State (Random 10s biometric challenges mid-exam)
@@ -566,7 +588,7 @@ const StudentExamRunnerContent: React.FC = () => {
               });
             }}
           >
-            <Card className="p-8 rounded-2xl bg-white border border-[#E2E8F0] shadow-md space-y-6 relative overflow-hidden">
+            <Card className="p-8 rounded-2xl bg-white border border-[#E2E8F0] shadow-md space-y-6 relative overflow-hidden select-none">
             {/* Question Bar Header */}
             <div className="flex items-center justify-between border-b border-[#E2E8F0] pb-4">
               <div className="flex items-center space-x-3">

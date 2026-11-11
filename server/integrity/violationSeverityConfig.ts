@@ -123,6 +123,16 @@ export const VIOLATION_SEVERITY_TABLE: Record<string, ViolationRuleDefinition> =
     description: 'Hash-chained autosave ledger failed cryptographic verification or contains broken links.',
     invigilatorAlert: true,
   },
+  SECURE_CLIENT_REQUIRED: {
+    ruleId: 'SECURE_CLIENT_REQUIRED',
+    name: 'Secure Client Required',
+    severity: 'CRITICAL',
+    points: 8,
+    isInstantKill: true,
+    alertUser: true,
+    description: 'Locked-down desktop application is mandatory for this high-stakes examination.',
+    invigilatorAlert: true,
+  },
 
   // ─── HIGH (3 Points) ────────────────────────────────────────────────────────
   FULLSCREEN_EXIT_EXTENDED: {
@@ -205,6 +215,46 @@ export const VIOLATION_SEVERITY_TABLE: Record<string, ViolationRuleDefinition> =
     description: 'Candidate ID/session forensic watermark overlay was removed, obscured, or modified in the DOM.',
     invigilatorAlert: true,
   },
+  PRINT_SCREEN_ATTEMPT: {
+    ruleId: 'PRINT_SCREEN_ATTEMPT',
+    name: 'Screen Capture or Print Attempt',
+    severity: 'HIGH',
+    points: 3,
+    isInstantKill: false,
+    alertUser: true,
+    description: 'Candidate attempted to capture the screen via PrintScreen or browser print dialog.',
+    invigilatorAlert: true,
+  },
+  SHORTCUT_RESTRICTED: {
+    ruleId: 'SHORTCUT_RESTRICTED',
+    name: 'Restricted Key Combination',
+    severity: 'HIGH',
+    points: 3,
+    isInstantKill: false,
+    alertUser: true,
+    description: 'Restricted keyboard shortcut (Ctrl+P, Ctrl+S, Ctrl+F, Ctrl+U, or Win/Cmd combo) intercepted.',
+    invigilatorAlert: true,
+  },
+  PICTURE_IN_PICTURE_ACTIVE: {
+    ruleId: 'PICTURE_IN_PICTURE_ACTIVE',
+    name: 'Picture-in-Picture Active',
+    severity: 'HIGH',
+    points: 3,
+    isInstantKill: false,
+    alertUser: true,
+    description: 'Picture-in-picture floating overlay was opened or detected during the examination.',
+    invigilatorAlert: true,
+  },
+  TIMER_THROTTLING_DETECTED: {
+    ruleId: 'TIMER_THROTTLING_DETECTED',
+    name: 'Timer Throttling or JS Pause Detected',
+    severity: 'HIGH',
+    points: 3,
+    isInstantKill: false,
+    alertUser: true,
+    description: 'Timer throttling or execution freeze detected (>20s heartbeat/performance drift).',
+    invigilatorAlert: true,
+  },
 
   // ─── MEDIUM (2 Points) ──────────────────────────────────────────────────────
   OFFLINE_LIMIT_EXCEEDED: {
@@ -267,6 +317,26 @@ export const VIOLATION_SEVERITY_TABLE: Record<string, ViolationRuleDefinition> =
     description: 'Keystroke interval rhythm diverged significantly from pre-exam baseline (flagged for human review, never auto-terminate).',
     invigilatorAlert: true,
   },
+  WINDOW_RESIZE_SNAP: {
+    ruleId: 'WINDOW_RESIZE_SNAP',
+    name: 'Window Snapped or Resized Abnormally',
+    severity: 'MEDIUM',
+    points: 2,
+    isInstantKill: false,
+    alertUser: true,
+    description: 'Browser window was resized, snapped to half-screen, or tiled during examination.',
+    invigilatorAlert: true,
+  },
+  VPN_OR_PROXY_DETECTED: {
+    ruleId: 'VPN_OR_PROXY_DETECTED',
+    name: 'VPN or Proxy Interface Detected',
+    severity: 'MEDIUM',
+    points: 2,
+    isInstantKill: false,
+    alertUser: true,
+    description: 'WebRTC IP leak comparison or network routing detected an active VPN/proxy tunnel.',
+    invigilatorAlert: true,
+  },
 
   // ─── LOW (1 Point, Log Only — No User Alert) ─────────────────────────────────
   FOCUS_LOSS_BRIEF: {
@@ -287,6 +357,26 @@ export const VIOLATION_SEVERITY_TABLE: Record<string, ViolationRuleDefinition> =
     isInstantKill: false,
     alertUser: false, // Log only, no user alert
     description: 'Webcam ambient lighting dropped below calibration threshold.',
+    invigilatorAlert: false,
+  },
+  TEXT_SELECTION_ATTEMPT: {
+    ruleId: 'TEXT_SELECTION_ATTEMPT',
+    name: 'Text Selection Attempted',
+    severity: 'LOW',
+    points: 1,
+    isInstantKill: false,
+    alertUser: false,
+    description: 'Attempted to highlight or copy protected question text.',
+    invigilatorAlert: false,
+  },
+  DRAG_DROP_ATTEMPT: {
+    ruleId: 'DRAG_DROP_ATTEMPT',
+    name: 'Drag and Drop Attempted',
+    severity: 'LOW',
+    points: 1,
+    isInstantKill: false,
+    alertUser: false,
+    description: 'Attempted to drag question content outside the examination interface.',
     invigilatorAlert: false,
   },
 };
@@ -316,6 +406,8 @@ export function resolveViolationRule(eventTypeOrRule: string): ViolationRuleDefi
     MULTIPLE_FACES_CONFIRMED: 'SECOND_PERSON_CONFIRMED',
     IDENTITY_MISMATCH: 'IDENTITY_MISMATCH',
     EVENT_TAMPERING: 'EVENT_TAMPERING',
+    SECURE_CLIENT_REQUIRED: 'SECURE_CLIENT_REQUIRED',
+    DESKTOP_CLIENT_REQUIRED: 'SECURE_CLIENT_REQUIRED',
 
     // High
     FULLSCREEN_EXIT_EXTENDED: 'FULLSCREEN_EXIT_EXTENDED',
@@ -327,6 +419,26 @@ export function resolveViolationRule(eventTypeOrRule: string): ViolationRuleDefi
     DEVTOOLS_OPEN: 'DEVTOOLS_OPEN',
     DEVTOOLS_OPENED: 'DEVTOOLS_OPENED',
     DEVTOOLSOPEN: 'DEVTOOLS_OPEN',
+    DEVTOOLS_TIMING_FLAG: 'DEVTOOLS_OPEN',
+    DEBUGGER_DELAY: 'DEVTOOLS_OPEN',
+    DEVTOOLS_POSSIBLE: 'DEVTOOLS_OPEN',
+    PRINT_SCREEN_ATTEMPT: 'PRINT_SCREEN_ATTEMPT',
+    PRINT_SCREEN: 'PRINT_SCREEN_ATTEMPT',
+    PRINTSCREEN: 'PRINT_SCREEN_ATTEMPT',
+    BEFOREPRINT: 'PRINT_SCREEN_ATTEMPT',
+    PRINT_ATTEMPT: 'PRINT_SCREEN_ATTEMPT',
+    SHORTCUT_RESTRICTED: 'SHORTCUT_RESTRICTED',
+    KEYBOARD_RESTRICTED: 'SHORTCUT_RESTRICTED',
+    WIN_CMD_SHORTCUT_RESTRICTED: 'SHORTCUT_RESTRICTED',
+    VIEW_SOURCE_ATTEMPT: 'SHORTCUT_RESTRICTED',
+    FIND_IN_PAGE_ATTEMPT: 'SHORTCUT_RESTRICTED',
+    PAGE_SAVE_ATTEMPT: 'SHORTCUT_RESTRICTED',
+    PICTURE_IN_PICTURE_ACTIVE: 'PICTURE_IN_PICTURE_ACTIVE',
+    PICTURE_IN_PICTURE: 'PICTURE_IN_PICTURE_ACTIVE',
+    PIP_DETECTED: 'PICTURE_IN_PICTURE_ACTIVE',
+    TIMER_THROTTLING_DETECTED: 'TIMER_THROTTLING_DETECTED',
+    TIMER_THROTTLED: 'TIMER_THROTTLING_DETECTED',
+    HEARTBEAT_TIMEOUT: 'TIMER_THROTTLING_DETECTED',
 
     // Medium
     TAB_SWITCH: 'TAB_SWITCH',
@@ -336,6 +448,13 @@ export function resolveViolationRule(eventTypeOrRule: string): ViolationRuleDefi
     GAZE_ANOMALY: 'GAZE_AWAY_REPEATEDLY',
     VOICE_DETECTED: 'VOICE_DETECTED',
     SPEECH_DETECTED: 'VOICE_DETECTED',
+    WINDOW_RESIZE_SNAP: 'WINDOW_RESIZE_SNAP',
+    WINDOW_SNAP: 'WINDOW_RESIZE_SNAP',
+    VIEWPORT_CHANGED: 'WINDOW_RESIZE_SNAP',
+    VPN_OR_PROXY_DETECTED: 'VPN_OR_PROXY_DETECTED',
+    VPN_DETECTED: 'VPN_OR_PROXY_DETECTED',
+    PROXY_DETECTED: 'VPN_OR_PROXY_DETECTED',
+    WEBRTC_LEAK: 'VPN_OR_PROXY_DETECTED',
 
     // Low
     FOCUS_LOSS_BRIEF: 'FOCUS_LOSS_BRIEF',
@@ -344,6 +463,11 @@ export function resolveViolationRule(eventTypeOrRule: string): ViolationRuleDefi
     LIGHTING_ISSUES: 'LIGHTING_ISSUES',
     LOW_LIGHTING: 'LIGHTING_ISSUES',
     FACE_LIGHTING_POOR: 'LIGHTING_ISSUES',
+    TEXT_SELECTION_ATTEMPT: 'TEXT_SELECTION_ATTEMPT',
+    TEXT_SELECTION: 'TEXT_SELECTION_ATTEMPT',
+    DRAG_DROP_ATTEMPT: 'DRAG_DROP_ATTEMPT',
+    DRAG_START: 'DRAG_DROP_ATTEMPT',
+    DROP: 'DRAG_DROP_ATTEMPT',
   };
 
   const matchedKey = aliasMap[normalized];

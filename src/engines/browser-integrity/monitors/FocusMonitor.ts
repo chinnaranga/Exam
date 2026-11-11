@@ -27,6 +27,8 @@ export class FocusMonitor extends BaseModule {
   private lastFullscreenChangeTime: number = Date.now();
 
   private rapidTabSwitchWindow: number[] = [];
+  private pollIntervalId: ReturnType<typeof setInterval> | null = null;
+  private wasFocused: boolean = true;
 
   constructor(eventBus: EventBus, sessionManager: SessionManager) {
     super('FocusMonitor', eventBus, sessionManager);
@@ -38,17 +40,37 @@ export class FocusMonitor extends BaseModule {
 
     this.lastFocusTime = Date.now();
     this.lastVisibilityChangeTime = Date.now();
+    this.wasFocused = typeof document !== 'undefined' && document.hasFocus ? document.hasFocus() : true;
 
     this.addDOMListener(window, 'focus', this.handleFocus, { passive: true });
     this.addDOMListener(window, 'blur', this.handleBlur, { passive: true });
     this.addDOMListener(document, 'visibilitychange', this.handleVisibilityChange, { passive: true });
     this.addDOMListener(document, 'fullscreenchange', this.handleFullscreenChange, { passive: true });
     this.addDOMListener(document, 'webkitfullscreenchange', this.handleFullscreenChange, { passive: true });
+
+    // Active 500ms document.hasFocus() poller (do not rely only on blur events)
+    this.pollIntervalId = setInterval(() => {
+      if (!this.isRunning || typeof document === 'undefined') return;
+      const currentlyFocused = document.hasFocus ? document.hasFocus() : true;
+      if (!currentlyFocused && this.wasFocused) {
+        this.wasFocused = false;
+        this.handleBlur();
+      } else if (currentlyFocused && !this.wasFocused) {
+        this.wasFocused = true;
+        this.handleFocus();
+      }
+    }, 500);
   }
 
   public stop(): void {
     if (!this.isRunning) return;
     this.isRunning = false;
+
+    if (this.pollIntervalId) {
+      clearInterval(this.pollIntervalId);
+      this.pollIntervalId = null;
+    }
+
     this.removeAllDOMListeners();
   }
 
