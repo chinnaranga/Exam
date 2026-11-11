@@ -15,11 +15,13 @@ import {
   Sparkles,
   Zap,
   CheckCircle2,
+  Clock,
 } from 'lucide-react';
 import {
   RedCheck,
   OmrBubble,
   CropMarks,
+  StickerBadge,
 } from '@/components/marks';
 
 export const PortalSelection: React.FC = () => {
@@ -43,6 +45,8 @@ export const PortalSelection: React.FC = () => {
     tagBg: string;
     features: string[];
     note: string;
+    isComingSoon?: boolean;
+    comingSoonQuarter?: string;
   }[] = [
     {
       id: 'student',
@@ -108,35 +112,47 @@ export const PortalSelection: React.FC = () => {
       id: 'org-admin',
       bubble: 'E',
       title: 'Organization Admin',
-      subtitle: 'Campus, department, program management, custom branding & role provisioning.',
-      path: '/org-admin/login',
-      dashboardPath: '/org-admin/dashboard',
+      subtitle: 'Campus hierarchy, automated SCIM roster invitations, and custom university branding.',
+      path: '/org-admin/coming-soon',
+      dashboardPath: '/org-admin/coming-soon',
       demoEmail: 'admin@mit.edu',
       role: 'ORGANIZATION_ADMIN',
       icon: Building2,
       sheetColor: 'bg-[#BFE6FF]/40 hover:bg-[#BFE6FF]/60 border-[#2B2350]',
       tagBg: 'bg-[#BFE6FF] text-[#2B2350]',
-      features: ['Campus & Dept Scoping', 'Roster Bulk Invitations', 'Institutional Analytics'],
-      note: 'admin control',
+      features: ['Campus & Dept Scoping', 'Automated SCIM Directory Sync', 'White-Label Branding'],
+      note: 'in roadmap',
+      isComingSoon: true,
+      comingSoonQuarter: 'Q2 2027',
     },
     {
       id: 'super-admin',
       bubble: 'F',
       title: 'Super Admin Portal',
-      subtitle: 'Global multi-tenant infrastructure control plane, RLS isolation & AI risk engine.',
-      path: '/super-admin/login',
-      dashboardPath: '/super-admin/dashboard',
+      subtitle: 'Global multi-tenant infrastructure control plane, RLS isolation & platform cluster health.',
+      path: '/super-admin/coming-soon',
+      dashboardPath: '/super-admin/coming-soon',
       demoEmail: 'superadmin@assessiq.com',
       role: 'SUPER_ADMIN',
       icon: Server,
       sheetColor: 'bg-white hover:bg-slate-50 border-[#2B2350]',
       tagBg: 'bg-[#E2E8F0] text-[#2B2350]',
-      features: ['Multi-Tenant Control Plane', 'RLS Row Level Security', 'Global AI Threat Radar'],
-      note: 'root clearance',
+      features: ['Postgres RLS Policies', 'Global Cluster Telemetry', 'Immutable Forensic Audit Logs'],
+      note: 'in roadmap',
+      isComingSoon: true,
+      comingSoonQuarter: 'Q2 2027',
     },
   ];
 
   const handleFastLaunch = async (portal: typeof portals[0]) => {
+    if (portal.isComingSoon) {
+      toast.info(`${portal.title} is scheduled for ${portal.comingSoonQuarter || 'Q2 2027'} rollout`, {
+        description: 'Directing you to the roadmap specifications & early access waitlist.',
+      });
+      navigate(portal.path);
+      return;
+    }
+
     setLoadingPortal(portal.id);
     try {
       const session = await authService.login({
@@ -229,11 +245,15 @@ export const PortalSelection: React.FC = () => {
                     </div>
 
                     <div className="flex items-center space-x-2">
-                      {isCurrentlyActive && (
+                      {portal.isComingSoon ? (
+                        <StickerBadge color="lemon" rotate={portal.bubble === 'E' ? -3 : 3}>
+                          COMING SOON
+                        </StickerBadge>
+                      ) : isCurrentlyActive ? (
                         <span className="text-[9px] font-mono font-bold uppercase tracking-wider bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full border border-emerald-400">
                           LOGGED IN
                         </span>
-                      )}
+                      ) : null}
                       <div className="w-8 h-8 rounded-xl bg-white border border-[#2B2350] flex items-center justify-center shadow-xs">
                         <Icon className="w-4 h-4 text-[#6C4DFF]" />
                       </div>
@@ -260,25 +280,46 @@ export const PortalSelection: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Actions: 1-Click Fast Launch + Standard Sign In */}
-                <div className="space-y-2 pt-2">
-                  <button
-                    type="button"
-                    onClick={() => handleFastLaunch(portal)}
-                    disabled={isBusy}
-                    className="w-full bg-[#FFF3A3] hover:bg-[#FFE680] text-[#2B2350] border-2 border-[#2B2350] font-mono font-bold text-xs py-2 rounded-xl shadow-[2px_2px_0px_#2B2350] flex items-center justify-center space-x-1.5 transition-transform hover:-translate-y-0.5 cursor-pointer disabled:opacity-50"
-                  >
-                    <Zap className="w-3.5 h-3.5 text-[#6C4DFF] fill-[#6C4DFF]" />
-                    <span>{isBusy ? 'LAUNCHING...' : '⚡ 1-CLICK INSTANT DISPATCH'}</span>
-                  </button>
+                {/* Actions: 1-Click Fast Launch + Standard Sign In OR Coming Soon Actions */}
+                {portal.isComingSoon ? (
+                  <div className="space-y-2 pt-2">
+                    <Link to={portal.path} className="block">
+                      <button
+                        type="button"
+                        className="w-full bg-[#FFF3A3] hover:bg-[#FFE680] text-[#2B2350] border-2 border-[#2B2350] font-mono font-bold text-xs py-2 rounded-xl shadow-[2px_2px_0px_#2B2350] flex items-center justify-center space-x-1.5 transition-transform hover:-translate-y-0.5 cursor-pointer"
+                      >
+                        <Clock className="w-3.5 h-3.5 text-[#6C4DFF]" />
+                        <span>ROADMAP SPECS ({portal.comingSoonQuarter})</span>
+                      </button>
+                    </Link>
 
-                  <Link to={portal.path} className="block">
-                    <button className="w-full bg-[#6C4DFF] hover:bg-[#5A3DEB] text-white font-mono font-bold text-xs py-2.5 rounded-xl shadow-[0_4px_12px_rgba(108,77,255,0.25)] flex items-center justify-center space-x-2 transition-all group cursor-pointer">
-                      <span>SIGN IN FORM</span>
-                      <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                    <Link to={portal.path} className="block">
+                      <button className="w-full bg-[#6C4DFF] hover:bg-[#5A3DEB] text-white font-mono font-bold text-xs py-2.5 rounded-xl shadow-[0_4px_12px_rgba(108,77,255,0.25)] flex items-center justify-center space-x-2 transition-all group cursor-pointer">
+                        <span>REQUEST PILOT ACCESS</span>
+                        <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                      </button>
+                    </Link>
+                  </div>
+                ) : (
+                  <div className="space-y-2 pt-2">
+                    <button
+                      type="button"
+                      onClick={() => handleFastLaunch(portal)}
+                      disabled={isBusy}
+                      className="w-full bg-[#FFF3A3] hover:bg-[#FFE680] text-[#2B2350] border-2 border-[#2B2350] font-mono font-bold text-xs py-2 rounded-xl shadow-[2px_2px_0px_#2B2350] flex items-center justify-center space-x-1.5 transition-transform hover:-translate-y-0.5 cursor-pointer disabled:opacity-50"
+                    >
+                      <Zap className="w-3.5 h-3.5 text-[#6C4DFF] fill-[#6C4DFF]" />
+                      <span>{isBusy ? 'LAUNCHING...' : '⚡ 1-CLICK INSTANT DISPATCH'}</span>
                     </button>
-                  </Link>
-                </div>
+
+                    <Link to={portal.path} className="block">
+                      <button className="w-full bg-[#6C4DFF] hover:bg-[#5A3DEB] text-white font-mono font-bold text-xs py-2.5 rounded-xl shadow-[0_4px_12px_rgba(108,77,255,0.25)] flex items-center justify-center space-x-2 transition-all group cursor-pointer">
+                        <span>SIGN IN FORM</span>
+                        <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                      </button>
+                    </Link>
+                  </div>
+                )}
               </div>
             );
           })}
