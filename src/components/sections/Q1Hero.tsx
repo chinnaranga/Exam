@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Play, ArrowRight } from 'lucide-react';
+import { Play, ArrowRight, LayoutGrid } from 'lucide-react';
 import RedCircle from '@/components/marks/RedCircle';
 import RedUnderline from '@/components/marks/RedUnderline';
 import MarginNote from '@/components/marks/MarginNote';
@@ -31,12 +32,12 @@ export const Q1Hero: React.FC = () => {
   };
 
   return (
-    <section className="mx-3 sm:mx-6 my-4 sm:my-6 rounded-[40px] bg-[#C9CCFF] p-8 sm:p-14 lg:p-20 relative overflow-hidden border border-[#B0B5FF] shadow-[0_20px_50px_rgba(43,35,80,0.06)] text-left">
+    <section className="mx-3 sm:mx-6 my-4 sm:my-6 rounded-[40px] bg-[#C9CCFF] p-8 sm:p-14 lg:p-20 relative overflow-hidden border-2 border-[#2B2350] shadow-[8px_8px_0px_#2B2350] text-left">
       <CropMarks />
 
       {/* Top Question Number Badge */}
       <div className="flex items-center justify-between mb-8 sm:mb-12">
-        <span className="font-mono text-xs sm:text-sm font-bold tracking-widest text-[#2B2350] bg-white/70 px-3.5 py-1.5 rounded-full border border-[#2B2350]/20 shadow-xs">
+        <span className="font-mono text-xs sm:text-sm font-bold tracking-widest text-[#2B2350] bg-white/90 px-3.5 py-1.5 rounded-full border border-[#2B2350] shadow-xs">
           Q1 / 08 · AI ASSESSMENT PLATFORM
         </span>
         <StickerBadge color="lemon" rotate={4}>
@@ -63,17 +64,17 @@ export const Q1Hero: React.FC = () => {
 
           <div className="flex flex-wrap items-center gap-4 pt-2">
             <a href="#q8-final">
-              <button className="bg-[#6C4DFF] hover:bg-[#5A3DEB] text-white font-mono font-bold text-sm sm:text-base px-8 py-4 rounded-2xl shadow-[0_6px_20px_rgba(108,77,255,0.35)] hover:shadow-[0_8px_25px_rgba(108,77,255,0.45)] transition-all transform hover:-translate-y-0.5 active:translate-y-0 flex items-center">
+              <button className="bg-[#6C4DFF] hover:bg-[#5A3DEB] text-white font-mono font-bold text-sm sm:text-base px-8 py-4 rounded-2xl border-2 border-[#2B2350] shadow-[4px_4px_0px_#2B2350] transition-all transform hover:-translate-y-0.5 active:translate-y-0 flex items-center">
                 Book a demo
                 <ArrowRight className="w-4 h-4 ml-2" />
               </button>
             </a>
-            <a href="#q4-how-it-works">
-              <button className="bg-white hover:bg-[#F8FAFC] text-[#2B2350] border-2 border-[#2B2350] font-mono font-bold text-sm sm:text-base px-7 py-4 rounded-2xl shadow-xs transition-all flex items-center">
-                <Play className="w-4 h-4 mr-2 fill-[#2B2350]" />
-                Watch the 60-sec tour
+            <Link to="/auth">
+              <button className="bg-[#FFF3A3] hover:bg-[#FFE680] text-[#2B2350] border-2 border-[#2B2350] font-mono font-bold text-sm sm:text-base px-7 py-4 rounded-2xl shadow-[4px_4px_0px_#2B2350] transition-all flex items-center gap-2">
+                <LayoutGrid className="w-4 h-4 text-[#6C4DFF]" />
+                <span>Open Role Portals</span>
               </button>
-            </a>
+            </Link>
           </div>
 
           {/* Row of 4 OMR bubbles under buttons: 3rd fills violet on load */}
@@ -206,9 +207,52 @@ export const Q1Hero: React.FC = () => {
           </motion.div>
         </div>
       </div>
+
+      {/* Station Gateway Dispatch Quick Links */}
+      <div className="mt-12 pt-6 border-t-2 border-dashed border-[#2B2350]/20 flex flex-wrap items-center justify-between gap-3 text-xs font-mono">
+        <span className="font-bold text-[#2B2350] flex items-center gap-1.5">
+          <span className="w-2 h-2 rounded-full bg-[#10B981] animate-pulse" />
+          ENTER LIVE ROLE STATIONS:
+        </span>
+        <div className="flex flex-wrap items-center gap-2">
+          <Link
+            to="/student/login"
+            className="px-3.5 py-1.5 rounded-xl bg-white border-2 border-[#2B2350] hover:bg-[#FFF3A3] text-[#2B2350] font-bold shadow-[2px_2px_0px_#2B2350] transition-all flex items-center gap-1.5 hover:-translate-y-0.5"
+          >
+            <span className="w-4 h-4 rounded-full bg-[#C9CCFF] text-[10px] flex items-center justify-center border border-[#2B2350]">A</span>
+            Student Portal
+          </Link>
+          <Link
+            to="/coding/login"
+            className="px-3.5 py-1.5 rounded-xl bg-white border-2 border-[#2B2350] hover:bg-[#FFF3A3] text-[#2B2350] font-bold shadow-[2px_2px_0px_#2B2350] transition-all flex items-center gap-1.5 hover:-translate-y-0.5"
+          >
+            <span className="w-4 h-4 rounded-full bg-[#FFF3A3] text-[10px] flex items-center justify-center border border-[#2B2350]">B</span>
+            Coding Platform
+          </Link>
+          <Link
+            to="/faculty/login"
+            className="px-3.5 py-1.5 rounded-xl bg-white border-2 border-[#2B2350] hover:bg-[#FFF3A3] text-[#2B2350] font-bold shadow-[2px_2px_0px_#2B2350] transition-all flex items-center gap-1.5 hover:-translate-y-0.5"
+          >
+            <span className="w-4 h-4 rounded-full bg-[#B8F0D2] text-[10px] flex items-center justify-center border border-[#2B2350]">C</span>
+            Faculty Portal
+          </Link>
+          <Link
+            to="/invigilator/login"
+            className="px-3.5 py-1.5 rounded-xl bg-white border-2 border-[#2B2350] hover:bg-[#FFF3A3] text-[#2B2350] font-bold shadow-[2px_2px_0px_#2B2350] transition-all flex items-center gap-1.5 hover:-translate-y-0.5"
+          >
+            <span className="w-4 h-4 rounded-full bg-[#FFB5A7] text-[10px] flex items-center justify-center border border-[#2B2350]">D</span>
+            Invigilator
+          </Link>
+          <Link
+            to="/auth"
+            className="px-3.5 py-1.5 rounded-xl bg-[#6C4DFF] hover:bg-[#5A3DEB] text-white font-bold border-2 border-[#2B2350] shadow-[2px_2px_0px_#2B2350] transition-all flex items-center gap-1.5 hover:-translate-y-0.5"
+          >
+            All Portals →
+          </Link>
+        </div>
+      </div>
     </section>
   );
 };
 
 export default Q1Hero;
-
