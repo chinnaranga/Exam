@@ -16,7 +16,7 @@ import LightLanding from '@/portals/public/pages/LightLanding';
 
 // Multi-Portal Gateway & Specialized Login Suite
 import PortalSelection from '@/portals/public/pages/auth/PortalSelection';
-import FacultyLogin from './portals/faculty/auth/FacultyLogin';
+import FacultyLogin from '@/portals/faculty/pages/auth/FacultyLogin';
 import InvigilatorLogin from './portals/invigilator/auth/InvigilatorLogin';
 import OrgAdminLogin from './portals/org-admin/auth/OrgAdminLogin';
 import SuperAdminLogin from './portals/super-admin/auth/SuperAdminLogin';
@@ -27,12 +27,12 @@ import AdminLanding from './portals/admin/AdminLanding';
 import AdminDashboard from './portals/admin/AdminDashboard';
 import ProductionDashboard from './pages/admin/ProductionDashboard';
 
-import FacultyLanding from './portals/faculty/FacultyLanding';
-import FacultyDashboard from './portals/faculty/FacultyDashboard';
-import FacultyLayout from './portals/faculty/shell/FacultyLayout';
-import FacultyQuestionBank from './portals/faculty/FacultyQuestionBank';
-import FacultyExamBuilder from './portals/faculty/FacultyExamBuilder';
-import FacultyAnalytics from './portals/faculty/FacultyAnalytics';
+import FacultyLanding from '@/portals/faculty/pages/FacultyLanding';
+import FacultyDashboard from '@/portals/faculty/pages/FacultyDashboard';
+import FacultyLayout from '@/portals/faculty/layout/FacultyLayout';
+import FacultyQuestionBank from '@/portals/faculty/pages/FacultyQuestionBank';
+import FacultyExamBuilder from '@/portals/faculty/pages/FacultyExamBuilder';
+import FacultyAnalytics from '@/portals/faculty/pages/FacultyAnalytics';
 
 import InvigilatorLanding from './portals/invigilator/InvigilatorLanding';
 import InvigilatorDashboard from './portals/invigilator/InvigilatorDashboard';
