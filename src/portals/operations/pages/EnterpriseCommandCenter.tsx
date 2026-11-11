@@ -12,7 +12,7 @@ import {
   IncidentItem,
   SystemHealthMetrics,
   DisasterRecoveryStatus,
-} from '../../server/operations/types/OperationsTypes';
+} from '@/server/operations/types/OperationsTypes';
 
 export const EnterpriseCommandCenter: React.FC = () => {
   const [activeTab, setActiveTab] = useState<string>('live_ops');

@@ -8,7 +8,7 @@ import { ObjectDetectionEngine } from '@/engines/proctoring/object-detection/Obj
 import { AudioEngine } from '@/engines/proctoring/audio/AudioEngine';
 import { PipelineEngine } from '@/engines/proctoring/pipeline/PipelineEngine';
 import { PreExamPermissionModal } from '@/engines/proctoring/consent/PreExamPermissionModal';
-import { EnterpriseCommandCenter } from '@/modules/enterprise-operations/EnterpriseCommandCenter';
+import { EnterpriseCommandCenter } from '@/portals/operations/pages/EnterpriseCommandCenter';
 import { Link } from 'react-router-dom';
 import { ShieldCheck, Play, ArrowLeft } from 'lucide-react';
 

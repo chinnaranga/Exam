@@ -44,7 +44,7 @@ import { AttentionEngine } from '@/engines/proctoring/attention/AttentionEngine'
 import { ObjectDetectionEngine } from '@/engines/proctoring/object-detection/ObjectDetectionEngine';
 import { AudioEngine } from '@/engines/proctoring/audio/AudioEngine';
 import { PipelineEngine } from '@/engines/proctoring/pipeline/PipelineEngine';
-import { EnterpriseCommandCenter } from '@/modules/enterprise-operations/EnterpriseCommandCenter';
+import { EnterpriseCommandCenter } from '@/portals/operations/pages/EnterpriseCommandCenter';
 import { ExamSecurityProvider } from '@/engines/exam-security/providers/ExamSecurityProvider';
 import { BrowserEventProvider } from '@/engines/exam-security/browser/BrowserEventProvider';
 import { KeyboardProvider } from '@/engines/exam-security/keyboard/KeyboardProvider';

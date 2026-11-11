@@ -72,7 +72,7 @@ import SuperAdminSecurity from '@/portals/super-admin/pages/SuperAdminSecurity';
 import SuperAdminPlatform from '@/portals/super-admin/pages/SuperAdminPlatform';
 
 // Phase 6 Enterprise Operations Command Center
-import { EnterpriseCommandCenter } from './modules/enterprise-operations/EnterpriseCommandCenter';
+import { EnterpriseCommandCenter } from '@/portals/operations/pages/EnterpriseCommandCenter';
 
 // Student Auth Suite
 import StudentLogin from '@/portals/student/pages/auth/StudentLogin';
