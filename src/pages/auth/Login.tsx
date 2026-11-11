@@ -8,10 +8,10 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
-import BrandLogo from '@/components/BrandLogo';
-import { authService } from '@/services/authService';
-import { useAuthStore } from '@/stores/authStore';
-import { SystemRole } from '@/types/auth';
+import BrandLogo from "@/shared/components/BrandLogo";
+import { authService } from "@/shared/services/authService";
+import { useAuthStore } from "@/shared/stores/authStore";
+import { SystemRole } from "@/shared/types/auth";
 import { toast } from 'sonner';
 import { Lock, Mail, ShieldCheck, Sparkles, Building2, UserCheck, ArrowRight, Globe } from 'lucide-react';
 

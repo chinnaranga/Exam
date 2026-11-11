@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { useAuthStore } from '@/stores/authStore';
+import { useAuthStore } from "@/shared/stores/authStore";
 import { useExams } from '@/hooks/useApiQueries';
 import {
   BookOpen,

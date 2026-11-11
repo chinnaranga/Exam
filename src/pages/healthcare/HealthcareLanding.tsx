@@ -1,5 +1,5 @@
 import React from 'react';
-import HealthcareNavbar from './components/Navbar';
+import HealthcareNavbar from "@/shared/components/Navbar";
 import HealthcareHero from './components/Hero';
 import HealthcareStatsGrid from './components/StatsGrid';
 import HealthcarePlatformCapabilities from './components/PlatformCapabilities';

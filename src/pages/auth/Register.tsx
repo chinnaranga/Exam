@@ -8,9 +8,9 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
-import BrandLogo from '@/components/BrandLogo';
-import { authService } from '@/services/authService';
-import { useAuthStore } from '@/stores/authStore';
+import BrandLogo from "@/shared/components/BrandLogo";
+import { authService } from "@/shared/services/authService";
+import { useAuthStore } from "@/shared/stores/authStore";
 import { toast } from 'sonner';
 import { Building2, User, Mail, Lock, ShieldCheck, ArrowRight } from 'lucide-react';
 

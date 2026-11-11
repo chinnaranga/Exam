@@ -3,13 +3,13 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Toaster } from '@/components/ui/toaster';
 import { Toaster as Sonner } from '@/components/ui/sonner';
 import { TooltipProvider } from '@/components/ui/tooltip';
-import Layout from './components/Layout';
+import Layout from "@/shared/components/Layout";
 import Index from './pages/Index';
 import CodingDashboard from './pages/coding/CodingDashboard';
-import Exams from './pages/Exams';
+import Exams from '@/shared/pages/Exams';
 import Users from './pages/Users';
-import SecuritySettings from './pages/auth/SecuritySettings';
-import NotFound from './pages/NotFound';
+import SecuritySettings from '@/shared/pages/SecuritySettings';
+import NotFound from '@/shared/pages/NotFound';
 
 // Unified Enterprise Light Landing Page
 import LightLanding from './pages/light/LightLanding';
@@ -94,14 +94,14 @@ import ProgramManagement from './pages/organization/ProgramManagement';
 import WorkspaceManagement from './pages/organization/WorkspaceManagement';
 
 // User Identity Center Pages
-import ProfilePage from './pages/me/ProfilePage';
-import ApiKeysPage from './pages/me/ApiKeysPage';
-import PrivacyPage from './pages/me/PrivacyPage';
-import ActivityPage from './pages/me/ActivityPage';
+import ProfilePage from '@/shared/pages/me/ProfilePage';
+import ApiKeysPage from '@/shared/pages/me/ApiKeysPage';
+import PrivacyPage from '@/shared/pages/me/PrivacyPage';
+import ActivityPage from '@/shared/pages/me/ActivityPage';
 
 // Enterprise Security Center Pages
 import SecurityCenterPage from './pages/security/SecurityCenterPage';
-import MfaWizardPage from './pages/security/MfaWizardPage';
+import MfaWizardPage from '@/shared/pages/MfaWizardPage';
 import CompliancePage from './pages/security/CompliancePage';
 
 // Enterprise Integration & Developer Platform Pages
@@ -116,18 +116,18 @@ import Register from './pages/auth/Register';
 import ForgotPassword from './pages/auth/ForgotPassword';
 import ResetPassword from './pages/auth/ResetPassword';
 import SelectTenant from './pages/auth/SelectTenant';
-import AccessDenied from './pages/auth/AccessDenied';
-import SessionExpired from './pages/auth/SessionExpired';
+import AccessDenied from '@/shared/pages/AccessDenied';
+import SessionExpired from '@/shared/pages/SessionExpired';
 import VerifyOTP from './pages/auth/VerifyOTP';
-import MFAVerification from './pages/auth/MFAVerification';
-import AccountLocked from './pages/auth/AccountLocked';
-import Maintenance from './pages/auth/Maintenance';
-import NetworkError from './pages/auth/NetworkError';
+import MFAVerification from '@/shared/pages/MFAVerification';
+import AccountLocked from '@/shared/pages/AccountLocked';
+import Maintenance from '@/shared/pages/Maintenance';
+import NetworkError from '@/shared/pages/NetworkError';
 import VerifyEmail from './pages/auth/VerifyEmail';
 import InvitationAccept from './pages/auth/InvitationAccept';
 import OrgDiscovery from './pages/auth/OrgDiscovery';
-import SessionsPage from './pages/auth/SessionsPage';
-import DevicesPage from './pages/auth/DevicesPage';
+import SessionsPage from '@/shared/pages/SessionsPage';
+import DevicesPage from '@/shared/pages/DevicesPage';
 import FirstLoginWizard from './pages/onboarding/FirstLoginWizard';
 
 // Admin Authorization Pages
@@ -136,9 +136,9 @@ import PermissionsPage from './pages/admin/PermissionsPage';
 import PoliciesPage from './pages/admin/PoliciesPage';
 
 // Guards
-import AuthGuard from './guards/AuthGuard';
-import TenantGuard from './guards/TenantGuard';
-import RoleGuard from './guards/RoleGuard';
+import AuthGuard from "@/shared/guards/AuthGuard";
+import TenantGuard from "@/shared/guards/TenantGuard";
+import RoleGuard from "@/shared/guards/RoleGuard";
 
 const queryClient = new QueryClient();
 

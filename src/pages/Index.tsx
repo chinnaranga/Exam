@@ -1,5 +1,5 @@
 import React from 'react';
-import { EnterpriseLayout } from '@/lib/design-system/EnterpriseLayout';
+import { EnterpriseLayout } from '@/shared/components/EnterpriseLayout';
 import { BookOpen, Users, ShieldCheck, ArrowRight, Building2, Brain } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useExams, useCandidates, useQuestionBank, useOrganizations } from '@/hooks/useApiQueries';

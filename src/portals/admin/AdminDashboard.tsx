@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Server, Cpu, ShieldCheck, Activity, Users, Radio, Lock, CheckCircle2, ArrowRight, FileText } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useOrganizations, useAuditLogs } from '@/hooks/useApiQueries';
-import { useOrganizationStore } from '@/stores/organizationStore';
+import { useOrganizationStore } from "@/shared/stores/organizationStore";
 
 export const AdminDashboard: React.FC = () => {
   const { data: orgsData, isLoading: isOrgsLoading } = useOrganizations({ page: 1, pageSize: 10 });

@@ -1,5 +1,5 @@
 import React from 'react';
-import LandingNavbar from './components/Navbar';
+import LandingNavbar from "@/shared/components/Navbar";
 import LandingHero from './components/Hero';
 import TrustStats from './components/TrustStats';
 import EnterpriseFeatures from './components/EnterpriseFeatures';

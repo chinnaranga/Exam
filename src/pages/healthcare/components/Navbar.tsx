@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Activity, ShieldCheck, ChevronDown, Menu, X, Lock } from 'lucide-react';
-import BrandLogo from '@/components/BrandLogo';
+import BrandLogo from "@/shared/components/BrandLogo";
 
 export const HealthcareNavbar: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);

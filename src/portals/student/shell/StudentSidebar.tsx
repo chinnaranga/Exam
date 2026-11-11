@@ -14,7 +14,7 @@ import {
   Briefcase,
   UserCheck,
 } from 'lucide-react';
-import { useAuthStore } from '@/stores/authStore';
+import { useAuthStore } from "@/shared/stores/authStore";
 import { toast } from 'sonner';
 
 export const StudentSidebar: React.FC = () => {

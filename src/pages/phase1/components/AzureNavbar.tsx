@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Search, Globe, Moon, Sun, Shield, Layers, ChevronDown, Menu, X, Cpu } from 'lucide-react';
-import BrandLogo from '@/components/BrandLogo';
+import BrandLogo from "@/shared/components/BrandLogo";
 
 export const AzureNavbar: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);

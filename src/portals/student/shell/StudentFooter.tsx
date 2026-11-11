@@ -1,5 +1,5 @@
 import React from 'react';
-import BrandLogo from '@/components/BrandLogo';
+import BrandLogo from "@/shared/components/BrandLogo";
 
 export const StudentFooter: React.FC = () => {
   return (

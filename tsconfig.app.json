@@ -30,7 +30,15 @@
       "@/portals/*": ["./src/portals/*"],
       "@/app/*": ["./src/app/*"],
       "@/server/*": ["./server/*"],
-      "@server/*": ["./server/*"]
+      "@server/*": ["./server/*"],
+      "@/components/ui/*": ["./src/shared/components/ui/*"],
+      "@/guards/*": ["./src/shared/guards/*"],
+      "@/stores/*": ["./src/shared/stores/*"],
+      "@/services/*": ["./src/shared/services/*"],
+      "@/hooks/*": ["./src/shared/hooks/*"],
+      "@/lib/*": ["./src/shared/lib/*"],
+      "@/types/*": ["./src/shared/types/*"],
+      "@/utils/*": ["./src/shared/utils/*"]
     }
   },
   "include": ["src"]

@@ -2,9 +2,9 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { MOCK_ORGANIZATIONS } from '@/services/authService';
-import { useAuthStore } from '@/stores/authStore';
-import { useTenantStore } from '@/stores/tenantStore';
+import { MOCK_ORGANIZATIONS } from "@/shared/services/authService";
+import { useAuthStore } from "@/shared/stores/authStore";
+import { useTenantStore } from "@/shared/stores/tenantStore";
 import { toast } from 'sonner';
 import { Building2, ArrowRight, CheckCircle2, Shield } from 'lucide-react';
 

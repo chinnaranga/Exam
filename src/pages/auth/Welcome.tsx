@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import BrandLogo from '@/components/BrandLogo';
+import BrandLogo from "@/shared/components/BrandLogo";
 import { ShieldCheck, Sparkles, Building2, UserCheck, ArrowRight, Lock, CheckCircle2 } from 'lucide-react';
 
 export const Welcome: React.FC = () => {

@@ -12,8 +12,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { useOrganizationStore } from '@/stores/organizationStore';
-import { useAuthStore } from '@/stores/authStore';
+import { useOrganizationStore } from "@/shared/stores/organizationStore";
+import { useAuthStore } from "@/shared/stores/authStore";
 import { useOrganizations, useAuditLogs } from '@/hooks/useApiQueries';
 import HierarchyExplorer from '@/components/organization/HierarchyExplorer';
 import InvitationModal from '@/components/organization/InvitationModal';

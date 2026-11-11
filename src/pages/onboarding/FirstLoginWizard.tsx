@@ -4,9 +4,9 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { MOCK_ORGANIZATIONS } from '@/services/authService';
-import { useAuthStore } from '@/stores/authStore';
-import { SystemRole } from '@/types/auth';
+import { MOCK_ORGANIZATIONS } from "@/shared/services/authService";
+import { useAuthStore } from "@/shared/stores/authStore";
+import { SystemRole } from "@/shared/types/auth";
 import { toast } from 'sonner';
 import { CheckCircle2, Building2, Shield, User, ArrowRight, ArrowLeft, Sparkles } from 'lucide-react';
 

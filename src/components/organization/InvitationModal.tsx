@@ -3,7 +3,7 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { SystemRole } from '@/types/auth';
+import { SystemRole } from "@/shared/types/auth";
 import { toast } from 'sonner';
 import { Mail, UserPlus, Upload, FileSpreadsheet, CheckCircle2, X } from 'lucide-react';
 

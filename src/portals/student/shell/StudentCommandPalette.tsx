@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Command } from 'cmdk';
 import { Search, Home, BookOpen, CheckSquare, Award, Settings, User, LogOut } from 'lucide-react';
-import { useAuthStore } from '@/stores/authStore';
+import { useAuthStore } from "@/shared/stores/authStore";
 
 interface StudentCommandPaletteProps {
   isOpen: boolean;

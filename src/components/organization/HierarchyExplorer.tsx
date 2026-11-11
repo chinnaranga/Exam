@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Card } from '@/components/ui/card';
-import { useOrganizationStore } from '@/stores/organizationStore';
+import { useOrganizationStore } from "@/shared/stores/organizationStore";
 import { Building2, ChevronRight, ChevronDown, BookOpen, GraduationCap, Folder, Layers } from 'lucide-react';
 
 export const HierarchyExplorer: React.FC = () => {

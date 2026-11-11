@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import BrandLogo from '@/components/BrandLogo';
+import BrandLogo from "@/shared/components/BrandLogo";
 import { Button } from '@/components/ui/button';
-import { useAuthStore } from '@/stores/authStore';
+import { useAuthStore } from "@/shared/stores/authStore";
 import {
   Bell,
   Search,

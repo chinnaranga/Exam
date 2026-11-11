@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { EnterpriseLayout } from '@/lib/design-system/EnterpriseLayout';
+import { EnterpriseLayout } from '@/shared/components/EnterpriseLayout';
 import { ConsentManager } from '@/engines/proctoring/consent/ConsentManager';
 import { CameraManager } from '@/engines/proctoring/camera/CameraManager';
 import { FaceEngine } from '@/engines/proctoring/face/FaceEngine';

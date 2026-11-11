@@ -1,5 +1,5 @@
 import React from 'react';
-import { PortalAuthLayout } from '@/pages/auth/PortalAuthLayout';
+import { PortalAuthLayout } from "@/shared/components/layout/PortalAuthLayout";
 import { Building2 } from 'lucide-react';
 
 export const OrgAdminLogin: React.FC = () => {
