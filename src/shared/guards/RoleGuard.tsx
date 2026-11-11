@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from "@/shared/stores/authStore";
 import { SystemRole } from "@/shared/types/auth";
-import { hasRole, getRoleHomeDashboard } from "@/shared/utils/rbac";
+import { hasRole, getPortalLoginPath } from "@/shared/utils/rbac";
 import { toast } from 'sonner';
 
 interface RoleGuardProps {
@@ -25,7 +25,7 @@ export const RoleGuard: React.FC<RoleGuardProps> = ({
   useEffect(() => {
     if (!isLoading && isAuthenticated && user && !userHasRole) {
       toast.warning('Role Boundary Enforced', {
-        description: `Your active persona is [${userRole || 'UNKNOWN'}]. Redirected to your authorized workspace.`,
+        description: `Your active persona is [${userRole || 'UNKNOWN'}]. Please authenticate with an authorized account.`,
       });
     }
   }, [isLoading, isAuthenticated, user, userHasRole, userRole]);
@@ -40,7 +40,8 @@ export const RoleGuard: React.FC<RoleGuardProps> = ({
   }
 
   if (!isAuthenticated || !accessToken || !user) {
-    return <Navigate to="/auth" state={{ from: location }} replace />;
+    const loginTarget = getPortalLoginPath(location.pathname);
+    return <Navigate to={loginTarget} state={{ from: location }} replace />;
   }
 
   if (!userHasRole) {
@@ -49,10 +50,10 @@ export const RoleGuard: React.FC<RoleGuardProps> = ({
       return <Navigate to={fallbackPath} replace />;
     }
 
-    // Auto-route to user's own authorized role dashboard if defined
-    const roleDashboard = getRoleHomeDashboard(userRole);
-    if (roleDashboard && roleDashboard !== '/auth/access-denied' && roleDashboard !== location.pathname) {
-      return <Navigate to={roleDashboard} replace />;
+    // Direct the user to the login page of the portal they are attempting to enter
+    const portalLogin = getPortalLoginPath(location.pathname);
+    if (portalLogin && portalLogin !== location.pathname) {
+      return <Navigate to={portalLogin} state={{ from: location }} replace />;
     }
 
     return <Navigate to="/auth/access-denied" replace />;

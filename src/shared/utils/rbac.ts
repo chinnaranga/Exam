@@ -20,6 +20,19 @@ export function hasRole(user: UserProfile | null, allowedRoles: SystemRole[]): b
 }
 
 /**
+ * Resolves the appropriate login URL for a given path or portal
+ */
+export function getPortalLoginPath(pathname: string): string {
+  if (pathname.startsWith('/invigilator')) return '/invigilator/login';
+  if (pathname.startsWith('/faculty')) return '/faculty/login';
+  if (pathname.startsWith('/student')) return '/student/login';
+  if (pathname.startsWith('/org-admin') || pathname.startsWith('/organization')) return '/org-admin/login';
+  if (pathname.startsWith('/super-admin') || pathname.startsWith('/admin')) return '/super-admin/login';
+  if (pathname.startsWith('/coding')) return '/coding/login';
+  return '/auth/login';
+}
+
+/**
  * Resolves the primary dashboard route for a given user role
  */
 export function getRoleHomeDashboard(role?: SystemRole | string): string {

@@ -28,3 +28,4 @@ export const RoleAwareDashboardRedirect: React.FC = () => {
 };
 
 export default RoleAwareDashboardRedirect;
+
