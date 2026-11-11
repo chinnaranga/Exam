@@ -17,7 +17,7 @@ import LightLanding from '@/portals/public/pages/LightLanding';
 // Multi-Portal Gateway & Specialized Login Suite
 import PortalSelection from '@/portals/public/pages/auth/PortalSelection';
 import FacultyLogin from '@/portals/faculty/pages/auth/FacultyLogin';
-import InvigilatorLogin from './portals/invigilator/auth/InvigilatorLogin';
+import InvigilatorLogin from '@/portals/invigilator/pages/auth/InvigilatorLogin';
 import OrgAdminLogin from './portals/org-admin/auth/OrgAdminLogin';
 import SuperAdminLogin from './portals/super-admin/auth/SuperAdminLogin';
 import CodingLogin from './portals/coding/auth/CodingLogin';
@@ -34,11 +34,11 @@ import FacultyQuestionBank from '@/portals/faculty/pages/FacultyQuestionBank';
 import FacultyExamBuilder from '@/portals/faculty/pages/FacultyExamBuilder';
 import FacultyAnalytics from '@/portals/faculty/pages/FacultyAnalytics';
 
-import InvigilatorLanding from './portals/invigilator/InvigilatorLanding';
-import InvigilatorDashboard from './portals/invigilator/InvigilatorDashboard';
-import InvigilatorLayout from './portals/invigilator/shell/InvigilatorLayout';
-import InvigilatorLiveGrid from './portals/invigilator/InvigilatorLiveGrid';
-import InvigilatorIncidents from './portals/invigilator/InvigilatorIncidents';
+import InvigilatorLanding from '@/portals/invigilator/pages/InvigilatorLanding';
+import InvigilatorDashboard from '@/portals/invigilator/pages/InvigilatorDashboard';
+import InvigilatorLayout from '@/portals/invigilator/layout/InvigilatorLayout';
+import InvigilatorLiveGrid from '@/portals/invigilator/pages/InvigilatorLiveGrid';
+import InvigilatorIncidents from '@/portals/invigilator/pages/InvigilatorIncidents';
 
 import StudentLanding from '@/portals/student/pages/StudentLanding';
 import StudentDashboard from '@/portals/student/pages/StudentDashboard';
