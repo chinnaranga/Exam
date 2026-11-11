@@ -40,26 +40,26 @@ import InvigilatorLayout from './portals/invigilator/shell/InvigilatorLayout';
 import InvigilatorLiveGrid from './portals/invigilator/InvigilatorLiveGrid';
 import InvigilatorIncidents from './portals/invigilator/InvigilatorIncidents';
 
-import StudentLanding from './portals/student/StudentLanding';
-import StudentDashboard from './portals/student/StudentDashboard';
-import StudentLayout from './portals/student/shell/StudentLayout';
-import StudentExamRunner from './portals/student/StudentExamRunner';
-import StudentScheduledExams from './portals/student/StudentScheduledExams';
-import StudentResults from './portals/student/StudentResults';
-import StudentCertificates from './portals/student/StudentCertificates';
-import StudentCourses from './portals/student/StudentCourses';
-import StudentPractice from './portals/student/StudentPractice';
-import StudentPlacement from './portals/student/StudentPlacement';
-import StudentSettings from './portals/student/StudentSettings';
-import StudentProfileOverview from './portals/student/profile/StudentProfileOverview';
-import StudentProfileEdit from './portals/student/profile/StudentProfileEdit';
-import StudentProfilePersonal from './portals/student/profile/StudentProfilePersonal';
-import StudentProfileAcademic from './portals/student/profile/StudentProfileAcademic';
-import StudentProfileContact from './portals/student/profile/StudentProfileContact';
-import StudentProfileGuardian from './portals/student/profile/StudentProfileGuardian';
-import StudentProfileEmergency from './portals/student/profile/StudentProfileEmergency';
-import StudentProfilePreferences from './portals/student/profile/StudentProfilePreferences';
-import StudentProfilePrivacy from './portals/student/profile/StudentProfilePrivacy';
+import StudentLanding from '@/portals/student/pages/StudentLanding';
+import StudentDashboard from '@/portals/student/pages/StudentDashboard';
+import StudentLayout from '@/portals/student/layout/StudentLayout';
+import StudentExamRunner from '@/portals/student/pages/StudentExamRunner';
+import StudentScheduledExams from '@/portals/student/pages/StudentScheduledExams';
+import StudentResults from '@/portals/student/pages/StudentResults';
+import StudentCertificates from '@/portals/student/pages/StudentCertificates';
+import StudentCourses from '@/portals/student/pages/StudentCourses';
+import StudentPractice from '@/portals/student/pages/StudentPractice';
+import StudentPlacement from '@/portals/student/pages/StudentPlacement';
+import StudentSettings from '@/portals/student/pages/StudentSettings';
+import StudentProfileOverview from '@/portals/student/pages/profile/StudentProfileOverview';
+import StudentProfileEdit from '@/portals/student/pages/profile/StudentProfileEdit';
+import StudentProfilePersonal from '@/portals/student/pages/profile/StudentProfilePersonal';
+import StudentProfileAcademic from '@/portals/student/pages/profile/StudentProfileAcademic';
+import StudentProfileContact from '@/portals/student/pages/profile/StudentProfileContact';
+import StudentProfileGuardian from '@/portals/student/pages/profile/StudentProfileGuardian';
+import StudentProfileEmergency from '@/portals/student/pages/profile/StudentProfileEmergency';
+import StudentProfilePreferences from '@/portals/student/pages/profile/StudentProfilePreferences';
+import StudentProfilePrivacy from '@/portals/student/pages/profile/StudentProfilePrivacy';
 
 import OrgAdminLayout from './portals/org-admin/shell/OrgAdminLayout';
 import OrgAdminUsers from './portals/org-admin/OrgAdminUsers';
@@ -75,13 +75,13 @@ import SuperAdminPlatform from './portals/super-admin/SuperAdminPlatform';
 import { EnterpriseCommandCenter } from './modules/enterprise-operations/EnterpriseCommandCenter';
 
 // Student Auth Suite
-import StudentLogin from './portals/student/auth/StudentLogin';
-import StudentRegister from './portals/student/auth/StudentRegister';
-import StudentVerifyEmail from './portals/student/auth/StudentVerifyEmail';
-import StudentForgotPassword from './portals/student/auth/StudentForgotPassword';
-import StudentResetPassword from './portals/student/auth/StudentResetPassword';
-import StudentMFA from './portals/student/auth/StudentMFA';
-import StudentAccountRecovery from './portals/student/auth/StudentAccountRecovery';
+import StudentLogin from '@/portals/student/pages/auth/StudentLogin';
+import StudentRegister from '@/portals/student/pages/auth/StudentRegister';
+import StudentVerifyEmail from '@/portals/student/pages/auth/StudentVerifyEmail';
+import StudentForgotPassword from '@/portals/student/pages/auth/StudentForgotPassword';
+import StudentResetPassword from '@/portals/student/pages/auth/StudentResetPassword';
+import StudentMFA from '@/portals/student/pages/auth/StudentMFA';
+import StudentAccountRecovery from '@/portals/student/pages/auth/StudentAccountRecovery';
 
 // Organization Admin Pages
 import OrganizationDashboard from './pages/organization/OrganizationDashboard';

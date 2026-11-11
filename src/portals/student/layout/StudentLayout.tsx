@@ -3,7 +3,7 @@ import { Outlet } from 'react-router-dom';
 import { StudentHeader } from './StudentHeader';
 import { StudentSidebar } from './StudentSidebar';
 import { StudentFooter } from './StudentFooter';
-import { StudentCommandPalette } from './StudentCommandPalette';
+import { StudentCommandPalette } from '../components/StudentCommandPalette';
 
 export const StudentLayout: React.FC = () => {
   const [isCommandOpen, setIsCommandOpen] = useState(false);

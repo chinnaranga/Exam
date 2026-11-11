@@ -1,30 +1,31 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { StudentAuthLayout } from './StudentAuthLayout';
+import { StudentAuthLayout } from '../../layout/StudentAuthLayout';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
+import { Mail, ArrowRight } from 'lucide-react';
 
-export const StudentAccountRecovery: React.FC = () => {
-  const [recoveryEmail, setRecoveryEmail] = useState('');
+export const StudentForgotPassword: React.FC = () => {
+  const [email, setEmail] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!recoveryEmail) return;
-    toast.success('Account Recovery Request Submitted', { description: 'University IT Administrator notified.' });
+    if (!email) return;
+    toast.success('Password Reset Email Sent', { description: `Sent reset instructions to ${email}.` });
   };
 
   return (
-    <StudentAuthLayout title="Student Account Recovery" subtitle="Submit a ticket to your University IT Helpdesk for account access">
+    <StudentAuthLayout title="Reset Student Password" subtitle="Enter your university email to receive a password reset link">
       <form onSubmit={handleSubmit} className="space-y-4 text-xs">
         <div className="space-y-1">
-          <Label className="uppercase text-[#0F172A] text-[10px]">Alternate Recovery Email / Phone</Label>
-          <Input value={recoveryEmail} onChange={(e) => setRecoveryEmail(e.target.value)} className="bg-[#F8FAFC] border-[#E2E8F0]" placeholder="personal.email@gmail.com" />
+          <Label className="uppercase text-[#0F172A] text-[10px]">University Email</Label>
+          <Input value={email} onChange={(e) => setEmail(e.target.value)} className="bg-[#F8FAFC] border-[#E2E8F0]" placeholder="student@university.edu" />
         </div>
 
         <Button type="submit" className="w-full bg-[#1E40AF] hover:bg-[#1E3A8A] text-white font-bold py-2.5 rounded-xl shadow-xs">
-          Submit IT Support Request
+          Send Password Reset Link
         </Button>
 
         <div className="text-center pt-2">
@@ -37,4 +38,4 @@ export const StudentAccountRecovery: React.FC = () => {
   );
 };
 
-export default StudentAccountRecovery;
+export default StudentForgotPassword;
