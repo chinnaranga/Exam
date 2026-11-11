@@ -1,8 +1,8 @@
 import React from 'react';
-import AzureNavbar from './components/AzureNavbar';
-import HeroExecutive from './components/HeroExecutive';
-import EnterpriseTrustBar from './components/EnterpriseTrustBar';
-import EnterpriseValueCards from './components/EnterpriseValueCards';
+import AzureNavbar from '../components/phase1/AzureNavbar';
+import HeroExecutive from '../components/phase1/HeroExecutive';
+import EnterpriseTrustBar from '../components/phase1/EnterpriseTrustBar';
+import EnterpriseValueCards from '../components/phase1/EnterpriseValueCards';
 import LandingFooter from '../landing/components/Footer';
 
 export const Phase1Landing: React.FC = () => {

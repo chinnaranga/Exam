@@ -1,17 +1,17 @@
 import React from 'react';
 import LandingNavbar from "@/shared/components/Navbar";
-import LandingHero from './components/Hero';
-import TrustStats from './components/TrustStats';
-import EnterpriseFeatures from './components/EnterpriseFeatures';
-import AIShowcase from './components/AIShowcase';
-import SecurityArchitecture from './components/SecurityArchitecture';
-import AnalyticsSection from './components/AnalyticsSection';
-import IndustrySolutions from './components/IndustrySolutions';
-import Testimonials from './components/Testimonials';
-import PricingSection from './components/PricingSection';
-import ResourcesSection from './components/ResourcesSection';
-import FinalCTA from './components/FinalCTA';
-import LandingFooter from './components/Footer';
+import LandingHero from '../components/enterprise/Hero';
+import TrustStats from '../components/enterprise/TrustStats';
+import EnterpriseFeatures from '../components/enterprise/EnterpriseFeatures';
+import AIShowcase from '../components/enterprise/AIShowcase';
+import SecurityArchitecture from '../components/enterprise/SecurityArchitecture';
+import AnalyticsSection from '../components/enterprise/AnalyticsSection';
+import IndustrySolutions from '../components/enterprise/IndustrySolutions';
+import Testimonials from '../components/enterprise/Testimonials';
+import PricingSection from '../components/enterprise/PricingSection';
+import ResourcesSection from '../components/enterprise/ResourcesSection';
+import FinalCTA from '../components/enterprise/FinalCTA';
+import LandingFooter from '../components/enterprise/Footer';
 
 export const EnterpriseLanding: React.FC = () => {
   return (

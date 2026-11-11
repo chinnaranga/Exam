@@ -4,7 +4,7 @@ import { Toaster } from '@/components/ui/toaster';
 import { Toaster as Sonner } from '@/components/ui/sonner';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import Layout from "@/shared/components/Layout";
-import Index from './pages/Index';
+import Index from '@/portals/public/pages/Index';
 import CodingDashboard from './pages/coding/CodingDashboard';
 import Exams from '@/shared/pages/Exams';
 import Users from './pages/Users';
@@ -12,10 +12,10 @@ import SecuritySettings from '@/shared/pages/SecuritySettings';
 import NotFound from '@/shared/pages/NotFound';
 
 // Unified Enterprise Light Landing Page
-import LightLanding from './pages/light/LightLanding';
+import LightLanding from '@/portals/public/pages/LightLanding';
 
 // Multi-Portal Gateway & Specialized Login Suite
-import PortalSelection from './pages/auth/PortalSelection';
+import PortalSelection from '@/portals/public/pages/auth/PortalSelection';
 import FacultyLogin from './portals/faculty/auth/FacultyLogin';
 import InvigilatorLogin from './portals/invigilator/auth/InvigilatorLogin';
 import OrgAdminLogin from './portals/org-admin/auth/OrgAdminLogin';
@@ -110,25 +110,25 @@ import WebhooksPage from './pages/developer/WebhooksPage';
 import JobQueuePage from './pages/developer/JobQueuePage';
 
 // Phase 1 Enterprise Auth & Security Screens
-import Welcome from './pages/auth/Welcome';
+import Welcome from '@/portals/public/pages/auth/Welcome';
 import Login from './pages/auth/Login';
-import Register from './pages/auth/Register';
-import ForgotPassword from './pages/auth/ForgotPassword';
-import ResetPassword from './pages/auth/ResetPassword';
-import SelectTenant from './pages/auth/SelectTenant';
+import Register from '@/portals/public/pages/auth/Register';
+import ForgotPassword from '@/portals/public/pages/auth/ForgotPassword';
+import ResetPassword from '@/portals/public/pages/auth/ResetPassword';
+import SelectTenant from '@/portals/public/pages/auth/SelectTenant';
 import AccessDenied from '@/shared/pages/AccessDenied';
 import SessionExpired from '@/shared/pages/SessionExpired';
-import VerifyOTP from './pages/auth/VerifyOTP';
+import VerifyOTP from '@/portals/public/pages/auth/VerifyOTP';
 import MFAVerification from '@/shared/pages/MFAVerification';
 import AccountLocked from '@/shared/pages/AccountLocked';
 import Maintenance from '@/shared/pages/Maintenance';
 import NetworkError from '@/shared/pages/NetworkError';
-import VerifyEmail from './pages/auth/VerifyEmail';
-import InvitationAccept from './pages/auth/InvitationAccept';
-import OrgDiscovery from './pages/auth/OrgDiscovery';
+import VerifyEmail from '@/portals/public/pages/auth/VerifyEmail';
+import InvitationAccept from '@/portals/public/pages/auth/InvitationAccept';
+import OrgDiscovery from '@/portals/public/pages/auth/OrgDiscovery';
 import SessionsPage from '@/shared/pages/SessionsPage';
 import DevicesPage from '@/shared/pages/DevicesPage';
-import FirstLoginWizard from './pages/onboarding/FirstLoginWizard';
+import FirstLoginWizard from '@/portals/public/pages/auth/FirstLoginWizard';
 
 // Admin Authorization Pages
 import RolesPage from './pages/admin/RolesPage';
