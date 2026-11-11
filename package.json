@@ -7,6 +7,8 @@
     "dev": "vite",
     "build": "vite build",
     "build:dev": "vite build --mode development",
+    "build:server": "tsc -p server/tsconfig.json",
+    "dev:server": "node server/index.ts",
     "lint": "eslint .",
     "preview": "vite preview"
   },
