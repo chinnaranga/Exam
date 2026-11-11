@@ -4,6 +4,7 @@ import { StudentDashboardController } from './student/student_dashboard.controll
 import { studentProfileController } from './student/student_profile.controller';
 import { HumanReviewAPI } from './integrity/HumanReviewAPI';
 import { EnterpriseOperationsController } from './operations/controllers/EnterpriseOperationsController';
+import { examSessionAuthority } from './integrity/ExamSessionAuthority';
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -12,6 +13,10 @@ app.use(express.json());
 
 // API Namespaces
 app.use('/api/v1/auth', authRoutes);
+
+// Authoritative Exam Session, Server Clock & Security Event Authority APIs
+app.use('/api/session', examSessionAuthority.router);
+app.use('/api/v1/session', examSessionAuthority.router);
 
 // Phase 4 Enterprise Integrity Intelligence Platform APIs
 const humanReviewAPI = new HumanReviewAPI();

@@ -116,3 +116,4 @@ export const SuperAdminComingSoon: React.FC = () => {
 };
 
 export default SuperAdminComingSoon;
+

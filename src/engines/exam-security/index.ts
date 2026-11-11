@@ -10,3 +10,4 @@ export * from './core/RestrictionManager';
 export * from './providers/ExamSecurityContext';
 export * from './providers/ExamSecurityProvider';
 export * from './hooks/useExamSecurity';
+export * from './hooks/useSignedEventChannel';
