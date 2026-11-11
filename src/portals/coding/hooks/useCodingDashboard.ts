@@ -11,7 +11,7 @@ import {
   NotificationItem,
   TimelineActivityItem,
   DashboardFilterState,
-} from '@/types/codingDashboard';
+} from '@/portals/coding/types/codingDashboard';
 
 const INITIAL_METRICS: MetricCardData[] = [
   { id: 'total-exams', title: 'Total Coding Exams', value: 24, change: '+14%', isPositive: true, sparkline: [12, 14, 18, 20, 22, 24], iconName: 'BookOpen', category: 'exams' },

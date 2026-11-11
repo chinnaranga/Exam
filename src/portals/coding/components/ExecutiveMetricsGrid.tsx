@@ -1,6 +1,6 @@
 import React from 'react';
 import { Card } from '@/components/ui/card';
-import { MetricCardData } from '@/types/codingDashboard';
+import { MetricCardData } from '@/portals/coding/types/codingDashboard';
 import {
   BookOpen,
   FileText,

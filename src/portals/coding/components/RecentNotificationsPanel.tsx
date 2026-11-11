@@ -1,6 +1,6 @@
 import React from 'react';
 import { Card } from '@/components/ui/card';
-import { NotificationItem } from '@/types/codingDashboard';
+import { NotificationItem } from '@/portals/coding/types/codingDashboard';
 import { Bell, AlertTriangle, CheckCircle2, Info, XCircle } from 'lucide-react';
 
 interface Props {

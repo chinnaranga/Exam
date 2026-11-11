@@ -5,7 +5,7 @@ import { Toaster as Sonner } from '@/components/ui/sonner';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import Layout from "@/shared/components/Layout";
 import Index from '@/portals/public/pages/Index';
-import CodingDashboard from './pages/coding/CodingDashboard';
+import CodingDashboard from '@/portals/coding/pages/CodingDashboard';
 import Exams from '@/shared/pages/Exams';
 import Users from '@/portals/org-admin/pages/Users';
 import SecuritySettings from '@/shared/pages/SecuritySettings';
@@ -20,7 +20,7 @@ import FacultyLogin from '@/portals/faculty/pages/auth/FacultyLogin';
 import InvigilatorLogin from '@/portals/invigilator/pages/auth/InvigilatorLogin';
 import OrgAdminLogin from '@/portals/org-admin/pages/auth/OrgAdminLogin';
 import SuperAdminLogin from '@/portals/super-admin/pages/auth/SuperAdminLogin';
-import CodingLogin from './portals/coding/auth/CodingLogin';
+import CodingLogin from '@/portals/coding/pages/auth/CodingLogin';
 
 // Dedicated Enterprise Portals & Workspaces
 import AdminLanding from '@/portals/super-admin/pages/AdminLanding';

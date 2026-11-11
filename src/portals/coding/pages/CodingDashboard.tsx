@@ -10,23 +10,23 @@ import {
   useSystemHealth,
   useCodingNotifications,
   useCodingTimeline,
-} from '@/hooks/useCodingDashboard';
-import { DashboardFilterState } from '@/types/codingDashboard';
-import { CodingDashboardHeader } from '@/components/coding/CodingDashboardHeader';
-import { ExecutiveMetricsGrid } from '@/components/coding/ExecutiveMetricsGrid';
-import { ExecutionOverviewSection } from '@/components/coding/ExecutionOverviewSection';
-import { RecentCodingExamsTable } from '@/components/coding/RecentCodingExamsTable';
-import { ProblemRepositoryOverview } from '@/components/coding/ProblemRepositoryOverview';
-import { ExecutionInfrastructureCard } from '@/components/coding/ExecutionInfrastructureCard';
-import { LanguageDistributionGrid } from '@/components/coding/LanguageDistributionGrid';
-import { SubmissionAnalyticsSection } from '@/components/coding/SubmissionAnalyticsSection';
-import { CandidateActivityStream } from '@/components/coding/CandidateActivityStream';
-import { SystemHealthMatrix } from '@/components/coding/SystemHealthMatrix';
-import { QuickActionsGrid } from '@/components/coding/QuickActionsGrid';
-import { RecentNotificationsPanel } from '@/components/coding/RecentNotificationsPanel';
-import { RecentActivityTimeline } from '@/components/coding/RecentActivityTimeline';
-import { GlobalSearchFilterBar } from '@/components/coding/GlobalSearchFilterBar';
-import { CodingModals } from '@/components/coding/CodingModals';
+} from '@/portals/coding/hooks/useCodingDashboard';
+import { DashboardFilterState } from '@/portals/coding/types/codingDashboard';
+import { CodingDashboardHeader } from '@/portals/coding/components/CodingDashboardHeader';
+import { ExecutiveMetricsGrid } from '@/portals/coding/components/ExecutiveMetricsGrid';
+import { ExecutionOverviewSection } from '@/portals/coding/components/ExecutionOverviewSection';
+import { RecentCodingExamsTable } from '@/portals/coding/components/RecentCodingExamsTable';
+import { ProblemRepositoryOverview } from '@/portals/coding/components/ProblemRepositoryOverview';
+import { ExecutionInfrastructureCard } from '@/portals/coding/components/ExecutionInfrastructureCard';
+import { LanguageDistributionGrid } from '@/portals/coding/components/LanguageDistributionGrid';
+import { SubmissionAnalyticsSection } from '@/portals/coding/components/SubmissionAnalyticsSection';
+import { CandidateActivityStream } from '@/portals/coding/components/CandidateActivityStream';
+import { SystemHealthMatrix } from '@/portals/coding/components/SystemHealthMatrix';
+import { QuickActionsGrid } from '@/portals/coding/components/QuickActionsGrid';
+import { RecentNotificationsPanel } from '@/portals/coding/components/RecentNotificationsPanel';
+import { RecentActivityTimeline } from '@/portals/coding/components/RecentActivityTimeline';
+import { GlobalSearchFilterBar } from '@/portals/coding/components/GlobalSearchFilterBar';
+import { CodingModals } from '@/portals/coding/components/CodingModals';
 import { toast } from 'sonner';
 
 export const CodingDashboard: React.FC = () => {

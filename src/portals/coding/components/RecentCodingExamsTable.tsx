@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { CodingExamItem } from '@/types/codingDashboard';
+import { CodingExamItem } from '@/portals/coding/types/codingDashboard';
 import {
   BookOpen,
   Search,

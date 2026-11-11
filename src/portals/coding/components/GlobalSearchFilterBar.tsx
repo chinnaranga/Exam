@@ -1,7 +1,7 @@
 import React from 'react';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { DashboardFilterState } from '@/types/codingDashboard';
+import { DashboardFilterState } from '@/portals/coding/types/codingDashboard';
 import { Search, Filter, Building2, Code, FileCode2, SlidersHorizontal, RefreshCw } from 'lucide-react';
 
 interface Props {

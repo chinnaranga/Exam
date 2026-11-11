@@ -1,6 +1,6 @@
 import React from 'react';
 import { Card } from '@/components/ui/card';
-import { LanguageMetric } from '@/types/codingDashboard';
+import { LanguageMetric } from '@/portals/coding/types/codingDashboard';
 import { Terminal, Code, Cpu, Clock, CheckCircle } from 'lucide-react';
 
 interface Props {
