@@ -15,8 +15,8 @@ import {
 import { useOrganizationStore } from "@/shared/stores/organizationStore";
 import { useAuthStore } from "@/shared/stores/authStore";
 import { useOrganizations, useAuditLogs } from '@/hooks/useApiQueries';
-import HierarchyExplorer from '@/components/organization/HierarchyExplorer';
-import InvitationModal from '@/components/organization/InvitationModal';
+import HierarchyExplorer from '../components/HierarchyExplorer';
+import InvitationModal from '../components/InvitationModal';
 import {
   Building2,
   BookOpen,

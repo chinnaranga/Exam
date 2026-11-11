@@ -7,7 +7,7 @@ import Layout from "@/shared/components/Layout";
 import Index from '@/portals/public/pages/Index';
 import CodingDashboard from './pages/coding/CodingDashboard';
 import Exams from '@/shared/pages/Exams';
-import Users from './pages/Users';
+import Users from '@/portals/org-admin/pages/Users';
 import SecuritySettings from '@/shared/pages/SecuritySettings';
 import NotFound from '@/shared/pages/NotFound';
 
@@ -18,7 +18,7 @@ import LightLanding from '@/portals/public/pages/LightLanding';
 import PortalSelection from '@/portals/public/pages/auth/PortalSelection';
 import FacultyLogin from '@/portals/faculty/pages/auth/FacultyLogin';
 import InvigilatorLogin from '@/portals/invigilator/pages/auth/InvigilatorLogin';
-import OrgAdminLogin from './portals/org-admin/auth/OrgAdminLogin';
+import OrgAdminLogin from '@/portals/org-admin/pages/auth/OrgAdminLogin';
 import SuperAdminLogin from './portals/super-admin/auth/SuperAdminLogin';
 import CodingLogin from './portals/coding/auth/CodingLogin';
 
@@ -61,10 +61,10 @@ import StudentProfileEmergency from '@/portals/student/pages/profile/StudentProf
 import StudentProfilePreferences from '@/portals/student/pages/profile/StudentProfilePreferences';
 import StudentProfilePrivacy from '@/portals/student/pages/profile/StudentProfilePrivacy';
 
-import OrgAdminLayout from './portals/org-admin/shell/OrgAdminLayout';
-import OrgAdminUsers from './portals/org-admin/OrgAdminUsers';
-import OrgAdminStructure from './portals/org-admin/OrgAdminStructure';
-import OrgAdminAssessments from './portals/org-admin/OrgAdminAssessments';
+import OrgAdminLayout from '@/portals/org-admin/layout/OrgAdminLayout';
+import OrgAdminUsers from '@/portals/org-admin/pages/OrgAdminUsers';
+import OrgAdminStructure from '@/portals/org-admin/pages/OrgAdminStructure';
+import OrgAdminAssessments from '@/portals/org-admin/pages/OrgAdminAssessments';
 
 import SuperAdminLayout from './portals/super-admin/shell/SuperAdminLayout';
 import SuperAdminTenants from './portals/super-admin/SuperAdminTenants';
@@ -84,14 +84,14 @@ import StudentMFA from '@/portals/student/pages/auth/StudentMFA';
 import StudentAccountRecovery from '@/portals/student/pages/auth/StudentAccountRecovery';
 
 // Organization Admin Pages
-import OrganizationDashboard from './pages/organization/OrganizationDashboard';
-import BrandingSettings from './pages/organization/BrandingSettings';
-import InvitationCenter from './pages/organization/InvitationCenter';
-import WorkspaceSettings from './pages/organization/WorkspaceSettings';
-import CampusManagement from './pages/organization/CampusManagement';
-import DepartmentManagement from './pages/organization/DepartmentManagement';
-import ProgramManagement from './pages/organization/ProgramManagement';
-import WorkspaceManagement from './pages/organization/WorkspaceManagement';
+import OrganizationDashboard from '@/portals/org-admin/pages/OrganizationDashboard';
+import BrandingSettings from '@/portals/org-admin/pages/BrandingSettings';
+import InvitationCenter from '@/portals/org-admin/pages/InvitationCenter';
+import WorkspaceSettings from '@/portals/org-admin/pages/WorkspaceSettings';
+import CampusManagement from '@/portals/org-admin/pages/CampusManagement';
+import DepartmentManagement from '@/portals/org-admin/pages/DepartmentManagement';
+import ProgramManagement from '@/portals/org-admin/pages/ProgramManagement';
+import WorkspaceManagement from '@/portals/org-admin/pages/WorkspaceManagement';
 
 // User Identity Center Pages
 import ProfilePage from '@/shared/pages/me/ProfilePage';
