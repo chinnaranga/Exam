@@ -113,6 +113,16 @@ export const VIOLATION_SEVERITY_TABLE: Record<string, ViolationRuleDefinition> =
     description: 'A second examination login was attempted for the same candidate while an active session exists.',
     invigilatorAlert: true,
   },
+  AUTOSAVE_CHAIN_TAMPERED: {
+    ruleId: 'AUTOSAVE_CHAIN_TAMPERED',
+    name: 'Autosave Hash Chain Tampered',
+    severity: 'CRITICAL',
+    points: 8,
+    isInstantKill: true,
+    alertUser: true,
+    description: 'Hash-chained autosave ledger failed cryptographic verification or contains broken links.',
+    invigilatorAlert: true,
+  },
 
   // ─── HIGH (3 Points) ────────────────────────────────────────────────────────
   FULLSCREEN_EXIT_EXTENDED: {
@@ -185,8 +195,28 @@ export const VIOLATION_SEVERITY_TABLE: Record<string, ViolationRuleDefinition> =
     description: 'Browser DevTools console or JavaScript debugger opened during examination.',
     invigilatorAlert: true,
   },
+  WATERMARK_TAMPERED: {
+    ruleId: 'WATERMARK_TAMPERED',
+    name: 'Forensic Watermark Removed or Tampered',
+    severity: 'HIGH',
+    points: 3,
+    isInstantKill: false,
+    alertUser: true,
+    description: 'Candidate ID/session forensic watermark overlay was removed, obscured, or modified in the DOM.',
+    invigilatorAlert: true,
+  },
 
   // ─── MEDIUM (2 Points) ──────────────────────────────────────────────────────
+  OFFLINE_LIMIT_EXCEEDED: {
+    ruleId: 'OFFLINE_LIMIT_EXCEEDED',
+    name: 'Offline Limit Exceeded (>3 Mins)',
+    severity: 'MEDIUM',
+    points: 2,
+    isInstantKill: false,
+    alertUser: true,
+    description: 'Client disconnected from proctoring telemetry for longer than the maximum 3-minute grace period.',
+    invigilatorAlert: true,
+  },
   TAB_SWITCH: {
     ruleId: 'TAB_SWITCH',
     name: 'Browser Tab Switch',

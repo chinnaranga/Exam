@@ -7,6 +7,7 @@ import { EnterpriseOperationsController } from './operations/controllers/Enterpr
 import { examSessionAuthority } from './integrity/ExamSessionAuthority';
 import { violationEngine } from './integrity/ViolationEngine';
 import { identityVerificationService } from './identity/IdentityVerificationService';
+import { examRandomizationEngine } from './exam/ExamRandomizationEngine';
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -23,6 +24,8 @@ app.use('/api/session', violationEngine.router);
 app.use('/api/v1/session', violationEngine.router);
 app.use('/api/session', identityVerificationService.router);
 app.use('/api/v1/session', identityVerificationService.router);
+app.use('/api/session', examRandomizationEngine.router);
+app.use('/api/v1/session', examRandomizationEngine.router);
 
 // Phase 4 Enterprise Integrity Intelligence Platform APIs
 const humanReviewAPI = new HumanReviewAPI();

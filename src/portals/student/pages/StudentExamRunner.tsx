@@ -59,6 +59,10 @@ import { BrowserCompatibility } from '@/engines/exam-security/fullscreen/utils/B
 import { ReverifyLivenessModal } from '@/engines/exam-security/ui/ReverifyLivenessModal';
 import { useServerViolationSentinel } from '@/engines/exam-security/hooks/useServerViolationSentinel';
 import { ViolationToast, CriticalAlertOverlay, LockdownTerminatedScreen } from '@/engines/exam-security/ui';
+import { TamperResistantWatermark } from '@/engines/exam-security/watermark/TamperResistantWatermark';
+import { useHashChainedAutosave } from '@/engines/exam-security/autosave/useHashChainedAutosave';
+import { useOfflineLimitSentinel } from '@/engines/exam-security/offline/useOfflineLimitSentinel';
+import { OfflinePausedScreen } from '@/engines/exam-security/offline/OfflinePausedScreen';
 
 interface QuestionItem {
   id: number;
@@ -162,7 +166,6 @@ const StudentExamRunnerContent: React.FC = () => {
   const [showSubmitModal, setShowSubmitModal] = useState(false);
   const [showCalculator, setShowCalculator] = useState(false);
   const [calcInput, setCalcInput] = useState('');
-  const [isOnline, setIsOnline] = useState(true);
 
   // Auto-Save State Sync & Live Proctor Broadcast
   useEffect(() => {
@@ -185,24 +188,6 @@ const StudentExamRunnerContent: React.FC = () => {
     }
   }, [currentIdx, selectedAnswers, flaggedQuestions, visitedQuestions, timeLeft, examStarted]);
 
-  // Online / Offline Sentinel Listener
-  useEffect(() => {
-    const handleOnline = () => {
-      setIsOnline(true);
-      toast.success('Network Reconnected', { description: 'Syncing cached responses with AssessIQ cloud.' });
-    };
-    const handleOffline = () => {
-      setIsOnline(false);
-      toast.error('Network Connection Interrupted', { description: 'Offline Autosave Active. Responses cached locally.' });
-    };
-    window.addEventListener('online', handleOnline);
-    window.addEventListener('offline', handleOffline);
-    return () => {
-      window.removeEventListener('online', handleOnline);
-      window.removeEventListener('offline', handleOffline);
-    };
-  }, []);
-
   // Server-authoritative violation sentinel & weighted points engine
   const examSessionId = 'sess_demo_candidate';
   const {
@@ -216,6 +201,34 @@ const StudentExamRunnerContent: React.FC = () => {
   } = useServerViolationSentinel({
     sessionId: examSessionId,
     pollIntervalMs: 5000,
+  });
+
+  // Hash-Chained WebCrypto IndexedDB Autosave
+  const { saveAnswer, syncChainWithServer, recordsCount } = useHashChainedAutosave({
+    sessionId: examSessionId,
+    onChainTamperDetected: (details) => {
+      reportViolation('AUTOSAVE_CHAIN_TAMPERED', details);
+      toast.error('Autosave Chain Tampered', {
+        description: 'CRITICAL: Hash chain failed cryptographic verification.',
+      });
+    },
+  });
+
+  // Offline Limit Sentinel (Maximum 3 Minutes = 180s)
+  const { isOnline, isExamPaused, offlineSecondsElapsed } = useOfflineLimitSentinel({
+    maxOfflineSeconds: 180,
+    onOfflineLimitExceeded: (duration) => {
+      reportViolation('OFFLINE_LIMIT_EXCEEDED', { duration });
+      toast.error('Offline Limit Exceeded', {
+        description: 'Workstation disconnected for > 3 minutes. Exam paused.',
+      });
+    },
+    onConnectivityRestored: (duration) => {
+      syncChainWithServer();
+      toast.success('Connectivity Restored', {
+        description: `Reconnected after ${duration}s. Resuming examination.`,
+      });
+    },
   });
 
   // Re-verification State (Random 10s biometric challenges mid-exam)
@@ -368,11 +381,14 @@ const StudentExamRunnerContent: React.FC = () => {
 
   const currentQ = EXAM_QUESTIONS[currentIdx];
 
-  // Option Selection & Immediate Auto-Save
+  // Option Selection & Cryptographic Hash-Chained Auto-Save
   const handleSelectOption = (optIdx: number) => {
     setSelectedAnswers((prev) => ({ ...prev, [currentIdx]: optIdx }));
     setVisitedQuestions((prev) => ({ ...prev, [currentIdx]: true }));
-    toast.success('Response Auto-Saved', { description: `Question ${currentIdx + 1} choice saved.` });
+    saveAnswer(String(currentQ.id), optIdx).catch(() => {});
+    toast.success('Response Cryptographically Autosaved', {
+      description: `Question ${currentIdx + 1} choice sealed in IndexedDB hash chain.`,
+    });
   };
 
   const handleClearResponse = () => {
@@ -540,7 +556,17 @@ const StudentExamRunnerContent: React.FC = () => {
       <main className="max-w-7xl w-full mx-auto my-auto p-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Left Question & Option Panel (8 Cols) */}
         <div className="lg:col-span-8 space-y-6">
-          <Card className="p-8 rounded-2xl bg-white border border-[#E2E8F0] shadow-md space-y-6 relative overflow-hidden">
+          <TamperResistantWatermark
+            candidateId="cand_student_2026"
+            sessionId={examSessionId}
+            onWatermarkTampered={(details) => {
+              reportViolation('WATERMARK_TAMPERED', details);
+              toast.error('Watermark Tampered!', {
+                description: 'HIGH Violation (3 points): forensic watermark manipulation detected.',
+              });
+            }}
+          >
+            <Card className="p-8 rounded-2xl bg-white border border-[#E2E8F0] shadow-md space-y-6 relative overflow-hidden">
             {/* Question Bar Header */}
             <div className="flex items-center justify-between border-b border-[#E2E8F0] pb-4">
               <div className="flex items-center space-x-3">
@@ -633,6 +659,7 @@ const StudentExamRunnerContent: React.FC = () => {
               </Button>
             </div>
           </Card>
+          </TamperResistantWatermark>
         </div>
 
         {/* Right Palette, Filters & Progress Summary (4 Cols) */}
@@ -828,6 +855,14 @@ const StudentExamRunnerContent: React.FC = () => {
         <LockdownTerminatedScreen
           reason="Maximum violation points exceeded or critical identity anomaly detected."
           onSubmitFinal={handleSubmitFinal}
+        />
+      )}
+
+      {/* Offline Paused Screen (After 3-Minute Limit) */}
+      {isExamPaused && (
+        <OfflinePausedScreen
+          offlineDurationSeconds={offlineSecondsElapsed}
+          recordsCount={recordsCount}
         />
       )}
 

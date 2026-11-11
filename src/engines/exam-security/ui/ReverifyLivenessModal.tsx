@@ -203,3 +203,4 @@ export const ReverifyLivenessModal: React.FC<ReverifyLivenessModalProps> = ({
     </div>
   );
 };
+

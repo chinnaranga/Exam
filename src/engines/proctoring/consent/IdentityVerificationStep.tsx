@@ -514,3 +514,4 @@ export const IdentityVerificationStep: React.FC<IdentityVerificationStepProps> =
     </div>
   );
 };
+
