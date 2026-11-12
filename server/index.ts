@@ -9,6 +9,7 @@ import { violationEngine } from './integrity/ViolationEngine';
 import { identityVerificationService } from './identity/IdentityVerificationService';
 import { examRandomizationEngine } from './exam/ExamRandomizationEngine';
 import { invigilatorActionController } from './integrity/InvigilatorActionController';
+import { examConfigRouter } from './exam/ExamConfigController';
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -47,6 +48,10 @@ app.use('/api/integrity', humanReviewAPI.router);
 // Layer 5 Invigilator Platform & Incident Management APIs
 app.use('/api/v1/invigilator', invigilatorActionController.router);
 app.use('/api/invigilator', invigilatorActionController.router);
+
+// Configurable Security Profiles & Versioned Exam Blueprints
+app.use('/api/v1/exam-config', examConfigRouter);
+app.use('/api/exam-config', examConfigRouter);
 
 import pipelineRoutes from './confidence-pipeline/routes/pipelineRoutes';
 

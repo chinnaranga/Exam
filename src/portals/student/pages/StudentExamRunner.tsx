@@ -37,6 +37,7 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { PreExamPermissionModal } from '@/engines/proctoring/consent/PreExamPermissionModal';
+import { PreExamRulesSummary } from '@/engines/proctoring/consent/PreExamRulesSummary';
 import { ConsentManager } from '@/engines/proctoring/consent/ConsentManager';
 import { CameraManager } from '@/engines/proctoring/camera/CameraManager';
 import { FaceEngine } from '@/engines/proctoring/face/FaceEngine';
@@ -148,6 +149,7 @@ const StudentExamRunnerContent: React.FC = () => {
   const { lastEvent: navEvent } = useNavigationSentinel();
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [examStarted, setExamStarted] = useState(false);
+  const [rulesAcknowledged, setRulesAcknowledged] = useState(false);
   const [showExitOverlay, setShowExitOverlay] = useState(false);
 
   // Persistence Key
@@ -464,6 +466,19 @@ const StudentExamRunnerContent: React.FC = () => {
 
   // Pre-Exam Hardware & Sensor Permission Screen (No Developer Tabs)
   if (!examStarted) {
+    if (!rulesAcknowledged) {
+      return (
+        <div className="min-h-screen bg-[#FAFAF7] text-[#2B2350] flex items-center justify-center p-6 font-sans">
+          <PreExamRulesSummary
+            examTitle="CS-402: Distributed Consensus & Raft Architecture"
+            durationMinutes={60}
+            profileTier="HIGH_STAKES"
+            onAcknowledge={() => setRulesAcknowledged(true)}
+          />
+        </div>
+      );
+    }
+
     return (
       <div className="min-h-screen bg-[#0F172A] text-white flex items-center justify-center p-6 font-sans">
         <div className="max-w-2xl w-full">

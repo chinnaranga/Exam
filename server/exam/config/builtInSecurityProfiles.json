@@ -1,0 +1,106 @@
+{
+  "profiles": [
+    {
+      "id": "PRACTICE",
+      "name": "Practice & Formative Assessment",
+      "tier": "PRACTICE",
+      "description": "Zero-friction formative learning mode. No proctoring sensors or camera requirements; hints are permitted and security events are logged only without penalties.",
+      "settings": {
+        "proctoringEnabled": false,
+        "hintsAllowed": true,
+        "violationsMode": "LOG_ONLY",
+        "fullscreenRequired": false,
+        "focusTracking": false,
+        "faceGazeTracking": false,
+        "cameraMode": "NONE",
+        "phoneSecondCameraRequired": false,
+        "identityVerificationRequired": false,
+        "reverificationRequired": false,
+        "reverificationIntervalCount": 0,
+        "typingBaselineRequired": false,
+        "requireSecureClient": false,
+        "offlineLimitMinutes": null,
+        "forwardOnlyNavigation": false,
+        "lockSectionOnComplete": false,
+        "watermarkOverlay": false,
+        "calculatorAllowed": true,
+        "scratchpadAllowed": true,
+        "allowedTools": ["CALCULATOR", "SCRATCHPAD", "FORMULA_SHEET"],
+        "thresholds": {
+          "overlayThreshold": 4,
+          "terminateThreshold": 8,
+          "decayIntervalMs": 300000,
+          "decayPointsPerInterval": 1
+        }
+      }
+    },
+    {
+      "id": "STANDARD",
+      "name": "Standard Academic Proctored Examination",
+      "tier": "STANDARD",
+      "description": "Standard university midterm or semester examination. Enforces full-screen lockdown, window focus tracking, Wasm facial/gaze orientation analysis, and server-side weighted violation engine.",
+      "settings": {
+        "proctoringEnabled": true,
+        "hintsAllowed": false,
+        "violationsMode": "ACTIVE",
+        "fullscreenRequired": true,
+        "focusTracking": true,
+        "faceGazeTracking": true,
+        "cameraMode": "PRIMARY_ONLY",
+        "phoneSecondCameraRequired": false,
+        "identityVerificationRequired": false,
+        "reverificationRequired": false,
+        "reverificationIntervalCount": 0,
+        "typingBaselineRequired": false,
+        "requireSecureClient": false,
+        "offlineLimitMinutes": 5,
+        "forwardOnlyNavigation": false,
+        "lockSectionOnComplete": false,
+        "watermarkOverlay": true,
+        "calculatorAllowed": false,
+        "scratchpadAllowed": true,
+        "allowedTools": ["SCRATCHPAD"],
+        "thresholds": {
+          "overlayThreshold": 4,
+          "terminateThreshold": 8,
+          "decayIntervalMs": 300000,
+          "decayPointsPerInterval": 1
+        }
+      }
+    },
+    {
+      "id": "HIGH_STAKES",
+      "name": "High-Stakes Certification & Licensure",
+      "tier": "HIGH_STAKES",
+      "description": "Maximum integrity licensure and certification. Incorporates full Standard proctoring plus mandatory pre-exam government ID biometric extraction, random mid-exam re-verification, mobile QR-paired second camera, locked-down desktop client requirement, 3-minute strict offline cap, and forward-only navigation.",
+      "settings": {
+        "proctoringEnabled": true,
+        "hintsAllowed": false,
+        "violationsMode": "ACTIVE",
+        "fullscreenRequired": true,
+        "focusTracking": true,
+        "faceGazeTracking": true,
+        "cameraMode": "DUAL_CAMERA_QR",
+        "phoneSecondCameraRequired": true,
+        "identityVerificationRequired": true,
+        "reverificationRequired": true,
+        "reverificationIntervalCount": 3,
+        "typingBaselineRequired": true,
+        "requireSecureClient": true,
+        "offlineLimitMinutes": 3,
+        "forwardOnlyNavigation": true,
+        "lockSectionOnComplete": true,
+        "watermarkOverlay": true,
+        "calculatorAllowed": false,
+        "scratchpadAllowed": true,
+        "allowedTools": ["SCRATCHPAD"],
+        "thresholds": {
+          "overlayThreshold": 4,
+          "terminateThreshold": 8,
+          "decayIntervalMs": 300000,
+          "decayPointsPerInterval": 1
+        }
+      }
+    }
+  ]
+}
