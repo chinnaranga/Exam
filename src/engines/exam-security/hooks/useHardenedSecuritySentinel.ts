@@ -100,3 +100,4 @@ export function useHardenedSecuritySentinel({
     layer2Hardener: layer2Ref.current,
   };
 }
+

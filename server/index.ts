@@ -8,6 +8,7 @@ import { examSessionAuthority } from './integrity/ExamSessionAuthority';
 import { violationEngine } from './integrity/ViolationEngine';
 import { identityVerificationService } from './identity/IdentityVerificationService';
 import { examRandomizationEngine } from './exam/ExamRandomizationEngine';
+import { invigilatorActionController } from './integrity/InvigilatorActionController';
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -42,6 +43,10 @@ app.use('/api/v1/session', examRandomizationEngine.router);
 // Phase 4 Enterprise Integrity Intelligence Platform APIs
 const humanReviewAPI = new HumanReviewAPI();
 app.use('/api/integrity', humanReviewAPI.router);
+
+// Layer 5 Invigilator Platform & Incident Management APIs
+app.use('/api/v1/invigilator', invigilatorActionController.router);
+app.use('/api/invigilator', invigilatorActionController.router);
 
 import pipelineRoutes from './confidence-pipeline/routes/pipelineRoutes';
 

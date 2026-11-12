@@ -88,3 +88,4 @@ export const OfflinePausedScreen: React.FC<OfflinePausedScreenProps> = ({
 };
 
 export default OfflinePausedScreen;
+

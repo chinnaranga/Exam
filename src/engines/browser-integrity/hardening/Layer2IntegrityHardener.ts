@@ -470,3 +470,4 @@ export async function computeSha256(bufferOrBytes: ArrayBuffer | Uint8Array): Pr
     throw new Error('SHA-256 is not supported in this runtime environment');
   }
 }
+
