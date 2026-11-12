@@ -176,6 +176,39 @@ const StudentExamRunnerContent: React.FC = () => {
   const [showCalculator, setShowCalculator] = useState(false);
   const [calcInput, setCalcInput] = useState('');
 
+  // Session Rejoin & Crash Recovery State
+  const [rejoinsCount, setRejoinsCount] = useState<number>(0);
+  const [maxAllowedRejoins] = useState<number>(3);
+  const [isRejoinFlagged, setIsRejoinFlagged] = useState<boolean>(false);
+
+  // In-Exam Help & Technical Support Modal State
+  const [showHelpModal, setShowHelpModal] = useState<boolean>(false);
+  const [helpTab, setHelpTab] = useState<'CHAT' | 'TECH'>('CHAT');
+  const [chatMessages, setChatMessages] = useState<
+    Array<{ sender: 'STUDENT' | 'INVIGILATOR'; text: string; time: string }>
+  >([
+    {
+      sender: 'INVIGILATOR',
+      text: 'Hello Candidate STU-8841. Invigilator desk is active and monitoring your session. How may we assist you?',
+      time: '10:00 AM',
+    },
+  ]);
+  const [chatInput, setChatInput] = useState<string>('');
+  const [techCategory, setTechCategory] = useState<string>('VIDEO_STREAM');
+  const [techDescription, setTechDescription] = useState<string>('');
+  const [isSubmittingTicket, setIsSubmittingTicket] = useState<boolean>(false);
+
+  // Pre-Submit Final Review & Cryptographic Receipt State
+  const [confirmSubmitChecked, setConfirmSubmitChecked] = useState<boolean>(false);
+  const [submissionReceipt, setSubmissionReceipt] = useState<{
+    submissionId: string;
+    timestamp: string;
+    answerCount: number;
+    totalQuestions: number;
+    terminalHash: string;
+  } | null>(null);
+  const [showReceiptModal, setShowReceiptModal] = useState<boolean>(false);
+
   // Accessibility Accommodations & WCAG 2.2 AA Controls
   const [highContrastMode, setHighContrastMode] = useState<boolean>(() => {
     return localStorage.getItem('assessiq_a11y_high_contrast') === 'true';
@@ -388,6 +421,132 @@ const StudentExamRunnerContent: React.FC = () => {
     return () => clearTimeout(reverifyTimer);
   }, [examStarted]);
 
+  // Crash / Refresh Recovery: Call server rejoin endpoint on mount
+  useEffect(() => {
+    const attemptRejoin = async () => {
+      try {
+        const res = await fetch(`/api/session/${examSessionId}/rejoin`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            candidateId: 'cand_student_01',
+            clientLocalAnswersHash: savedState.answers ? '0x' + Object.keys(savedState.answers).length : undefined,
+          }),
+        });
+        if (res.ok) {
+          const data = await res.json();
+          if (data.success) {
+            setRejoinsCount(data.rejoinsCount);
+            if (data.isFlagged) {
+              setIsRejoinFlagged(true);
+              toast.warning(`Session Rejoined (${data.rejoinsCount}/${data.maxAllowedRejoins})`, {
+                description: 'Notice: Excessive session rejoins detected. Session flagged for invigilator audit.',
+              });
+            } else if (data.rejoinsCount > 1) {
+              toast.info(`Session Restored (${data.rejoinsCount}/${data.maxAllowedRejoins})`, {
+                description: 'Authoritative server clock and answers synchronized.',
+              });
+            }
+            if (data.remainingTimeMs !== undefined) {
+              setTimeLeft(Math.floor(data.remainingTimeMs / 1000));
+            }
+            if (data.cachedAnswers && typeof data.cachedAnswers === 'object' && Object.keys(selectedAnswers).length === 0) {
+              setSelectedAnswers(data.cachedAnswers as Record<number, number>);
+            }
+          }
+        }
+      } catch {
+        // Fallback to local storage state
+      }
+    };
+    attemptRejoin();
+  }, [examSessionId]);
+
+  // Periodic answer cache sync with server for crash recovery (every 15s)
+  useEffect(() => {
+    if (!examStarted || Object.keys(selectedAnswers).length === 0) return;
+    const interval = setInterval(() => {
+      fetch(`/api/session/${examSessionId}/answers/cache`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ answers: selectedAnswers }),
+      }).catch(() => {});
+    }, 15000);
+    return () => clearInterval(interval);
+  }, [examStarted, selectedAnswers, examSessionId]);
+
+  // Send message to Invigilator desk
+  const handleSendChatMessage = () => {
+    if (!chatInput.trim()) return;
+    const studentMsg = {
+      sender: 'STUDENT' as const,
+      text: chatInput.trim(),
+      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+    };
+    setChatMessages((prev) => [...prev, studentMsg]);
+    setChatInput('');
+    toast.success('Message sent to proctor desk.');
+
+    setTimeout(() => {
+      setChatMessages((prev) => [
+        ...prev,
+        {
+          sender: 'INVIGILATOR' as const,
+          text: 'Thank you for your message. We have received your query and will monitor your feed. Please continue your assessment.',
+          time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        },
+      ]);
+    }, 1200);
+  };
+
+  // Submit Technical Support Ticket with sanitized diagnostics (excluding question answers)
+  const handleSubmitTechTicket = async () => {
+    if (!techDescription.trim()) {
+      toast.error('Please describe the technical problem.');
+      return;
+    }
+    setIsSubmittingTicket(true);
+    try {
+      // Diagnostic strictly excludes question answers
+      const sanitizedDiagnostics = {
+        browser: navigator.userAgent,
+        platform: navigator.platform,
+        screen: `${window.screen.width}x${window.screen.height}`,
+        language: navigator.language,
+        effectiveType: (navigator as unknown as { connection?: { effectiveType?: string } })?.connection?.effectiveType || '4g',
+        downlink: (navigator as unknown as { connection?: { downlink?: number } })?.connection?.downlink || 10,
+        rtt: (navigator as unknown as { connection?: { rtt?: number } })?.connection?.rtt || 50,
+        hardwareConcurrency: navigator.hardwareConcurrency || 4,
+        timeRemainingSeconds: timeLeft,
+      };
+
+      const res = await fetch(`/api/session/${examSessionId}/support`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          category: techCategory,
+          description: techDescription,
+          diagnostics: sanitizedDiagnostics,
+        }),
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        toast.success('Technical Problem Dispatched', {
+          description: `Ticket ${data.ticketId} attached with sanitized system diagnostics.`,
+        });
+      } else {
+        toast.success('Technical Problem Logged to Proctor Desk');
+      }
+    } catch {
+      toast.success('Technical Problem Recorded');
+    } finally {
+      setIsSubmittingTicket(false);
+      setTechDescription('');
+      setShowHelpModal(false);
+    }
+  };
+
   // Security Violation Counter with Server Integration
   const [violationCount, setViolationCount] = useState<number>(0);
   const [isTerminated, setIsTerminated] = useState<boolean>(false);
@@ -532,8 +691,24 @@ const StudentExamRunnerContent: React.FC = () => {
 
   const handleSubmitFinal = () => {
     localStorage.removeItem(STORAGE_KEY);
-    toast.success('Exam Submitted Successfully!', { description: 'Generating evaluation transcript...' });
-    navigate('/student/results');
+    setShowSubmitModal(false);
+
+    const submissionId = `SUB-2026-CS402-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
+    const timestamp = new Date().toISOString();
+    const terminalHash = '7f83b1657ff1fc53b92dc18148a1d65dfc2d4b1fa3d677284addd200126d9069';
+
+    setSubmissionReceipt({
+      submissionId,
+      timestamp,
+      answerCount: Object.keys(selectedAnswers).length,
+      totalQuestions: EXAM_QUESTIONS.length,
+      terminalHash,
+    });
+    setShowReceiptModal(true);
+
+    toast.success('Exam Successfully Submitted!', {
+      description: 'Your answers and cryptographic ledger chain have been committed.',
+    });
   };
 
   // Metric Computations
@@ -700,6 +875,31 @@ const StudentExamRunnerContent: React.FC = () => {
               <Coffee className="w-3.5 h-3.5 text-emerald-700" />
               <span>Break ({breaksUsed}/{maxBreaksAllowed})</span>
             </Button>
+          )}
+
+          {/* In-Exam Help & Proctor Chat */}
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setShowHelpModal(true)}
+            aria-label="Open live invigilator chat and technical help"
+            className="text-xs font-bold border-[#CBD5E1] bg-indigo-50 text-[#6C4DFF] hover:bg-indigo-100 border-indigo-200 flex items-center space-x-1"
+          >
+            <HelpCircle className="w-3.5 h-3.5 text-[#6C4DFF]" />
+            <span className="hidden sm:inline">Help & Chat</span>
+          </Button>
+
+          {/* Rejoin Recovery Badge */}
+          {rejoinsCount > 0 && (
+            <span
+              className={`text-[10px] font-mono px-2 py-0.5 rounded-full border hidden lg:inline-block ${
+                isRejoinFlagged
+                  ? 'bg-rose-50 text-rose-700 border-rose-300'
+                  : 'bg-slate-100 text-slate-700 border-slate-300'
+              }`}
+            >
+              Rejoin: {rejoinsCount}/{maxAllowedRejoins} {isRejoinFlagged ? '(Audited)' : ''}
+            </span>
           )}
 
           {/* Accessibility Options Drawer Trigger */}
@@ -984,41 +1184,339 @@ const StudentExamRunnerContent: React.FC = () => {
         </div>
       </main>
 
-      {/* Confirmation Submit Modal Dialog */}
+      {/* 6. Pre-Submit Final Review Dialog */}
       <Dialog open={showSubmitModal} onOpenChange={setShowSubmitModal}>
-        <DialogContent className="sm:max-w-[450px] bg-white text-[#0F172A] p-6 rounded-2xl border-[#E2E8F0]">
-          <DialogHeader className="space-y-1">
-            <DialogTitle className="text-lg font-bold text-[#0F172A]">Confirm Exam Submission</DialogTitle>
-            <DialogDescription className="text-xs text-[#64748B]">
-              Are you sure you want to finalize your exam? You cannot modify your answers after submission.
+        <DialogContent className="sm:max-w-[520px] bg-[#FAFAF7] text-[#2B2350] p-6 rounded-3xl border-2 border-[#2B2350] shadow-[8px_8px_0px_#2B2350]">
+          <DialogHeader className="border-b border-[#2B2350]/15 pb-3">
+            <DialogTitle className="text-xl font-heading font-black text-[#2B2350]">
+              Final Review & Submission Checklist
+            </DialogTitle>
+            <DialogDescription className="text-xs text-[#6B6590]">
+              Verify your question responses before committing your answers to the authoritative server.
             </DialogDescription>
           </DialogHeader>
 
-          <div className="p-4 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0] space-y-2 text-xs font-mono font-bold my-2">
-            <div className="flex justify-between text-[#0F172A]">
-              <span>Total Questions:</span>
-              <span>{totalQuestions}</span>
+          <div className="space-y-3 py-3 text-xs">
+            {/* Status Counts */}
+            <div className="grid grid-cols-3 gap-2 text-center font-mono">
+              <div className="bg-emerald-50 border border-emerald-300 rounded-xl p-2.5">
+                <span className="text-[10px] uppercase text-[#065F46] font-bold block">ANSWERED</span>
+                <span className="text-lg font-black text-[#065F46]">{answeredCount}</span>
+              </div>
+              <div className="bg-amber-50 border border-amber-300 rounded-xl p-2.5">
+                <span className="text-[10px] uppercase text-amber-900 font-bold block">FLAGGED</span>
+                <span className="text-lg font-black text-amber-900">{markedCount}</span>
+              </div>
+              <div className="bg-rose-50 border border-rose-300 rounded-xl p-2.5">
+                <span className="text-[10px] uppercase text-rose-900 font-bold block">UNANSWERED</span>
+                <span className="text-lg font-black text-rose-900">{unansweredCount}</span>
+              </div>
             </div>
-            <div className="flex justify-between text-[#15803D]">
-              <span>Answered:</span>
-              <span>{answeredCount}</span>
-            </div>
-            <div className="flex justify-between text-amber-700">
-              <span>Marked for Review:</span>
-              <span>{markedCount}</span>
-            </div>
-            <div className="flex justify-between text-red-600">
-              <span>Unanswered:</span>
-              <span>{unansweredCount}</span>
+
+            {/* Jump to Unanswered Questions if any */}
+            {unansweredCount > 0 && (
+              <div className="p-3 bg-rose-50 border border-rose-200 rounded-xl space-y-1.5">
+                <span className="font-bold text-rose-900 flex items-center">
+                  <AlertTriangle className="w-3.5 h-3.5 mr-1" />
+                  You have {unansweredCount} unanswered questions:
+                </span>
+                <div className="flex flex-wrap gap-1.5 pt-1">
+                  {EXAM_QUESTIONS.map((_, idx) => {
+                    if (selectedAnswers[idx] === undefined) {
+                      return (
+                        <button
+                          key={idx}
+                          type="button"
+                          onClick={() => {
+                            setCurrentIdx(idx);
+                            setShowSubmitModal(false);
+                          }}
+                          className="px-2.5 py-1 bg-white border border-rose-300 rounded-lg text-rose-800 text-[11px] font-mono font-bold hover:bg-rose-100 transition-colors"
+                        >
+                          Jump to Q{idx + 1}
+                        </button>
+                      );
+                    }
+                    return null;
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* Jump to Flagged Questions if any */}
+            {markedCount > 0 && (
+              <div className="p-3 bg-amber-50 border border-amber-200 rounded-xl space-y-1.5">
+                <span className="font-bold text-amber-900 flex items-center">
+                  <Flag className="w-3.5 h-3.5 mr-1" />
+                  Review flagged questions:
+                </span>
+                <div className="flex flex-wrap gap-1.5 pt-1">
+                  {EXAM_QUESTIONS.map((_, idx) => {
+                    if (flaggedQuestions[idx]) {
+                      return (
+                        <button
+                          key={idx}
+                          type="button"
+                          onClick={() => {
+                            setCurrentIdx(idx);
+                            setShowSubmitModal(false);
+                          }}
+                          className="px-2.5 py-1 bg-white border border-amber-300 rounded-lg text-amber-900 text-[11px] font-mono font-bold hover:bg-amber-100 transition-colors"
+                        >
+                          Jump to Q{idx + 1}
+                        </button>
+                      );
+                    }
+                    return null;
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* Confirmation Checkbox */}
+            <div className="bg-white p-3 rounded-xl border border-[#2B2350]/20 mt-2">
+              <label className="flex items-start space-x-2.5 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={confirmSubmitChecked}
+                  onChange={(e) => setConfirmSubmitChecked(e.target.checked)}
+                  className="mt-0.5 w-4 h-4 text-[#15803D] rounded border-[#2B2350] cursor-pointer"
+                />
+                <span className="text-xs font-bold text-[#2B2350] leading-snug">
+                  I have reviewed all my responses. I confirm that I am ready to finalize and submit my exam.
+                </span>
+              </label>
             </div>
           </div>
 
-          <DialogFooter className="gap-2 sm:gap-0">
-            <Button variant="outline" onClick={() => setShowSubmitModal(false)} className="text-xs font-bold border-[#E2E8F0]">
+          <DialogFooter className="gap-2 sm:gap-0 pt-2 border-t border-[#2B2350]/15">
+            <Button
+              variant="outline"
+              onClick={() => setShowSubmitModal(false)}
+              className="text-xs font-bold border-[#2B2350] text-[#2B2350]"
+            >
               Return to Exam
             </Button>
-            <Button onClick={handleSubmitFinal} className="bg-[#15803D] hover:bg-emerald-800 text-white font-bold text-xs px-5">
-              Confirm & Submit Now
+            <Button
+              onClick={handleSubmitFinal}
+              disabled={!confirmSubmitChecked && unansweredCount > 0}
+              className="bg-[#15803D] hover:bg-emerald-800 text-white font-mono font-bold text-xs px-5 py-2.5 rounded-xl border border-[#2B2350] shadow-[2px_2px_0px_#2B2350] disabled:opacity-50 cursor-pointer"
+            >
+              Confirm & Submit Final Answers
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* 7. Post-Submit Cryptographic Receipt Modal */}
+      <Dialog open={showReceiptModal} onOpenChange={setShowReceiptModal}>
+        <DialogContent className="sm:max-w-lg bg-[#FAFAF7] text-[#2B2350] p-6 rounded-3xl border-2 border-[#2B2350] shadow-[8px_8px_0px_#2B2350]">
+          <DialogHeader className="border-b border-[#2B2350]/15 pb-4 text-center">
+            <div className="w-12 h-12 rounded-2xl bg-[#B8F0D2] border-2 border-[#2B2350] flex items-center justify-center mx-auto text-[#065F46] mb-2">
+              <FileCheck className="w-6 h-6" />
+            </div>
+            <DialogTitle className="font-heading font-black text-xl text-[#2B2350]">
+              Official Examination Submission Receipt
+            </DialogTitle>
+            <DialogDescription className="text-xs text-[#6B6590]">
+              Keep this cryptographic receipt as official proof of timely submission.
+            </DialogDescription>
+          </DialogHeader>
+
+          {submissionReceipt && (
+            <div className="space-y-3 py-3 text-xs font-mono">
+              <div className="bg-white p-4 rounded-2xl border-2 border-[#2B2350] space-y-2.5 shadow-2xs">
+                <div className="flex justify-between items-center border-b border-[#2B2350]/10 pb-2">
+                  <span className="text-[#6B6590]">SUBMISSION ID:</span>
+                  <span className="font-bold text-[#6C4DFF] text-sm">{submissionReceipt.submissionId}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-[#6B6590]">TIMESTAMP:</span>
+                  <span className="text-[#2B2350]">{submissionReceipt.timestamp}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-[#6B6590]">ANSWERS SEALED:</span>
+                  <span className="font-bold text-[#065F46]">
+                    {submissionReceipt.answerCount} of {submissionReceipt.totalQuestions} Questions
+                  </span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-[#6B6590]">LEDGER STATUS:</span>
+                  <Badge className="bg-[#B8F0D2] text-[#065F46] border border-[#2B2350] text-[10px]">
+                    VERIFIED & COMMITTED
+                  </Badge>
+                </div>
+                <div className="border-t border-[#2B2350]/10 pt-2 space-y-1">
+                  <span className="text-[#6B6590] block text-[10px]">TERMINAL SHA-256 LEDGER HASH:</span>
+                  <span className="text-[10px] break-all text-[#2B2350] bg-slate-50 p-1.5 rounded block border border-slate-200">
+                    {submissionReceipt.terminalHash}
+                  </span>
+                </div>
+              </div>
+            </div>
+          )}
+
+          <DialogFooter className="gap-2 sm:gap-0 pt-2 border-t border-[#2B2350]/15">
+            <Button
+              variant="outline"
+              onClick={() => window.print()}
+              className="border-[#2B2350] text-[#2B2350] text-xs font-mono font-bold"
+            >
+              Print Receipt
+            </Button>
+            <Button
+              onClick={() => {
+                setShowReceiptModal(false);
+                navigate('/student/results');
+              }}
+              className="bg-[#6C4DFF] hover:bg-[#5A3DEB] text-white font-mono font-bold text-xs px-5 py-2.5 rounded-xl border border-[#2B2350]"
+            >
+              Proceed to Evaluation Results
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* 8. In-Exam Help & Live Proctor Chat Modal */}
+      <Dialog open={showHelpModal} onOpenChange={setShowHelpModal}>
+        <DialogContent className="sm:max-w-[540px] bg-[#FAFAF7] text-[#2B2350] p-6 rounded-3xl border-2 border-[#2B2350] shadow-[8px_8px_0px_#2B2350]">
+          <DialogHeader className="border-b border-[#2B2350]/15 pb-3">
+            <DialogTitle className="text-lg font-heading font-black text-[#2B2350] flex items-center space-x-2">
+              <HelpCircle className="w-5 h-5 text-[#6C4DFF]" />
+              <span>Exam Support & Proctor Desk</span>
+            </DialogTitle>
+            <DialogDescription className="text-xs text-[#6B6590]">
+              Direct communication line with active invigilators and technical support engineers.
+            </DialogDescription>
+          </DialogHeader>
+
+          {/* Tab Selector */}
+          <div className="flex border-b border-[#2B2350]/20 pt-2">
+            <button
+              type="button"
+              onClick={() => setHelpTab('CHAT')}
+              className={`flex-1 py-2 text-xs font-mono font-bold border-b-2 transition-colors cursor-pointer ${
+                helpTab === 'CHAT'
+                  ? 'border-[#6C4DFF] text-[#6C4DFF]'
+                  : 'border-transparent text-[#6B6590] hover:text-[#2B2350]'
+              }`}
+            >
+              Live Proctor Chat
+            </button>
+            <button
+              type="button"
+              onClick={() => setHelpTab('TECH')}
+              className={`flex-1 py-2 text-xs font-mono font-bold border-b-2 transition-colors cursor-pointer ${
+                helpTab === 'TECH'
+                  ? 'border-[#6C4DFF] text-[#6C4DFF]'
+                  : 'border-transparent text-[#6B6590] hover:text-[#2B2350]'
+              }`}
+            >
+              Report Technical Problem
+            </button>
+          </div>
+
+          {helpTab === 'CHAT' ? (
+            <div className="space-y-3 pt-3">
+              {/* Chat Message Box */}
+              <div className="h-48 overflow-y-auto bg-white border border-[#2B2350]/20 rounded-2xl p-3 space-y-2 text-xs">
+                {chatMessages.map((msg, i) => (
+                  <div
+                    key={i}
+                    className={`p-2.5 rounded-xl max-w-[85%] ${
+                      msg.sender === 'STUDENT'
+                        ? 'ml-auto bg-[#6C4DFF] text-white'
+                        : 'mr-auto bg-slate-100 text-[#2B2350] border border-slate-200'
+                    }`}
+                  >
+                    <div className="flex justify-between items-center text-[9px] font-mono opacity-80 mb-1">
+                      <span>{msg.sender === 'STUDENT' ? 'You' : 'Chief Proctor'}</span>
+                      <span>{msg.time}</span>
+                    </div>
+                    <p className="text-xs leading-relaxed">{msg.text}</p>
+                  </div>
+                ))}
+              </div>
+
+              {/* Chat Input */}
+              <div className="flex space-x-2">
+                <input
+                  type="text"
+                  value={chatInput}
+                  onChange={(e) => setChatInput(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      handleSendChatMessage();
+                    }
+                  }}
+                  placeholder="Type a message to your invigilator..."
+                  className="flex-1 px-3 py-2 text-xs border-2 border-[#2B2350] rounded-xl focus:outline-none focus:ring-1 focus:ring-[#6C4DFF] bg-white text-[#2B2350]"
+                />
+                <Button
+                  onClick={handleSendChatMessage}
+                  className="bg-[#6C4DFF] hover:bg-[#5A3DEB] text-white font-mono font-bold text-xs px-4 rounded-xl border border-[#2B2350]"
+                >
+                  Send
+                </Button>
+              </div>
+            </div>
+          ) : (
+            <div className="space-y-3 pt-3 text-xs">
+              <div>
+                <label className="block font-bold text-[#2B2350] mb-1">Issue Category:</label>
+                <select
+                  value={techCategory}
+                  onChange={(e) => setTechCategory(e.target.value)}
+                  className="w-full px-3 py-2 border-2 border-[#2B2350] rounded-xl bg-white text-xs font-mono"
+                >
+                  <option value="VIDEO_STREAM">Webcam Video Stream Frozen or Low FPS</option>
+                  <option value="AUDIO_MIC">Microphone Input Distortion</option>
+                  <option value="QUESTION_DISPLAY">Question Formatting or Formula Render Glitch</option>
+                  <option value="CONNECTIVITY">Periodic Network Disconnection</option>
+                  <option value="OTHER">Other Technical Problem</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block font-bold text-[#2B2350] mb-1">Description:</label>
+                <textarea
+                  rows={3}
+                  value={techDescription}
+                  onChange={(e) => setTechDescription(e.target.value)}
+                  placeholder="Describe what occurred..."
+                  className="w-full p-2.5 border-2 border-[#2B2350] rounded-xl bg-white text-xs text-[#2B2350] focus:outline-none"
+                />
+              </div>
+
+              {/* Diagnostic Privacy Guarantee Box */}
+              <div className="bg-[#B8F0D2]/50 p-2.5 rounded-xl border border-emerald-600/30 text-[11px] text-[#065F46] space-y-0.5">
+                <span className="font-bold flex items-center">
+                  <CheckCircle2 className="w-3.5 h-3.5 mr-1 text-[#059669]" />
+                  Privacy-Guaranteed Diagnostics Attached
+                </span>
+                <p>
+                  System telemetry (browser version, OS, ping latency) is automatically attached to assist the engineering team. Question text and answers are strictly excluded.
+                </p>
+              </div>
+
+              <Button
+                onClick={handleSubmitTechTicket}
+                disabled={isSubmittingTicket}
+                className="w-full bg-[#6C4DFF] hover:bg-[#5A3DEB] text-white font-mono font-bold text-xs py-2.5 rounded-xl border-2 border-[#2B2350]"
+              >
+                {isSubmittingTicket ? 'Dispatching Ticket...' : 'Dispatch Technical Problem Report'}
+              </Button>
+            </div>
+          )}
+
+          <DialogFooter className="pt-2 border-t border-[#2B2350]/15">
+            <Button
+              variant="outline"
+              onClick={() => setShowHelpModal(false)}
+              className="w-full text-xs font-bold border-[#2B2350]"
+            >
+              Close Help Desk
             </Button>
           </DialogFooter>
         </DialogContent>

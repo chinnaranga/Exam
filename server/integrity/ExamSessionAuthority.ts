@@ -50,6 +50,20 @@ export interface ClockResponse {
   isExpired: boolean;
 }
 
+export interface RejoinResponse {
+  success: boolean;
+  sessionId: string;
+  rejoinsCount: number;
+  maxAllowedRejoins: number;
+  isFlagged: boolean;
+  flagReason?: string;
+  serverNow: number;
+  deadline: number;
+  remainingTimeMs: number;
+  status: SessionStatus;
+  cachedAnswers?: unknown;
+}
+
 export interface ExamSessionState {
   id: string;
   candidateId?: string;
@@ -66,6 +80,10 @@ export interface ExamSessionState {
   submittedAnswers?: unknown;
   submittedAt?: number;
   autoSubmitTimer?: NodeJS.Timeout;
+  rejoinsCount: number;
+  maxAllowedRejoins: number;
+  cachedAnswers?: unknown;
+  supportTickets?: Array<{ id: string; category: string; description: string; diagnostics: unknown; timestamp: number }>;
 }
 
 /**
@@ -90,6 +108,43 @@ export function computeEventHmac(secret: string, event: Omit<SignedSecurityEvent
 export function computeLedgerHash(prevHash: string, eventData: unknown): string {
   const eventDataStr = typeof eventData === 'string' ? eventData : JSON.stringify(eventData);
   return crypto.createHash('sha256').update(prevHash + eventDataStr).digest('hex');
+}
+
+/**
+ * Sanitizes technical diagnostic payload to guarantee that NO candidate answers,
+ * question text, options, or sensitive assessment keys are ever transmitted over support channels.
+ */
+export function sanitizeDiagnostics(diagnostics: unknown): Record<string, unknown> {
+  if (!diagnostics || typeof diagnostics !== 'object' || Array.isArray(diagnostics)) {
+    return {};
+  }
+  const forbiddenPatterns = [
+    /answer/i,
+    /option/i,
+    /question/i,
+    /stem/i,
+    /correct/i,
+    /key/i,
+    /secret/i,
+    /solution/i,
+    /choice/i,
+  ];
+  const cleaned: Record<string, unknown> = {};
+
+  for (const [k, v] of Object.entries(diagnostics as Record<string, unknown>)) {
+    const isForbidden = forbiddenPatterns.some((pattern) => pattern.test(k));
+    if (isForbidden) continue;
+
+    if (v && typeof v === 'object' && !Array.isArray(v)) {
+      cleaned[k] = sanitizeDiagnostics(v);
+    } else if (Array.isArray(v)) {
+      cleaned[k] = v.length;
+    } else {
+      cleaned[k] = v;
+    }
+  }
+
+  return cleaned;
 }
 
 /**
@@ -148,6 +203,10 @@ export class ExamSessionAuthority {
       lastHeartbeatAt: startedAt,
       lastClientPerfNow: null,
       ledger: [],
+      rejoinsCount: 0,
+      maxAllowedRejoins: 3,
+      cachedAnswers: undefined,
+      supportTickets: [],
     };
 
     // Genesis ledger entry
@@ -197,6 +256,163 @@ export class ExamSessionAuthority {
       status: session.status,
       timeRemainingMs,
       isExpired,
+    };
+  }
+
+  /**
+   * Rejoin an active session after browser crash, refresh, or disconnect.
+   * Restores authoritative deadline and cached answers.
+   * Increments rejoin count and logs to ledger. If rejoins exceed maxAllowedRejoins (3),
+   * flags the session for invigilator audit without terminating the candidate.
+   */
+  public rejoinSession(params: {
+    sessionId: string;
+    candidateId?: string;
+    clientLocalAnswersHash?: string;
+    nowMs?: number;
+  }): RejoinResponse {
+    const session = this.sessions.get(params.sessionId);
+    if (!session) {
+      throw new Error(`Session ${params.sessionId} not found`);
+    }
+
+    const serverNow = params.nowMs || Date.now();
+    const remainingTimeMs = Math.max(0, session.deadline - serverNow);
+
+    // If session is already finalized/terminated, return with current status
+    if (session.status === 'TERMINATED' || session.status === 'SUBMITTED' || session.status === 'AUTO_SUBMITTED') {
+      return {
+        success: false,
+        sessionId: session.id,
+        rejoinsCount: session.rejoinsCount,
+        maxAllowedRejoins: session.maxAllowedRejoins,
+        isFlagged: true,
+        flagReason: `Session is already finalized with status: ${session.status}`,
+        serverNow,
+        deadline: session.deadline,
+        remainingTimeMs,
+        status: session.status,
+        cachedAnswers: session.cachedAnswers,
+      };
+    }
+
+    // Increment rejoin count
+    session.rejoinsCount += 1;
+    const isLimitExceeded = session.rejoinsCount > session.maxAllowedRejoins;
+
+    if (isLimitExceeded) {
+      this.appendLedgerRecord(session, {
+        type: 'SESSION_REJOIN_LIMIT_EXCEEDED',
+        severity: 'HIGH',
+        payload: {
+          rejoinsCount: session.rejoinsCount,
+          maxAllowed: session.maxAllowedRejoins,
+          candidateId: params.candidateId || session.candidateId,
+          clientLocalAnswersHash: params.clientLocalAnswersHash,
+          timestamp: serverNow,
+          warning: 'Excessive session rejoins detected. Flagged for invigilator review.',
+        },
+      });
+    } else {
+      this.appendLedgerRecord(session, {
+        type: 'SESSION_REJOINED',
+        severity: 'INFO',
+        payload: {
+          rejoinsCount: session.rejoinsCount,
+          maxAllowed: session.maxAllowedRejoins,
+          candidateId: params.candidateId || session.candidateId,
+          clientLocalAnswersHash: params.clientLocalAnswersHash,
+          timestamp: serverNow,
+        },
+      });
+    }
+
+    return {
+      success: true,
+      sessionId: session.id,
+      rejoinsCount: session.rejoinsCount,
+      maxAllowedRejoins: session.maxAllowedRejoins,
+      isFlagged: isLimitExceeded,
+      flagReason: isLimitExceeded
+        ? `Session rejoined ${session.rejoinsCount} times (exceeds limit of ${session.maxAllowedRejoins}). Flagged for invigilator review.`
+        : undefined,
+      serverNow,
+      deadline: session.deadline,
+      remainingTimeMs,
+      status: session.status,
+      cachedAnswers: session.cachedAnswers,
+    };
+  }
+
+  /**
+   * Cache candidate in-progress answers on the server for crash recovery.
+   */
+  public updateCachedAnswers(
+    sessionId: string,
+    answers: unknown,
+    nowMs?: number
+  ): { success: boolean; cachedAt: number } {
+    const session = this.sessions.get(sessionId);
+    if (!session) {
+      throw new Error(`Session ${sessionId} not found`);
+    }
+
+    const serverNow = nowMs || Date.now();
+    session.cachedAnswers = answers;
+
+    return {
+      success: true,
+      cachedAt: serverNow,
+    };
+  }
+
+  /**
+   * Submit an in-exam technical support ticket with sanitized diagnostics.
+   * Strips any candidate answers or question content before recording.
+   */
+  public submitSupportTicket(
+    sessionId: string,
+    ticket: { category: string; description: string; diagnostics?: unknown },
+    nowMs?: number
+  ): { success: boolean; ticketId: string; timestamp: number } {
+    const session = this.sessions.get(sessionId);
+    if (!session) {
+      throw new Error(`Session ${sessionId} not found`);
+    }
+
+    const serverNow = nowMs || Date.now();
+    const ticketId = `tkt_${Date.now()}_${crypto.randomBytes(3).toString('hex')}`;
+    const sanitizedDiagnostics = sanitizeDiagnostics(ticket.diagnostics);
+
+    const ticketRecord = {
+      id: ticketId,
+      category: ticket.category || 'TECHNICAL_ISSUE',
+      description: ticket.description || '',
+      diagnostics: sanitizedDiagnostics,
+      timestamp: serverNow,
+    };
+
+    if (!session.supportTickets) {
+      session.supportTickets = [];
+    }
+    session.supportTickets.push(ticketRecord);
+
+    this.appendLedgerRecord(session, {
+      type: 'SUPPORT_TICKET_SUBMITTED',
+      severity: 'INFO',
+      payload: {
+        ticketId,
+        category: ticketRecord.category,
+        description: ticketRecord.description,
+        diagnostics: sanitizedDiagnostics,
+        timestamp: serverNow,
+      },
+    });
+
+    return {
+      success: true,
+      ticketId,
+      timestamp: serverNow,
     };
   }
 
@@ -690,6 +906,50 @@ export class ExamSessionAuthority {
           count: session.ledger.length,
           ledger: session.ledger,
         });
+      } catch (err: unknown) {
+        const msg = err instanceof Error ? err.message : String(err);
+        res.status(404).json({ error: msg });
+      }
+    });
+
+    // 8. Rejoin Exam Session: POST /api/session/:id/rejoin
+    this.router.post('/:id/rejoin', (req: Request, res: Response) => {
+      try {
+        const { candidateId, clientLocalAnswersHash } = req.body;
+        const result = this.rejoinSession({
+          sessionId: req.params.id,
+          candidateId,
+          clientLocalAnswersHash,
+        });
+        res.json(result);
+      } catch (err: unknown) {
+        const msg = err instanceof Error ? err.message : String(err);
+        res.status(404).json({ error: msg });
+      }
+    });
+
+    // 9. Cache in-progress answers: POST /api/session/:id/answers/cache
+    this.router.post('/:id/answers/cache', (req: Request, res: Response) => {
+      try {
+        const { answers } = req.body;
+        const result = this.updateCachedAnswers(req.params.id, answers);
+        res.json(result);
+      } catch (err: unknown) {
+        const msg = err instanceof Error ? err.message : String(err);
+        res.status(404).json({ error: msg });
+      }
+    });
+
+    // 10. In-exam technical support ticket: POST /api/session/:id/support
+    this.router.post('/:id/support', (req: Request, res: Response) => {
+      try {
+        const { category, description, diagnostics } = req.body;
+        const result = this.submitSupportTicket(req.params.id, {
+          category,
+          description,
+          diagnostics,
+        });
+        res.json(result);
       } catch (err: unknown) {
         const msg = err instanceof Error ? err.message : String(err);
         res.status(404).json({ error: msg });

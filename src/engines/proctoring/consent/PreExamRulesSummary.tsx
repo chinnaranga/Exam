@@ -93,6 +93,19 @@ export const PreExamRulesSummary: React.FC<PreExamRulesSummaryProps> = ({
         </div>
       </div>
 
+      {/* Wellbeing & Candidate Reassurance Banner */}
+      <div className="bg-[#B8F0D2]/50 border-2 border-[#2B2350] rounded-xl p-3.5 mb-4 text-xs font-body leading-relaxed flex items-center space-x-3 shadow-[2px_2px_0px_#2B2350]">
+        <div className="w-8 h-8 rounded-lg bg-[#10B981] text-white flex items-center justify-center shrink-0 border border-[#2B2350]">
+          <ShieldCheck className="w-4 h-4" />
+        </div>
+        <div>
+          <strong className="text-[#065F46] block font-heading">Take a breath. You are prepared.</strong>
+          <span className="text-[#065F46]/90 text-[11px]">
+            Ensure your workspace is comfortable, your water is nearby, and proceed when you are ready. Our integrity checks are designed to protect your hard work and maintain a fair playing field for everyone.
+          </span>
+        </div>
+      </div>
+
       {/* Plain Language Summary Callout */}
       <div className="bg-[#FFF3A3]/40 border border-[#2B2350] rounded-xl p-3.5 mb-5 text-xs font-body leading-relaxed">
         <strong>Plain-Language Summary: </strong>

@@ -67,11 +67,16 @@ export interface UseServerViolationSentinelResult {
   isTerminated: boolean;
   terminationReason: string | null;
   activeToast: { message: string; violation: RecordedViolation } | null;
+  activeWarning: { message: string; violation: RecordedViolation } | null;
+  criticalAlert: { currentPoints: number; countdownSeconds: number; violationName?: string } | null;
+  isLockdownTerminated: boolean;
   evidencePacket: EvidencePacket | null;
   recentViolations: RecordedViolation[];
   reportViolation: (type: string, payload?: unknown) => Promise<ViolationDecision | null>;
   acknowledgeOverlay: () => void;
   dismissToast: () => void;
+  dismissWarning: () => void;
+  dismissCriticalAlert: () => void;
   refreshStatus: () => Promise<void>;
 }
 
@@ -233,11 +238,22 @@ export function useServerViolationSentinel({
     isTerminated,
     terminationReason,
     activeToast,
+    activeWarning: activeToast,
+    criticalAlert: showOverlay
+      ? {
+          currentPoints: points,
+          countdownSeconds: overlayCountdown,
+          violationName: recentViolations[recentViolations.length - 1]?.name,
+        }
+      : null,
+    isLockdownTerminated: isTerminated,
     evidencePacket,
     recentViolations,
     reportViolation,
     acknowledgeOverlay,
     dismissToast,
+    dismissWarning: dismissToast,
+    dismissCriticalAlert: acknowledgeOverlay,
     refreshStatus,
   };
 }

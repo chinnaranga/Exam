@@ -22,6 +22,8 @@ import StudentCertificates from './pages/StudentCertificates';
 import StudentPlacement from './pages/StudentPlacement';
 import StudentSettings from './pages/StudentSettings';
 import StudentExamRunner from './pages/StudentExamRunner';
+import StudentSystemCheck from './pages/StudentSystemCheck';
+import StudentPracticeDemo from './pages/StudentPracticeDemo';
 
 import StudentProfileOverview from './pages/profile/StudentProfileOverview';
 import StudentProfileEdit from './pages/profile/StudentProfileEdit';
@@ -56,6 +58,28 @@ export const StudentRoutes = (
     <Route path="/student/reset-password" element={<StudentResetPassword />} />
     <Route path="/student/mfa" element={<StudentMFA />} />
     <Route path="/student/account-recovery" element={<StudentAccountRecovery />} />
+
+    {/* Standalone System Readiness & Practice Demo Routes */}
+    <Route
+      path="/student/system-check"
+      element={
+        <AuthGuard>
+          <RoleGuard allowedRoles={STUDENT_ALLOWED_ROLES}>
+            <StudentSystemCheck />
+          </RoleGuard>
+        </AuthGuard>
+      }
+    />
+    <Route
+      path="/student/practice/demo"
+      element={
+        <AuthGuard>
+          <RoleGuard allowedRoles={STUDENT_ALLOWED_ROLES}>
+            <StudentPracticeDemo />
+          </RoleGuard>
+        </AuthGuard>
+      }
+    />
 
     {/* Protected Exam Runner */}
     <Route

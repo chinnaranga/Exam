@@ -226,6 +226,14 @@ export const PreExamPermissionModal: React.FC<PreExamPermissionModalProps> = ({ 
         </div>
       </div>
 
+      {/* Candidate Wellbeing Reassurance */}
+      <div style={{ backgroundColor: '#ECFDF5', border: '1px solid #A7F3D0', borderRadius: '12px', padding: '0.85rem 1rem', marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+        <CheckCircle2 size={20} style={{ color: '#059669', flexShrink: 0 }} />
+        <p style={{ margin: 0, fontSize: '0.82rem', color: '#065F46', lineHeight: 1.4 }}>
+          <strong>Take a comfortable breath.</strong> This quick verification calibrates your lighting and microphone so that normal eye movement and background noises during your exam won't be misinterpreted.
+        </p>
+      </div>
+
       {/* Permission Blocked Warning Banner */}
       {cameraError && (
         <div style={{ backgroundColor: '#FEF2F2', border: '1px solid #FCA5A5', borderRadius: '12px', padding: '1rem 1.25rem', marginBottom: '1.5rem', color: '#991B1B' }}>
