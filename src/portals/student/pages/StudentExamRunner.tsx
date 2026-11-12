@@ -34,6 +34,12 @@ import {
   Sparkles,
   FileCheck,
   ListFilter,
+  Volume2,
+  VolumeX,
+  Coffee,
+  Eye,
+  Type,
+  Settings2,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { PreExamPermissionModal } from '@/engines/proctoring/consent/PreExamPermissionModal';
@@ -169,6 +175,95 @@ const StudentExamRunnerContent: React.FC = () => {
   const [showSubmitModal, setShowSubmitModal] = useState(false);
   const [showCalculator, setShowCalculator] = useState(false);
   const [calcInput, setCalcInput] = useState('');
+
+  // Accessibility Accommodations & WCAG 2.2 AA Controls
+  const [highContrastMode, setHighContrastMode] = useState<boolean>(() => {
+    return localStorage.getItem('assessiq_a11y_high_contrast') === 'true';
+  });
+  const [largeTextMode, setLargeTextMode] = useState<boolean>(() => {
+    return localStorage.getItem('assessiq_a11y_large_text') === 'true';
+  });
+  const [dyslexiaFont, setDyslexiaFont] = useState<boolean>(() => {
+    return localStorage.getItem('assessiq_a11y_dyslexia_font') === 'true';
+  });
+  const [isSpeaking, setIsSpeaking] = useState<boolean>(false);
+  const [showA11yModal, setShowA11yModal] = useState<boolean>(false);
+
+  // Timed Rest Breaks (Approved Accommodation)
+  const [hasBreakAccommodation, setHasBreakAccommodation] = useState<boolean>(true);
+  const [maxBreaksAllowed] = useState<number>(2);
+  const [breaksUsed, setBreaksUsed] = useState<number>(0);
+  const [isOnBreak, setIsOnBreak] = useState<boolean>(false);
+  const [breakTimeRemaining, setBreakTimeRemaining] = useState<number>(600); // 10 mins = 600s
+
+  const handleStartRestBreak = () => {
+    if (breaksUsed >= maxBreaksAllowed) {
+      toast.error('Break Limit Reached', {
+        description: `You have completed all ${maxBreaksAllowed} authorized rest breaks.`,
+      });
+      return;
+    }
+    const nextUsed = breaksUsed + 1;
+    setBreaksUsed(nextUsed);
+    setIsOnBreak(true);
+    setBreakTimeRemaining(600);
+    toast.info(`Rest Break ${nextUsed}/${maxBreaksAllowed} Started`, {
+      description: 'The main exam timer is frozen. Violation tracking is paused.',
+    });
+  };
+
+  const handleResumeFromBreak = () => {
+    setIsOnBreak(false);
+    toast.success('Exam Resumed', {
+      description: 'Your rest break has ended. Exam clock and proctoring sentinels are now active.',
+    });
+  };
+
+  // Break Countdown Timer
+  useEffect(() => {
+    let timer: any = null;
+    if (isOnBreak && breakTimeRemaining > 0) {
+      timer = setInterval(() => {
+        setBreakTimeRemaining((prev) => {
+          if (prev <= 1) {
+            clearInterval(timer);
+            handleResumeFromBreak();
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    }
+    return () => clearInterval(timer);
+  }, [isOnBreak, breakTimeRemaining]);
+
+  // Text-to-Speech (TTS) Reader
+  const handleReadAloud = () => {
+    if (!('speechSynthesis' in window)) {
+      toast.error('Text-to-speech is not supported on this browser.');
+      return;
+    }
+
+    if (isSpeaking) {
+      window.speechSynthesis.cancel();
+      setIsSpeaking(false);
+      return;
+    }
+
+    window.speechSynthesis.cancel();
+    const currentQ = EXAM_QUESTIONS[currentIdx];
+    const textToSpeak = `Question ${currentIdx + 1}. ${currentQ.text}. ${
+      currentQ.options.map((opt, i) => `Option ${String.fromCharCode(65 + i)}: ${opt}`).join('. ')
+    }`;
+
+    const utterance = new SpeechSynthesisUtterance(textToSpeak);
+    utterance.rate = 0.95;
+    utterance.onstart = () => setIsSpeaking(true);
+    utterance.onend = () => setIsSpeaking(false);
+    utterance.onerror = () => setIsSpeaking(false);
+
+    window.speechSynthesis.speak(utterance);
+  };
 
   // Auto-Save State Sync & Live Proctor Broadcast
   useEffect(() => {
@@ -500,23 +595,49 @@ const StudentExamRunnerContent: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] font-sans text-[#0F172A] flex flex-col justify-between select-none">
-      {/* Network Offline Alert Banner */}
+    <div
+      className={`min-h-screen flex flex-col justify-between select-none transition-colors duration-150 ${
+        highContrastMode ? 'bg-white text-black font-semibold' : 'bg-[#F8FAFC] font-sans text-[#0F172A]'
+      } ${largeTextMode ? 'text-sm' : 'text-xs'} ${dyslexiaFont ? 'tracking-wide leading-relaxed font-sans' : ''}`}
+    >
+      {/* WCAG 2.2 AA Skip Link */}
+      <a
+        href="#main-question-area"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:bg-[#6C4DFF] focus:text-white focus:px-4 focus:py-2 focus:rounded-xl focus:shadow-lg focus:outline-none font-bold text-xs"
+      >
+        Skip to Question Content
+      </a>
+
+      {/* Network Offline Alert Banner (Never Color-Only) */}
       {!isOnline && (
-        <div className="bg-amber-600 text-white px-6 py-2 text-xs font-mono font-bold flex items-center justify-between sticky top-0 z-50">
-          <div className="flex items-center space-x-2">
-            <WifiOff className="w-4 h-4 animate-pulse" />
-            <span>OFFLINE MODE ACTIVE: Answers cached locally. They will automatically sync when network recovers.</span>
+        <div
+          role="status"
+          aria-live="polite"
+          className="bg-[#D97706] text-white border-b-2 border-[#92400E] px-6 py-2.5 text-xs font-mono font-bold flex items-center justify-between sticky top-0 z-50 shadow-xs"
+        >
+          <div className="flex items-center space-x-2.5">
+            <WifiOff className="w-4 h-4 shrink-0" aria-hidden="true" />
+            <span>
+              STATUS: OFFLINE CACHE ACTIVE (Answers cryptographically saved in local storage. Automatic cloud sync upon reconnection.)
+            </span>
           </div>
-          <Badge className="bg-white/20 text-white border-none text-[10px]">CACHE SECURE</Badge>
+          <Badge className="bg-[#78350F] text-amber-100 border border-amber-300 text-[10px] font-mono">
+            OFFLINE SAFE
+          </Badge>
         </div>
       )}
 
-      {/* Last 5-Minute Alert Banner */}
+      {/* Last 5-Minute Alert Banner (Never Color-Only) */}
       {timeLeft < 300 && (
-        <div className="bg-red-600 text-white px-6 py-1.5 text-xs font-mono font-bold flex items-center justify-center space-x-2 animate-pulse sticky top-0 z-50">
-          <AlertTriangle className="w-4 h-4" />
-          <span>ATTENTION: Less than 5 minutes remaining! Exam will auto-submit at 00:00.</span>
+        <div
+          role="alert"
+          aria-live="assertive"
+          className="bg-[#DC2626] text-white border-b-2 border-[#7F1D1D] px-6 py-2 text-xs font-mono font-bold flex items-center justify-center space-x-2 sticky top-0 z-50 shadow-xs"
+        >
+          <AlertTriangle className="w-4 h-4 shrink-0" aria-hidden="true" />
+          <span>
+            CRITICAL TIME WARNING: Less than 5 minutes remaining! Server clock auto-submits at 00:00.
+          </span>
         </div>
       )}
 
@@ -551,29 +672,65 @@ const StudentExamRunnerContent: React.FC = () => {
           </span>
         </div>
 
-        <div className="flex items-center space-x-5">
-          {/* Live Security Violation Attempt Counter Badge */}
-          <div className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-xl border font-mono font-bold text-xs ${
-            violationCount === 0
-              ? 'bg-emerald-50 text-emerald-700 border-emerald-300'
-              : violationCount === 1
-              ? 'bg-amber-50 text-amber-700 border-amber-300'
-              : 'bg-red-50 text-red-600 border-red-300 animate-pulse'
-          }`}>
-            <ShieldAlert className="w-3.5 h-3.5" />
-            <span>ATTEMPTS: {violationCount} / 3</span>
-          </div>
+        <div className="flex items-center space-x-3 sm:space-x-4">
+          {/* TTS Read Question Aloud */}
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleReadAloud}
+            aria-label={isSpeaking ? 'Stop reading question aloud' : 'Read question and options aloud'}
+            className={`text-xs font-bold border-[#CBD5E1] flex items-center space-x-1 ${
+              isSpeaking ? 'bg-purple-100 text-purple-800 border-purple-400' : 'text-[#2B2350]'
+            }`}
+          >
+            {isSpeaking ? <VolumeX className="w-3.5 h-3.5 text-purple-700" /> : <Volume2 className="w-3.5 h-3.5" />}
+            <span className="hidden sm:inline">{isSpeaking ? 'Stop TTS' : 'Read Aloud'}</span>
+          </Button>
+
+          {/* Timed Rest Break Button (Accommodation) */}
+          {hasBreakAccommodation && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleStartRestBreak}
+              disabled={breaksUsed >= maxBreaksAllowed || isOnBreak}
+              aria-label={`Take rest break (${breaksUsed}/${maxBreaksAllowed} used)`}
+              className="text-xs font-bold border-[#CBD5E1] bg-emerald-50 text-emerald-800 hover:bg-emerald-100 border-emerald-300 flex items-center space-x-1"
+            >
+              <Coffee className="w-3.5 h-3.5 text-emerald-700" />
+              <span>Break ({breaksUsed}/{maxBreaksAllowed})</span>
+            </Button>
+          )}
+
+          {/* Accessibility Options Drawer Trigger */}
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setShowA11yModal(true)}
+            aria-label="Open accessibility options"
+            className="text-xs font-bold border-[#CBD5E1] text-[#2B2350] flex items-center space-x-1"
+          >
+            <Settings2 className="w-3.5 h-3.5" />
+            <span className="hidden md:inline">Accessibility</span>
+          </Button>
 
           {/* Persistent Sticky Timer */}
-          <div className={`flex items-center space-x-2 px-3.5 py-1.5 rounded-xl border font-mono font-bold text-xs ${timeLeft < 300 ? 'bg-red-50 text-red-700 border-red-300 animate-pulse' : 'bg-blue-50 text-[#1E40AF] border-blue-200'}`}>
+          <div
+            aria-live="polite"
+            aria-label={`Time remaining: ${formatTime(timeLeft)}`}
+            className={`flex items-center space-x-2 px-3 py-1.5 rounded-xl border font-mono font-bold text-xs ${
+              timeLeft < 300 ? 'bg-red-50 text-red-700 border-red-300 animate-pulse' : 'bg-blue-50 text-[#1E40AF] border-blue-200'
+            }`}
+          >
             <Clock className="w-4 h-4 text-[#2563EB]" />
-            <span>TIME REMAINING: {formatTime(timeLeft)}</span>
+            <span>{formatTime(timeLeft)}</span>
           </div>
 
           <Button
             variant="outline"
             size="sm"
             onClick={() => setShowCalculator(!showCalculator)}
+            aria-label="Toggle calculator"
             className="border-[#E2E8F0] text-xs font-bold hidden sm:flex"
           >
             <Calculator className="w-3.5 h-3.5 mr-1" /> Calc
@@ -639,7 +796,7 @@ const StudentExamRunnerContent: React.FC = () => {
 
             {/* Question Text */}
             <div className="space-y-4">
-              <h2 className="text-base font-extrabold text-[#0F172A] leading-relaxed">
+              <h2 id="main-question-area" className="text-base font-extrabold text-[#0F172A] leading-relaxed">
                 {currentQ.text}
               </h2>
 
@@ -650,22 +807,43 @@ const StudentExamRunnerContent: React.FC = () => {
               )}
             </div>
 
-            {/* Options List */}
-            <div className="space-y-3 pt-2">
+            {/* Options List with WCAG 2.2 Radio Group */}
+            <div
+              role="radiogroup"
+              aria-labelledby="main-question-area"
+              className="space-y-3 pt-2"
+            >
               {currentQ.options.map((opt, idx) => {
                 const isSelected = selectedAnswers[currentIdx] === idx;
+                const optLetter = String.fromCharCode(65 + idx);
                 return (
                   <button
                     key={idx}
+                    type="button"
+                    role="radio"
+                    aria-checked={isSelected}
+                    aria-label={`Option ${optLetter}: ${opt}`}
                     onClick={() => handleSelectOption(idx)}
-                    className={`w-full text-left p-4 rounded-xl border text-xs font-medium transition-all flex items-center justify-between cursor-pointer ${isSelected
+                    onKeyDown={(e) => {
+                      if (e.key === ' ' || e.key === 'Enter') {
+                        e.preventDefault();
+                        handleSelectOption(idx);
+                      }
+                    }}
+                    className={`w-full text-left p-4 rounded-xl border text-xs font-medium transition-all flex items-center justify-between cursor-pointer focus-visible:ring-2 focus-visible:ring-[#6C4DFF] focus-visible:outline-none ${
+                      isSelected
                         ? 'border-[#1E40AF] bg-blue-50/80 text-[#1E40AF] font-bold shadow-2xs'
                         : 'border-[#E2E8F0] bg-white text-[#0F172A] hover:bg-[#F8FAFC]'
-                      }`}
+                    }`}
                   >
                     <span className="pr-4">{opt}</span>
-                    <span className={`w-6 h-6 rounded-full border flex items-center justify-center font-mono text-[11px] shrink-0 ${isSelected ? 'bg-[#1E40AF] text-white border-[#1E40AF]' : 'border-[#CBD5E1]'}`}>
-                      {String.fromCharCode(65 + idx)}
+                    <span
+                      aria-hidden="true"
+                      className={`w-6 h-6 rounded-full border flex items-center justify-center font-mono text-[11px] shrink-0 ${
+                        isSelected ? 'bg-[#1E40AF] text-white border-[#1E40AF]' : 'border-[#CBD5E1]'
+                      }`}
+                    >
+                      {optLetter}
                     </span>
                   </button>
                 );
@@ -759,17 +937,24 @@ const StudentExamRunnerContent: React.FC = () => {
                   return (
                     <button
                       key={i}
+                      type="button"
                       onClick={() => handleNavigate(i)}
-                      className={`h-10 rounded-xl font-bold flex items-center justify-center transition-all cursor-pointer ${isCurrent
+                      aria-label={`Question ${i + 1}: ${
+                        isAns ? 'Answered' : isMark ? 'Marked for Review' : 'Unanswered'
+                      }`}
+                      className={`h-10 rounded-xl font-bold flex items-center justify-center transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-[#6C4DFF] focus-visible:outline-none ${
+                        isCurrent
                           ? 'ring-2 ring-[#1E40AF] ring-offset-2 bg-[#1E40AF] text-white shadow-md'
                           : isAns
-                            ? 'bg-emerald-100 text-[#15803D] border border-emerald-300'
-                            : isMark
-                              ? 'bg-amber-100 text-amber-800 border border-amber-300'
-                              : 'bg-[#F8FAFC] border border-[#E2E8F0] text-[#0F172A] hover:bg-[#F1F5F9]'
-                        }`}
+                          ? 'bg-emerald-100 text-[#15803D] border border-emerald-300'
+                          : isMark
+                          ? 'bg-amber-100 text-amber-800 border border-amber-300'
+                          : 'bg-[#F8FAFC] border border-[#E2E8F0] text-[#0F172A] hover:bg-[#F1F5F9]'
+                      }`}
                     >
-                      {i + 1}
+                      <span>{i + 1}</span>
+                      {isAns && <span className="text-[9px] ml-0.5" aria-hidden="true">✓</span>}
+                      {isMark && !isAns && <span className="text-[9px] ml-0.5" aria-hidden="true">⚐</span>}
                     </button>
                   );
                 })}
@@ -902,6 +1087,122 @@ const StudentExamRunnerContent: React.FC = () => {
           recordsCount={recordsCount}
         />
       )}
+
+      {/* Timed Rest Break Full-Screen Overlay (Approved Accommodation) */}
+      {isOnBreak && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="rest-break-title"
+          className="fixed inset-0 z-50 bg-[#2B2350]/90 backdrop-blur-md flex items-center justify-center p-6 text-white"
+        >
+          <div className="max-w-md w-full bg-white text-[#2B2350] border-2 border-[#2B2350] rounded-3xl p-6 shadow-[8px_8px_0px_#2B2350] text-center space-y-4">
+            <div className="w-14 h-14 rounded-2xl bg-[#B8F0D2] border-2 border-[#2B2350] flex items-center justify-center mx-auto text-[#065F46]">
+              <Coffee className="w-7 h-7" />
+            </div>
+
+            <div>
+              <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-[#10B981] bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-300">
+                APPROVED ACCOMMODATION
+              </span>
+              <h2 id="rest-break-title" className="font-heading font-black text-xl text-[#2B2350] mt-1">
+                Rest Break in Progress
+              </h2>
+              <p className="text-xs text-[#6B6590] mt-1 font-body">
+                Take this time to stretch, rest your eyes, or step away. The main exam timer is frozen and proctoring violation sentinels are temporarily suspended.
+              </p>
+            </div>
+
+            <div className="bg-[#FAFAF7] border-2 border-[#2B2350] rounded-2xl p-4 font-mono">
+              <span className="text-[10px] text-[#6B6590] uppercase block">BREAK TIME REMAINING</span>
+              <span className="text-3xl font-black text-[#6C4DFF]" aria-live="polite">
+                {formatTime(breakTimeRemaining)}
+              </span>
+            </div>
+
+            <Button
+              onClick={handleResumeFromBreak}
+              className="w-full bg-[#10B981] hover:bg-[#059669] text-white font-mono font-bold text-xs py-3 rounded-xl border-2 border-[#2B2350] shadow-[3px_3px_0px_#2B2350] cursor-pointer"
+            >
+              Resume Examination Early
+            </Button>
+          </div>
+        </div>
+      )}
+
+      {/* Accessibility Options Modal */}
+      <Dialog open={showA11yModal} onOpenChange={setShowA11yModal}>
+        <DialogContent className="sm:max-w-[480px] bg-[#FAFAF7] text-[#2B2350] p-6 rounded-3xl border-2 border-[#2B2350] shadow-[8px_8px_0px_#2B2350]">
+          <DialogHeader className="border-b border-[#2B2350]/15 pb-3">
+            <DialogTitle className="text-lg font-heading font-black text-[#2B2350] flex items-center space-x-2">
+              <Settings2 className="w-5 h-5 text-[#6C4DFF]" />
+              <span>Accessibility & Display Options (WCAG 2.2 AA)</span>
+            </DialogTitle>
+            <DialogDescription className="text-xs text-[#6B6590]">
+              Personalize your viewing and interaction experience during the assessment.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4 pt-3 text-xs">
+            <div className="flex items-center justify-between bg-white p-3 rounded-xl border border-[#2B2350]">
+              <div>
+                <span className="font-bold text-[#2B2350] block">High Contrast Mode</span>
+                <span className="text-[10px] text-[#6B6590]">High-contrast stark black & white styling</span>
+              </div>
+              <input
+                type="checkbox"
+                checked={highContrastMode}
+                onChange={(e) => {
+                  setHighContrastMode(e.target.checked);
+                  localStorage.setItem('assessiq_a11y_high_contrast', String(e.target.checked));
+                }}
+                className="w-4 h-4 text-[#6C4DFF] rounded cursor-pointer"
+              />
+            </div>
+
+            <div className="flex items-center justify-between bg-white p-3 rounded-xl border border-[#2B2350]">
+              <div>
+                <span className="font-bold text-[#2B2350] block">Large Typography (125%)</span>
+                <span className="text-[10px] text-[#6B6590]">Increases base text size across question stems</span>
+              </div>
+              <input
+                type="checkbox"
+                checked={largeTextMode}
+                onChange={(e) => {
+                  setLargeTextMode(e.target.checked);
+                  localStorage.setItem('assessiq_a11y_large_text', String(e.target.checked));
+                }}
+                className="w-4 h-4 text-[#6C4DFF] rounded cursor-pointer"
+              />
+            </div>
+
+            <div className="flex items-center justify-between bg-white p-3 rounded-xl border border-[#2B2350]">
+              <div>
+                <span className="font-bold text-[#2B2350] block">Dyslexia-Friendly Layout</span>
+                <span className="text-[10px] text-[#6B6590]">Increases letter spacing and line height</span>
+              </div>
+              <input
+                type="checkbox"
+                checked={dyslexiaFont}
+                onChange={(e) => {
+                  setDyslexiaFont(e.target.checked);
+                  localStorage.setItem('assessiq_a11y_dyslexia_font', String(e.target.checked));
+                }}
+                className="w-4 h-4 text-[#6C4DFF] rounded cursor-pointer"
+              />
+            </div>
+          </div>
+
+          <DialogFooter className="pt-3 border-t border-[#2B2350]/15">
+            <Button
+              onClick={() => setShowA11yModal(false)}
+              className="w-full bg-[#6C4DFF] hover:bg-[#5A3DEB] text-white font-mono font-bold text-xs py-2.5 rounded-xl border-2 border-[#2B2350] shadow-[3px_3px_0px_#2B2350]"
+            >
+              Done
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Footer Status */}
       <footer className="bg-white border-t border-[#E2E8F0] py-3 px-6 text-xs text-[#64748B] flex justify-between font-mono">

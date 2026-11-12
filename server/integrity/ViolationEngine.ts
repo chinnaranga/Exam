@@ -7,6 +7,7 @@ import {
   resolveViolationRule,
 } from './violationSeverityConfig';
 import { ExamSessionAuthority, examSessionAuthority } from './ExamSessionAuthority';
+import { accommodationService } from '../accessibility/AccommodationService';
 
 export type SessionIntegrityStatus = 'ACTIVE' | 'WARNING' | 'OVERLAY_ACTIVE' | 'TERMINATED';
 
@@ -206,6 +207,35 @@ export class ViolationEngine {
 
     // 2. Resolve violation rule definition from master config
     const rule: ViolationRuleDefinition = resolveViolationRule(violationInput.type);
+
+    // 2b. Check if violation is suppressed by approved accommodation (e.g. rest breaks, relaxed gaze)
+    const suppression = accommodationService.shouldSuppressViolation(sessionId, violationInput.type, now);
+    if (suppression.suppress) {
+      return {
+        action: 'NONE',
+        sessionId,
+        currentPoints: session.currentPoints,
+        previousPoints: session.currentPoints,
+        pointsAdded: 0,
+        status: session.status,
+        violation: {
+          id: `suppressed_${now}`,
+          ruleId: rule.ruleId,
+          type: rule.ruleId,
+          name: `${rule.name} (Suppressed: ${suppression.reason})`,
+          severity: 'LOW',
+          pointsAdded: 0,
+          totalPointsAfter: session.currentPoints,
+          timestamp: now,
+          payload: violationInput.payload,
+          alertUser: false,
+          invigilatorAlert: false,
+        },
+        showOverlay: false,
+        isTerminated: false,
+        displayToast: false,
+      };
+    }
 
     // 3. Apply points decay before adding new violation points
     this.applyDecay(sessionId, now);

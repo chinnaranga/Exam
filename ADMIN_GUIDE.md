@@ -115,3 +115,4 @@ To guarantee tamper evidence across historical records:
 - At 00:00 UTC daily, the `DailyLedgerAnchorService` computes a cryptographic Merkle root combining the terminal hashes of all sessions active in the preceding 24 hours.
 - The resulting daily root hash is stored immutably.
 - Retroactive alterations to any session ledger cause an immediate hash mismatch in `verifyDailyAnchor()`.
+

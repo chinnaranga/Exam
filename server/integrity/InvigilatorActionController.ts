@@ -391,3 +391,4 @@ export class InvigilatorActionController {
 }
 
 export const invigilatorActionController = new InvigilatorActionController();
+

@@ -10,6 +10,7 @@ import { identityVerificationService } from './identity/IdentityVerificationServ
 import { examRandomizationEngine } from './exam/ExamRandomizationEngine';
 import { invigilatorActionController } from './integrity/InvigilatorActionController';
 import { examConfigRouter } from './exam/ExamConfigController';
+import { accommodationService } from './accessibility/AccommodationService';
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -52,6 +53,12 @@ app.use('/api/invigilator', invigilatorActionController.router);
 // Configurable Security Profiles & Versioned Exam Blueprints
 app.use('/api/v1/exam-config', examConfigRouter);
 app.use('/api/exam-config', examConfigRouter);
+
+// Accessibility Accommodations & Timed Rest Breaks APIs
+app.use('/api/v1/accommodations', accommodationService.router);
+app.use('/api/accommodations', accommodationService.router);
+app.use('/api/session', accommodationService.router);
+app.use('/api/v1/session', accommodationService.router);
 
 import pipelineRoutes from './confidence-pipeline/routes/pipelineRoutes';
 

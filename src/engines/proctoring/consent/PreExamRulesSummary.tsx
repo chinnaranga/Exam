@@ -298,3 +298,4 @@ export const PreExamRulesSummary: React.FC<PreExamRulesSummaryProps> = ({
     </div>
   );
 };
+

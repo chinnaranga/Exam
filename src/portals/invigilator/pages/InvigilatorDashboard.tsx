@@ -48,6 +48,10 @@ interface LiveCandidate {
   escalatedToChiefProctor: boolean;
   lastMessageReceived?: string;
   lastActiveAt: number;
+  hasAccommodation?: boolean;
+  accommodationBadge?: string;
+  accommodationDetails?: string;
+  isOnBreak?: boolean;
 }
 
 interface ReviewQueueItem {
@@ -90,6 +94,10 @@ export const InvigilatorDashboard: React.FC = () => {
       integrityScore: 98,
       escalatedToChiefProctor: false,
       lastActiveAt: Date.now(),
+      hasAccommodation: true,
+      accommodationBadge: 'ACCOMMODATION ACTIVE',
+      accommodationDetails: '+50% Extra Time • 2x10m Rest Breaks Authorized',
+      isOnBreak: false,
     },
     {
       sessionId: 'sess_student_02',
@@ -479,20 +487,29 @@ export const InvigilatorDashboard: React.FC = () => {
                   {/* Card Header */}
                   <div className="flex items-center justify-between">
                     <div>
-                      <h3 className="font-extrabold text-sm text-[#2B2350]">{cand.candidateName}</h3>
+                      <div className="flex items-center space-x-2">
+                        <h3 className="font-extrabold text-sm text-[#2B2350]">{cand.candidateName}</h3>
+                        {cand.hasAccommodation && (
+                          <Badge className="bg-[#B8F0D2] text-[#065F46] border border-[#10B981] text-[9px] font-mono font-bold">
+                            ACCOMMODATION ACTIVE
+                          </Badge>
+                        )}
+                      </div>
                       <p className="text-[11px] text-[#64748B]">{cand.candidateId}</p>
                     </div>
 
                     <Badge
                       className={`text-[10px] font-bold ${
-                        cand.isPaused
+                        cand.isOnBreak
+                          ? 'bg-[#FFF3A3] text-[#2B2350] border border-[#2B2350]'
+                          : cand.isPaused
                           ? 'bg-amber-100 text-amber-800'
                           : cand.status === 'ACTIVE'
                           ? 'bg-emerald-100 text-emerald-800'
                           : 'bg-red-100 text-red-800'
                       }`}
                     >
-                      {cand.isPaused ? 'PAUSED' : cand.status}
+                      {cand.isOnBreak ? 'ON REST BREAK' : cand.isPaused ? 'PAUSED' : cand.status}
                     </Badge>
                   </div>
 
@@ -524,6 +541,19 @@ export const InvigilatorDashboard: React.FC = () => {
                       </p>
                     </div>
                   </div>
+
+                  {/* Confidential Accommodation Policy Disclosure */}
+                  {cand.hasAccommodation && (
+                    <div className="p-2.5 rounded-xl bg-[#B8F0D2]/20 border border-[#10B981]/40 text-[10px] font-mono space-y-0.5">
+                      <div className="font-bold text-[#065F46] flex items-center space-x-1.5">
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#10B981]" />
+                        <span>Policy: {cand.accommodationDetails}</span>
+                      </div>
+                      <p className="text-[9px] text-[#6B6590] italic">
+                        Medical diagnosis & clinical reasons are strictly confidential per privacy regulations.
+                      </p>
+                    </div>
+                  )}
 
                   {/* Real-Time Action Controls */}
                   <div className="pt-2 border-t border-[#E2E8F0] flex flex-wrap gap-2">
