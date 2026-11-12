@@ -65,7 +65,11 @@ export const MobileSecondCameraWizard: React.FC<MobileSecondCameraWizardProps> =
     screenEdgeVisible: false,
   });
 
-  // Automatically configure reachable LAN IP so phone on Wi-Fi can scan & connect
+  // Check if running on local machine vs deployed production domain
+  const isLocalHost = typeof window !== 'undefined' && 
+    (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.hostname.startsWith('192.168.'));
+
+  // Automatically configure reachable LAN IP so phone on Wi-Fi can scan & connect when running locally
   const [networkHost, setNetworkHost] = useState<string>(() => {
     const saved = localStorage.getItem('assessiq_second_camera_host');
     if (saved) return saved;
@@ -81,9 +85,19 @@ export const MobileSecondCameraWizard: React.FC<MobileSecondCameraWizardProps> =
   const [showHostConfig, setShowHostConfig] = useState<boolean>(false);
   const [copiedLink, setCopiedLink] = useState<boolean>(false);
 
-  const port = typeof window !== 'undefined' && window.location.port ? window.location.port : '8080';
-  const protocol = typeof window !== 'undefined' ? window.location.protocol : 'http:';
-  const pairingUrl = `${protocol}//${networkHost}${port ? `:${port}` : ''}/mobile-camera?token=${pairingToken}&session=${sessionId}`;
+  // In production (Render, Vercel), pairingUrl MUST use window.location.origin (e.g. https://assessiq-portal.onrender.com)
+  // NEVER attach :8080 in production because SSL is terminated on standard HTTPS port 443!
+  const pairingUrl = useMemo(() => {
+    if (typeof window === 'undefined') {
+      return `https://assessiq-portal.onrender.com/mobile-camera?token=${pairingToken}&session=${sessionId}`;
+    }
+    if (!isLocalHost) {
+      return `${window.location.origin}/mobile-camera?token=${pairingToken}&session=${sessionId}`;
+    }
+    // Local development mode: use the LAN IP with local dev port (defaults to 8080)
+    const localPort = window.location.port ? `:${window.location.port}` : ':8080';
+    return `${window.location.protocol}//${networkHost}${localPort}/mobile-camera?token=${pairingToken}&session=${sessionId}`;
+  }, [isLocalHost, networkHost, pairingToken, sessionId]);
 
   // Initialize pairing token & 2-minute countdown
   const generateNewToken = () => {
