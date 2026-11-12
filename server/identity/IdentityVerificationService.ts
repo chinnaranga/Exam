@@ -41,7 +41,7 @@ export interface SessionBinding {
 
 export interface LivenessChallenge {
   challengeId: string;
-  challengeType: LivenessChallengeType | 'AUDIO_PHRASE' | 'STATIC_GAZE';
+  challengeType: LivenessChallengeType | 'AUDIO_PHRASE' | 'STATIC_GAZE' | 'PROCTOR_SIGN_OFF';
   instructions: string;
   nonce: string;
   issuedAt: number;

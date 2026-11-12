@@ -3,8 +3,9 @@ import { Card } from '@/shared/components/ui/card';
 import { Button } from '@/shared/components/ui/button';
 import { Input } from '@/shared/components/ui/input';
 import { SecurityCenterService } from '@/server/security/security_center.service';
-import { ShieldCheck, QrCode, Key, CheckCircle2, Lock } from 'lucide-react';
+import { ShieldCheck, Key, CheckCircle2, Lock } from 'lucide-react';
 import { toast } from 'sonner';
+import { QRCodeSVG } from '@/shared/components/qr/QRCodeSVG';
 
 export const MfaWizardPage: React.FC = () => {
   const [step, setStep] = useState<1 | 2>(1);
@@ -39,8 +40,13 @@ export const MfaWizardPage: React.FC = () => {
       {step === 1 && (
         <Card className="p-6 rounded-2xl bg-white border border-[#E5E7EB] shadow-xs space-y-6">
           <div className="flex flex-col sm:flex-row items-center gap-6">
-            <div className="w-36 h-36 bg-[#FAFBFC] border-2 border-dashed border-[#E5E7EB] rounded-2xl flex items-center justify-center shrink-0">
-              <QrCode className="w-20 h-20 text-[#2563EB]" />
+            <div className="w-36 h-36 bg-white border border-[#E5E7EB] rounded-2xl flex items-center justify-center shrink-0 p-2 shadow-xs">
+              <QRCodeSVG
+                value="otpauth://totp/AssessIQ:student@institution.edu?secret=JBSWY3DPEHPK3PXP&issuer=AssessIQ"
+                size={120}
+                level="M"
+                includeMargin={false}
+              />
             </div>
             <div className="space-y-2 text-xs text-[#6B7280]">
               <h3 className="font-bold text-sm text-[#111827]">Step 1: Scan QR Code with Authenticator App</h3>

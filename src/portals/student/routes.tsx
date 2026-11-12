@@ -24,6 +24,7 @@ import StudentSettings from './pages/StudentSettings';
 import StudentExamRunner from './pages/StudentExamRunner';
 import StudentSystemCheck from './pages/StudentSystemCheck';
 import StudentPracticeDemo from './pages/StudentPracticeDemo';
+import StudentDemoExam from './pages/StudentDemoExam';
 
 import StudentProfileOverview from './pages/profile/StudentProfileOverview';
 import StudentProfileEdit from './pages/profile/StudentProfileEdit';
@@ -76,6 +77,16 @@ export const StudentRoutes = (
         <AuthGuard>
           <RoleGuard allowedRoles={STUDENT_ALLOWED_ROLES}>
             <StudentPracticeDemo />
+          </RoleGuard>
+        </AuthGuard>
+      }
+    />
+    <Route
+      path="/student/demo-exam"
+      element={
+        <AuthGuard>
+          <RoleGuard allowedRoles={STUDENT_ALLOWED_ROLES}>
+            <StudentDemoExam />
           </RoleGuard>
         </AuthGuard>
       }

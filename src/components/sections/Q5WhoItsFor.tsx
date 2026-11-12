@@ -97,7 +97,7 @@ export const Q5WhoItsFor: React.FC = () => {
                       letter={letter}
                       filled={isSelected}
                       size="md"
-                      onClick={() => setSelectedLetter(letter)}
+                      as="span"
                     />
                     <div>
                       <div className="font-heading text-base sm:text-lg font-bold text-[#2B2350]">

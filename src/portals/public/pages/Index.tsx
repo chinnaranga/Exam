@@ -1,6 +1,6 @@
 import React from 'react';
 import { EnterpriseLayout } from '@/shared/components/EnterpriseLayout';
-import { BookOpen, Users, ShieldCheck, ArrowRight, Building2, Brain } from 'lucide-react';
+import { BookOpen, Users, ShieldCheck, ArrowRight, Building2, Brain, Sparkles } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useExams, useCandidates, useQuestionBank, useOrganizations } from '@/shared/hooks/useApiQueries';
 
@@ -32,7 +32,10 @@ export const IndexPage: React.FC = () => {
           </p>
         </div>
 
-        <div style={{ display: 'flex', gap: '0.75rem' }}>
+        <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+          <Link to="/demo-exam" className="btn-enterprise-primary" style={{ backgroundColor: '#6C4DFF', borderColor: '#5A3DEB', display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}>
+            <Sparkles size={16} /> Launch Demo Exam (Feature Tester)
+          </Link>
           <Link to="/faculty/exams" className="btn-enterprise-secondary">
             Exam Builder Studio
           </Link>

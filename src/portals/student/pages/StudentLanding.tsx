@@ -199,6 +199,13 @@ export const StudentLanding: React.FC = () => {
                   <span>⚡ 1-CLICK FAST AUTH (DEMO)</span>
                 </button>
 
+                <Link to="/demo-exam">
+                  <button className="bg-[#B8F0D2] border-2 border-[#2B2350] hover:bg-[#99E6BD] text-[#065F46] font-mono font-bold text-xs sm:text-sm px-5 py-3.5 rounded-2xl shadow-[3px_3px_0px_#2B2350] flex items-center space-x-1.5 transition-transform hover:-translate-y-0.5 cursor-pointer">
+                    <Sparkles className="w-4 h-4 text-[#065F46]" />
+                    <span>LAUNCH DEMO EXAM (FEATURE TESTER)</span>
+                  </button>
+                </Link>
+
                 <Link to="/student/practice">
                   <button className="bg-white border-2 border-[#2B2350] hover:bg-slate-50 text-[#2B2350] font-mono font-bold text-xs sm:text-sm px-5 py-3.5 rounded-2xl shadow-[2px_2px_0px_#2B2350] flex items-center space-x-1.5 transition-transform hover:-translate-y-0.5 cursor-pointer">
                     <Brain className="w-4 h-4 text-[#6C4DFF]" />

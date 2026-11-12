@@ -32,12 +32,16 @@ export const PreExamRulesSummary: React.FC<PreExamRulesSummaryProps> = ({
   className = '',
 }) => {
   const [checkedItems, setCheckedItems] = useState<Record<string, boolean>>({
-    room: false,
-    screen: false,
     camera: false,
+    microphone: false,
+    biometrics: false,
+    keystrokeData: false,
+    roomScan: false,
+    phoneCamera: false,
     code: false,
   });
   const [expandedSection, setExpandedSection] = useState<string | null>('MONITORING');
+  const [showAlternativeModal, setShowAlternativeModal] = useState(false);
 
   const isHighStakes = profileTier === 'HIGH_STAKES';
   const isPractice = profileTier === 'PRACTICE';
@@ -46,8 +50,13 @@ export const PreExamRulesSummary: React.FC<PreExamRulesSummaryProps> = ({
     setCheckedItems((prev) => ({ ...prev, [id]: !prev[id] }));
   };
 
-  const allAcknowledged =
-    checkedItems.room && checkedItems.screen && checkedItems.camera && checkedItems.code;
+  // Mandatory categories: camera, microphone, biometrics, keystrokeData, and honor code
+  const mandatoryAcknowledged =
+    checkedItems.camera &&
+    checkedItems.microphone &&
+    checkedItems.biometrics &&
+    checkedItems.keystrokeData &&
+    checkedItems.code;
 
   return (
     <div
@@ -62,8 +71,11 @@ export const PreExamRulesSummary: React.FC<PreExamRulesSummaryProps> = ({
           <div>
             <div className="flex items-center space-x-2">
               <span className="font-mono text-[10px] uppercase font-bold tracking-wider text-[#6C4DFF]">
-                PRE-EXAM CANDIDATE DISCLOSURE
+                VERSIONED CONSENT (v2.2-compliance-2026)
               </span>
+              <Badge variant="outline" className="text-[10px] font-mono border-emerald-300 text-emerald-700 bg-emerald-50">
+                GDPR & FERPA VERIFIED
+              </Badge>
               <Badge
                 className={`text-[10px] font-mono font-bold uppercase ${
                   isHighStakes
@@ -240,30 +252,10 @@ export const PreExamRulesSummary: React.FC<PreExamRulesSummaryProps> = ({
       <div className="bg-[#FAFAF7] border-2 border-[#2B2350] rounded-xl p-4 mb-5">
         <h3 className="font-mono text-xs font-bold uppercase tracking-wider text-[#2B2350] mb-3 flex items-center space-x-1.5">
           <CheckCircle2 className="w-4 h-4 text-[#10B981]" />
-          <span>Candidate Readiness Acknowledgement</span>
+          <span>Statutory Consent & Readiness Acknowledgement</span>
         </h3>
 
         <div className="space-y-2.5 text-xs font-body">
-          <label className="flex items-start space-x-2.5 cursor-pointer">
-            <input
-              type="checkbox"
-              checked={checkedItems.room}
-              onChange={() => toggleCheck('room')}
-              className="mt-0.5 rounded border-[#2B2350] text-[#6C4DFF] focus:ring-[#6C4DFF]"
-            />
-            <span>My testing room is private, quiet, and well-lit with no unauthorized individuals present.</span>
-          </label>
-
-          <label className="flex items-start space-x-2.5 cursor-pointer">
-            <input
-              type="checkbox"
-              checked={checkedItems.screen}
-              onChange={() => toggleCheck('screen')}
-              className="mt-0.5 rounded border-[#2B2350] text-[#6C4DFF] focus:ring-[#6C4DFF]"
-            />
-            <span>I understand that leaving fullscreen mode, switching tabs, or opening developer tools will log violation points.</span>
-          </label>
-
           <label className="flex items-start space-x-2.5 cursor-pointer">
             <input
               type="checkbox"
@@ -271,35 +263,105 @@ export const PreExamRulesSummary: React.FC<PreExamRulesSummaryProps> = ({
               onChange={() => toggleCheck('camera')}
               className="mt-0.5 rounded border-[#2B2350] text-[#6C4DFF] focus:ring-[#6C4DFF]"
             />
-            <span>My camera and microphone are operational and unobstructed throughout the examination session.</span>
+            <span>
+              <strong>Webcam Stream (Local Wasm):</strong> I consent to on-device facial presence and head pose analysis.
+            </span>
           </label>
 
           <label className="flex items-start space-x-2.5 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={checkedItems.microphone}
+              onChange={() => toggleCheck('microphone')}
+              className="mt-0.5 rounded border-[#2B2350] text-[#6C4DFF] focus:ring-[#6C4DFF]"
+            />
+            <span>
+              <strong>Microphone Audio:</strong> I consent to local ambient audio decibel analysis for speech detection.
+            </span>
+          </label>
+
+          <label className="flex items-start space-x-2.5 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={checkedItems.biometrics}
+              onChange={() => toggleCheck('biometrics')}
+              className="mt-0.5 rounded border-[#2B2350] text-[#6C4DFF] focus:ring-[#6C4DFF]"
+            />
+            <span>
+              <strong>Biometric Geometry & Liveness:</strong> I consent to automated facial feature matching and random liveness prompts.
+            </span>
+          </label>
+
+          <label className="flex items-start space-x-2.5 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={checkedItems.keystrokeData}
+              onChange={() => toggleCheck('keystrokeData')}
+              className="mt-0.5 rounded border-[#2B2350] text-[#6C4DFF] focus:ring-[#6C4DFF]"
+            />
+            <span>
+              <strong>Keystroke Dynamics:</strong> I consent to typing rhythm and cadence monitoring during written answers.
+            </span>
+          </label>
+
+          {isHighStakes && (
+            <>
+              <label className="flex items-start space-x-2.5 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={checkedItems.roomScan}
+                  onChange={() => toggleCheck('roomScan')}
+                  className="mt-0.5 rounded border-[#2B2350] text-[#6C4DFF] focus:ring-[#6C4DFF]"
+                />
+                <span>
+                  <strong>360° Room Environment Scan:</strong> I agree to show my immediate testing desk and surrounding room.
+                </span>
+              </label>
+
+              <label className="flex items-start space-x-2.5 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={checkedItems.phoneCamera}
+                  onChange={() => toggleCheck('phoneCamera')}
+                  className="mt-0.5 rounded border-[#2B2350] text-[#6C4DFF] focus:ring-[#6C4DFF]"
+                />
+                <span>
+                  <strong>Secondary Phone Camera:</strong> I agree to position my mobile phone camera for dual-angle monitoring.
+                </span>
+              </label>
+            </>
+          )}
+
+          <label className="flex items-start space-x-2.5 cursor-pointer pt-1 border-t border-slate-200">
             <input
               type="checkbox"
               checked={checkedItems.code}
               onChange={() => toggleCheck('code')}
               className="mt-0.5 rounded border-[#2B2350] text-[#6C4DFF] focus:ring-[#6C4DFF]"
             />
-            <span>I pledge to uphold academic integrity and adhere to the institutional honor code.</span>
+            <span>
+              <strong>Institutional Honor Code:</strong> I pledge that all submitted answers will be my own unaided work.
+            </span>
           </label>
         </div>
       </div>
 
       {/* Action Footer */}
       <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
-        <span className="text-[11px] font-mono text-[#6B6590]">
-          {allAcknowledged
-            ? '✓ All rules acknowledged and verified'
-            : 'Please check all 4 boxes to unlock exam runner'}
-        </span>
+        <button
+          type="button"
+          onClick={() => setShowAlternativeModal(true)}
+          className="text-xs font-mono font-bold text-red-600 hover:text-red-700 underline cursor-pointer"
+        >
+          Decline Consent & View Alternative Testing Accommodation
+        </button>
 
         <button
           type="button"
-          disabled={!allAcknowledged}
+          disabled={!mandatoryAcknowledged}
           onClick={onAcknowledge}
           className={`w-full sm:w-auto px-6 py-3 rounded-xl font-mono font-bold text-xs border-2 border-[#2B2350] transition-all flex items-center justify-center space-x-2 ${
-            allAcknowledged
+            mandatoryAcknowledged
               ? 'bg-[#10B981] hover:bg-[#059669] text-white shadow-[3px_3px_0px_#2B2350] cursor-pointer hover:-translate-y-0.5'
               : 'bg-slate-200 text-slate-400 border-slate-300 cursor-not-allowed'
           }`}
@@ -308,6 +370,48 @@ export const PreExamRulesSummary: React.FC<PreExamRulesSummaryProps> = ({
           <span>I ACCEPT & PROCEED TO EXAM</span>
         </button>
       </div>
+
+      {/* Institutional Alternative Process Modal (If Consent is Declined) */}
+      {showAlternativeModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4">
+          <div className="bg-white border-2 border-[#2B2350] rounded-2xl shadow-[6px_6px_0px_#2B2350] p-6 max-w-lg w-full space-y-4 animate-in fade-in zoom-in-95">
+            <div className="flex items-center space-x-3 text-amber-600">
+              <AlertTriangle className="w-6 h-6 shrink-0" />
+              <div>
+                <h3 className="font-bold text-base text-[#2B2350]">Consent Declined: Exam Locked</h3>
+                <p className="text-xs text-slate-500 font-mono">Institutional Non-Automated Alternative Process</p>
+              </div>
+            </div>
+
+            <p className="text-xs text-slate-700 leading-relaxed">
+              Under GDPR Article 22 and University Examination Regulations, candidates are not penalized for withholding proctoring consent. You are eligible to take this examination via the institution&apos;s approved alternative method.
+            </p>
+
+            <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 text-xs space-y-2 font-mono text-[#0F172A]">
+              <div><strong>Format:</strong> In-Person Proctored Examination</div>
+              <div><strong>Facility Location:</strong> Academic Services Building, Testing Center Hall B (Room 204)</div>
+              <div><strong>Coordinator Email:</strong> testing-accommodations@institution.edu</div>
+              <div><strong>Helpline:</strong> +1 (555) 019-2834</div>
+            </div>
+
+            <div className="flex justify-end space-x-2 pt-2">
+              <button
+                type="button"
+                onClick={() => setShowAlternativeModal(false)}
+                className="px-4 py-2 border-2 border-[#2B2350] rounded-xl text-xs font-mono font-bold bg-white text-[#2B2350] hover:bg-slate-100"
+              >
+                Return to Consent Agreement
+              </button>
+              <a
+                href="mailto:testing-accommodations@institution.edu?subject=Alternative%20Testing%20Accommodation%20Request"
+                className="px-4 py-2 border-2 border-[#2B2350] rounded-xl text-xs font-mono font-bold bg-[#6C4DFF] text-white hover:bg-[#5839ee] flex items-center space-x-1"
+              >
+                <span>Email Coordinator</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

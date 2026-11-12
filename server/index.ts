@@ -1,4 +1,16 @@
 import express from 'express';
+import path from 'path';
+import fs from 'fs';
+
+// Auto-load environment variables from .env file if available in Node 20.12+ / 22+
+if (typeof (process as any).loadEnvFile === 'function' && fs.existsSync('.env')) {
+  try {
+    (process as any).loadEnvFile();
+  } catch {
+    // Ignore if already loaded or unreadable
+  }
+}
+
 import authRoutes from './auth/routes/auth.routes';
 import { StudentDashboardController } from './student/student_dashboard.controller';
 import { studentProfileController } from './student/student_profile.controller';
@@ -17,11 +29,22 @@ const PORT = process.env.PORT || 3001;
 
 app.use(express.json());
 
-// Strict Enterprise Exam Security Headers & CSP Middleware
-app.use((_req, res, next) => {
+// Strict Enterprise Exam Security Headers, CORS & CSP Middleware
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  if (origin) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+    res.setHeader('Access-Control-Allow-Methods', 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, X-Session-Id');
+  }
+  if (req.method === 'OPTIONS') {
+    return res.sendStatus(204);
+  }
+
   res.setHeader(
     'Content-Security-Policy',
-    "default-src 'self'; script-src 'self' 'unsafe-eval' https://cdn.gpteng.co; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: blob:; connect-src 'self' ws: wss:; font-src 'self' data: https://fonts.gstatic.com; object-src 'none'; media-src 'self' blob:; frame-ancestors 'none';"
+    "default-src 'self'; script-src 'self' 'unsafe-eval' https://cdn.gpteng.co; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: blob:; connect-src 'self' https: ws: wss: stun:; font-src 'self' data: https://fonts.gstatic.com; object-src 'none'; media-src 'self' blob:; frame-ancestors 'none';"
   );
   res.setHeader('X-Content-Type-Options', 'nosniff');
   res.setHeader('X-Frame-Options', 'DENY');
@@ -89,6 +112,18 @@ app.delete('/api/v1/student/profile/avatar', (req, res) => studentProfileControl
 app.get('/health', (req, res) => {
   res.json({ status: 'HEALTHY', timestamp: new Date().toISOString() });
 });
+
+// Serve production client build from dist/ if available
+const distPath = path.resolve(process.cwd(), 'dist');
+if (fs.existsSync(distPath)) {
+  app.use(express.static(distPath));
+  app.get('*', (req, res, next) => {
+    if (req.path.startsWith('/api') || req.path === '/health') {
+      return next();
+    }
+    res.sendFile(path.join(distPath, 'index.html'));
+  });
+}
 
 if (process.env.NODE_ENV !== 'test') {
   app.listen(PORT, () => {

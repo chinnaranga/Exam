@@ -7,6 +7,7 @@ import { TooltipProvider } from '@/shared/components/ui/tooltip';
 
 // Shared Layout & Pages
 import Layout from '@/shared/components/Layout';
+import ErrorBoundary from '@/shared/components/ErrorBoundary';
 import RoleAwareDashboardRedirect from '@/shared/components/RoleAwareDashboardRedirect';
 import Index from '@/portals/public/pages/Index';
 import Exams from '@/shared/pages/Exams';
@@ -25,6 +26,8 @@ import Maintenance from '@/shared/pages/Maintenance';
 import NetworkError from '@/shared/pages/NetworkError';
 import MFAVerification from '@/shared/pages/MFAVerification';
 import MfaWizardPage from '@/shared/pages/MfaWizardPage';
+import MobileCameraStreamer from '@/portals/student/pages/MobileCameraStreamer';
+import StudentDemoExam from '@/portals/student/pages/StudentDemoExam';
 
 // Self-Contained Role Portals
 import { PublicRoutes } from '@/portals/public';
@@ -59,11 +62,16 @@ const App: React.FC = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
-      <BrowserRouter>
+      <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
         <Suspense fallback={<PortalFallback />}>
-          <Routes>
-            {/* 1. Public Portal Routes */}
+          <ErrorBoundary>
+            <Routes>
+              {/* 1. Public Portal Routes */}
             {PublicRoutes}
+            <Route path="/privacy" element={<PrivacyPage />} />
+            <Route path="/mobile-camera" element={<MobileCameraStreamer />} />
+            <Route path="/demo-exam" element={<StudentDemoExam />} />
+            <Route path="/demo" element={<StudentDemoExam />} />
 
             {/* 2. Student Portal Routes */}
             {StudentRoutes}
@@ -110,7 +118,8 @@ const App: React.FC = () => (
               <Route path="*" element={<NotFound />} />
             </Route>
           </Routes>
-        </Suspense>
+        </ErrorBoundary>
+      </Suspense>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>

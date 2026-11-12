@@ -2,6 +2,21 @@ import crypto from 'crypto';
 import express, { Request, Response, Router } from 'express';
 import { ExamSessionAuthority, examSessionAuthority } from '../integrity/ExamSessionAuthority';
 import { ViolationEngine, violationEngine } from '../integrity/ViolationEngine';
+import {
+  QuestionType,
+  MatchingConfig,
+  OrderingConfig,
+  FillInTheBlankConfig,
+  NumericConfig,
+  MathEquationConfig,
+  ImageHotspotConfig,
+  CaseStudyConfig,
+  FileUploadConfig,
+  AudioVideoConfig,
+  RubricDefinition,
+  QuestionDefinition,
+} from './questionTypes';
+import { gradingEngine } from './GradingEngine';
 
 export interface MultipleChoiceOption {
   id: string;
@@ -20,12 +35,25 @@ export interface ParameterizedConfig {
 export interface ExamQuestionDefinition {
   id: string;
   topic: string;
-  sectionId: string;
+  sectionId?: string;
   stem: string;
-  type: 'MULTIPLE_CHOICE' | 'PARAMETERIZED_NUMERIC' | 'CODING' | 'ESSAY';
+  type: QuestionType;
   points: number;
+  negativeMarking?: number;
+  negativeMarkingFloor?: number;
   options?: MultipleChoiceOption[];
+  multipleChoiceOptions?: MultipleChoiceOption[];
   parameterizedConfig?: ParameterizedConfig;
+  matchingConfig?: MatchingConfig;
+  orderingConfig?: OrderingConfig;
+  fillInTheBlankConfig?: FillInTheBlankConfig;
+  numericConfig?: NumericConfig;
+  mathEquationConfig?: MathEquationConfig;
+  imageHotspotConfig?: ImageHotspotConfig;
+  caseStudyConfig?: CaseStudyConfig;
+  fileUploadConfig?: FileUploadConfig;
+  audioVideoConfig?: AudioVideoConfig;
+  rubric?: RubricDefinition;
   correctAnswer?: string | number;
   explanation?: string;
 }
@@ -57,10 +85,45 @@ export interface ClientQuestionView {
   sectionId: string;
   topic: string;
   stem: string;
-  type: 'MULTIPLE_CHOICE' | 'PARAMETERIZED_NUMERIC' | 'CODING' | 'ESSAY';
+  type: QuestionType;
   points: number;
   options?: { id: string; text: string }[];
   unit?: string;
+  matchingConfig?: {
+    premises: { id: string; text: string }[];
+    responses: { id: string; text: string }[];
+  };
+  orderingConfig?: {
+    items: { id: string; text: string }[];
+  };
+  fillInTheBlankConfig?: {
+    template: string;
+    blankIds: string[];
+  };
+  numericConfig?: {
+    requiredUnit?: string;
+  };
+  mathEquationConfig?: {
+    hasLatexInput: boolean;
+  };
+  imageHotspotConfig?: {
+    imageUrl: string;
+    imageAltText?: string;
+  };
+  caseStudyConfig?: {
+    passageTitle: string;
+    passageContent: string;
+    passageMediaUrl?: string;
+    subQuestions: ClientQuestionView[];
+  };
+  fileUploadConfig?: {
+    allowedFileTypes: string[];
+    maxFileSizeMb: number;
+  };
+  audioVideoConfig?: {
+    mediaType: 'AUDIO' | 'VIDEO';
+    maxDurationSeconds: number;
+  };
   perQuestionTimeCapSeconds?: number;
 }
 
@@ -85,7 +148,7 @@ export interface ClientExamView {
 export interface InternalAnswerKey {
   questionId: string;
   sectionId: string;
-  type: 'MULTIPLE_CHOICE' | 'PARAMETERIZED_NUMERIC' | 'CODING' | 'ESSAY';
+  type: QuestionType | string;
   points: number;
   correctOptionId?: string;
   calculatedNumericAnswer?: number;
@@ -197,6 +260,7 @@ export class ExamRandomizationEngine {
       examSpec: ExamSpecification;
       candidateView: ClientExamView;
       answerKeys: Map<string, InternalAnswerKey>;
+      questionDefinitions: Map<string, ExamQuestionDefinition>;
       completedSections: Set<string>;
       submittedAnswers: Map<string, unknown>;
     }
@@ -227,6 +291,7 @@ export class ExamRandomizationEngine {
   }): ClientExamView {
     const prng = new SeededPRNG(params.sessionId);
     const answerKeys = new Map<string, InternalAnswerKey>();
+    const questionDefinitions = new Map<string, ExamQuestionDefinition>();
     const clientSections: ClientSectionView[] = [];
 
     for (const section of params.examSpec.sections) {
@@ -243,10 +308,12 @@ export class ExamRandomizationEngine {
       const clientQuestions: ClientQuestionView[] = [];
 
       for (const q of shuffledQuestions) {
-        if (q.type === 'MULTIPLE_CHOICE' && q.options) {
-          // 3. Shuffle Options Order
-          const shuffledOptions = prng.shuffle(q.options);
-          const correctOpt = q.options.find((o) => o.isCorrect);
+        questionDefinitions.set(q.id, q);
+
+        if (q.type === 'MULTIPLE_CHOICE') {
+          const opts = q.multipleChoiceOptions || q.options || [];
+          const shuffledOptions = prng.shuffle(opts);
+          const correctOpt = opts.find((o) => o.isCorrect);
 
           answerKeys.set(q.id, {
             questionId: q.id,
@@ -265,6 +332,148 @@ export class ExamRandomizationEngine {
             type: 'MULTIPLE_CHOICE',
             points: q.points,
             options: shuffledOptions.map((o) => ({ id: o.id, text: o.text })),
+            perQuestionTimeCapSeconds: section.perQuestionTimeCapSeconds,
+          });
+        } else if (q.type === 'MATCHING' && q.matchingConfig) {
+          const shuffledPremises = prng.shuffle(q.matchingConfig.premises);
+          const shuffledResponses = prng.shuffle(q.matchingConfig.responses);
+
+          clientQuestions.push({
+            id: q.id,
+            sectionId: section.id,
+            topic: q.topic,
+            stem: q.stem,
+            type: 'MATCHING',
+            points: q.points,
+            matchingConfig: {
+              premises: shuffledPremises,
+              responses: shuffledResponses,
+            },
+            perQuestionTimeCapSeconds: section.perQuestionTimeCapSeconds,
+          });
+        } else if (q.type === 'ORDERING' && q.orderingConfig) {
+          const scrambledItems = prng.shuffle(q.orderingConfig.items);
+
+          clientQuestions.push({
+            id: q.id,
+            sectionId: section.id,
+            topic: q.topic,
+            stem: q.stem,
+            type: 'ORDERING',
+            points: q.points,
+            orderingConfig: {
+              items: scrambledItems,
+            },
+            perQuestionTimeCapSeconds: section.perQuestionTimeCapSeconds,
+          });
+        } else if (q.type === 'FILL_IN_THE_BLANK' && q.fillInTheBlankConfig) {
+          clientQuestions.push({
+            id: q.id,
+            sectionId: section.id,
+            topic: q.topic,
+            stem: q.stem,
+            type: 'FILL_IN_THE_BLANK',
+            points: q.points,
+            fillInTheBlankConfig: {
+              template: q.fillInTheBlankConfig.template,
+              blankIds: q.fillInTheBlankConfig.blanks.map((b) => b.id),
+            },
+            perQuestionTimeCapSeconds: section.perQuestionTimeCapSeconds,
+          });
+        } else if (q.type === 'NUMERIC' && q.numericConfig) {
+          clientQuestions.push({
+            id: q.id,
+            sectionId: section.id,
+            topic: q.topic,
+            stem: q.stem,
+            type: 'NUMERIC',
+            points: q.points,
+            numericConfig: {
+              requiredUnit: q.numericConfig.requiredUnit,
+            },
+            perQuestionTimeCapSeconds: section.perQuestionTimeCapSeconds,
+          });
+        } else if (q.type === 'MATH_EQUATION') {
+          clientQuestions.push({
+            id: q.id,
+            sectionId: section.id,
+            topic: q.topic,
+            stem: q.stem,
+            type: 'MATH_EQUATION',
+            points: q.points,
+            mathEquationConfig: {
+              hasLatexInput: true,
+            },
+            perQuestionTimeCapSeconds: section.perQuestionTimeCapSeconds,
+          });
+        } else if (q.type === 'IMAGE_HOTSPOT' && q.imageHotspotConfig) {
+          clientQuestions.push({
+            id: q.id,
+            sectionId: section.id,
+            topic: q.topic,
+            stem: q.stem,
+            type: 'IMAGE_HOTSPOT',
+            points: q.points,
+            imageHotspotConfig: {
+              imageUrl: q.imageHotspotConfig.imageUrl,
+              imageAltText: q.imageHotspotConfig.imageAltText,
+            },
+            perQuestionTimeCapSeconds: section.perQuestionTimeCapSeconds,
+          });
+        } else if (q.type === 'CASE_STUDY' && q.caseStudyConfig) {
+          const subViews: ClientQuestionView[] = q.caseStudyConfig.subQuestions.map((subQ) => ({
+            id: subQ.id,
+            sectionId: section.id,
+            topic: subQ.topic,
+            stem: subQ.stem,
+            type: subQ.type,
+            points: subQ.points,
+            options: (subQ.multipleChoiceOptions || subQ.options)
+              ? prng.shuffle(subQ.multipleChoiceOptions || subQ.options || []).map((o) => ({ id: o.id, text: o.text }))
+              : undefined,
+          }));
+
+          clientQuestions.push({
+            id: q.id,
+            sectionId: section.id,
+            topic: q.topic,
+            stem: q.stem,
+            type: 'CASE_STUDY',
+            points: q.points,
+            caseStudyConfig: {
+              passageTitle: q.caseStudyConfig.passageTitle,
+              passageContent: q.caseStudyConfig.passageContent,
+              passageMediaUrl: q.caseStudyConfig.passageMediaUrl,
+              subQuestions: subViews,
+            },
+            perQuestionTimeCapSeconds: section.perQuestionTimeCapSeconds,
+          });
+        } else if (q.type === 'FILE_UPLOAD' && q.fileUploadConfig) {
+          clientQuestions.push({
+            id: q.id,
+            sectionId: section.id,
+            topic: q.topic,
+            stem: q.stem,
+            type: 'FILE_UPLOAD',
+            points: q.points,
+            fileUploadConfig: {
+              allowedFileTypes: q.fileUploadConfig.allowedFileTypes,
+              maxFileSizeMb: q.fileUploadConfig.maxFileSizeMb,
+            },
+            perQuestionTimeCapSeconds: section.perQuestionTimeCapSeconds,
+          });
+        } else if (q.type === 'AUDIO_VIDEO_RESPONSE' && q.audioVideoConfig) {
+          clientQuestions.push({
+            id: q.id,
+            sectionId: section.id,
+            topic: q.topic,
+            stem: q.stem,
+            type: 'AUDIO_VIDEO_RESPONSE',
+            points: q.points,
+            audioVideoConfig: {
+              mediaType: q.audioVideoConfig.mediaType,
+              maxDurationSeconds: q.audioVideoConfig.maxDurationSeconds,
+            },
             perQuestionTimeCapSeconds: section.perQuestionTimeCapSeconds,
           });
         } else if (q.type === 'PARAMETERIZED_NUMERIC' && q.parameterizedConfig) {
@@ -348,6 +557,7 @@ export class ExamRandomizationEngine {
       examSpec: params.examSpec,
       candidateView,
       answerKeys,
+      questionDefinitions,
       completedSections: new Set<string>(),
       submittedAnswers: new Map<string, unknown>(),
     });
@@ -435,32 +645,40 @@ export class ExamRandomizationEngine {
     let maxScore = 0;
     const questionResults: GradingResult['questionResults'] = [];
 
-    for (const [qId, key] of session.answerKeys.entries()) {
-      maxScore += key.points;
+    for (const [qId, qDef] of session.questionDefinitions.entries()) {
+      maxScore += qDef.points;
       const candidateAnswer = submissions[qId];
-      let isCorrect = false;
 
-      if (key.type === 'MULTIPLE_CHOICE') {
-        isCorrect = String(candidateAnswer) === String(key.correctOptionId);
-      } else if (key.type === 'PARAMETERIZED_NUMERIC' && key.calculatedNumericAnswer !== undefined) {
-        const numVal = Number(candidateAnswer);
-        const tolerance = key.tolerance || 0.02;
-        const diff = Math.abs(numVal - key.calculatedNumericAnswer);
-        const allowedDiff = Math.abs(key.calculatedNumericAnswer) * tolerance || 0.01;
-        isCorrect = diff <= allowedDiff;
+      const key = session.answerKeys.get(qId);
+      const qForGrading = {
+        ...qDef,
+        multipleChoiceOptions: qDef.multipleChoiceOptions || qDef.options,
+      } as QuestionDefinition;
+
+      if (qDef.type === 'PARAMETERIZED_NUMERIC' && key?.calculatedNumericAnswer !== undefined) {
+        qForGrading.numericConfig = {
+          expectedValue: key.calculatedNumericAnswer,
+          toleranceType: 'PERCENTAGE',
+          toleranceValue: key.tolerance || 0.02,
+          requiredUnit: qDef.parameterizedConfig?.unit,
+        };
       }
 
-      const pointsAwarded = isCorrect ? key.points : 0;
-      totalScore += pointsAwarded;
+      const evaluation = gradingEngine.evaluateQuestion(
+        qForGrading,
+        candidateAnswer
+      );
 
+      totalScore += evaluation.pointsAwarded;
       questionResults.push({
         questionId: qId,
-        pointsAwarded,
-        maxPoints: key.points,
-        isCorrect,
+        pointsAwarded: evaluation.pointsAwarded,
+        maxPoints: qDef.points,
+        isCorrect: evaluation.isCorrect,
       });
     }
 
+    totalScore = Math.max(0, Math.round(totalScore * 100) / 100);
     const percentage = maxScore > 0 ? Math.round((totalScore / maxScore) * 100) : 0;
     const result: GradingResult = {
       sessionId,

@@ -54,12 +54,13 @@ export class AppealsAndRetentionService {
     gazeRecordsCount: number,
     clipboardCount: number,
     ledgerRootHash: string,
-    appealWindowDays: number = 7
+    appealWindowDays: number = 7,
+    completedAt?: number
   ): SessionEvidencePackage {
     const pkg: SessionEvidencePackage = {
       sessionId,
       candidateId,
-      examCompletedAt: Date.now(),
+      examCompletedAt: completedAt || Date.now(),
       appealWindowDays,
       isPurged: false,
       rawBiometricSnapshotsCount: rawSnapshotsCount,

@@ -235,6 +235,11 @@ export class ExamSessionAuthority {
     return this.sessions.get(sessionId) || null;
   }
 
+  public getLedger(sessionId: string): LedgerRecord[] {
+    const session = this.sessions.get(sessionId);
+    return session ? session.ledger : [];
+  }
+
   /**
    * Authoritative clock endpoint response: { serverNow, deadline }
    */
@@ -705,6 +710,13 @@ export class ExamSessionAuthority {
       success: true,
       status: 'SUBMITTED',
     };
+  }
+
+  /**
+   * Finalizes student session upon explicit student exit / submission.
+   */
+  public recordStudentExit(session: ExamSessionState): void {
+    this.submitAnswers(session.id, session.cachedAnswers || {});
   }
 
   /**

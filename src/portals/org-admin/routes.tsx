@@ -1,10 +1,13 @@
 import React from 'react';
 import { Route } from 'react-router-dom';
 import OrgAdminComingSoon from './pages/OrgAdminComingSoon';
+import InstitutionalSettingsPage from './pages/InstitutionalSettingsPage';
 
 export const OrgAdminRoutes = (
   <>
-    {/* Organization Admin Portal - Coming Soon */}
+    {/* Organization Admin Portal */}
+    <Route path="/org-admin/institutional" element={<InstitutionalSettingsPage />} />
+    <Route path="/organization/institutional" element={<InstitutionalSettingsPage />} />
     <Route path="/org-admin" element={<OrgAdminComingSoon />} />
     <Route path="/org-admin/coming-soon" element={<OrgAdminComingSoon />} />
     <Route path="/org-admin/login" element={<OrgAdminComingSoon />} />

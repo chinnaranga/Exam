@@ -8,7 +8,8 @@
     "build": "vite build",
     "build:dev": "vite build --mode development",
     "build:server": "tsc -p server/tsconfig.json",
-    "dev:server": "node server/index.ts",
+    "dev:server": "jiti server/index.ts",
+    "start": "jiti server/index.ts",
     "lint": "eslint .",
     "preview": "vite preview"
   },
@@ -52,6 +53,7 @@
     "express": "^4.19.2",
     "framer-motion": "^11.18.2",
     "input-otp": "^1.2.4",
+    "jiti": "^1.21.7",
     "lucide-react": "^0.462.0",
     "next-themes": "^0.3.0",
     "react": "^18.3.1",

@@ -816,3 +816,4 @@ const FixBox: React.FC<{ instruction: string }> = ({ instruction }) => {
 };
 
 export default StudentSystemCheck;
+

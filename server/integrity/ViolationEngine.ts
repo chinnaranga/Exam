@@ -11,7 +11,7 @@ import { accommodationService } from '../accessibility/AccommodationService';
 
 export type SessionIntegrityStatus = 'ACTIVE' | 'WARNING' | 'OVERLAY_ACTIVE' | 'TERMINATED';
 
-export type ServerEnforcementAction = 'LOG_ONLY' | 'WARNING_TOAST' | 'OVERLAY' | 'TERMINATE';
+export type ServerEnforcementAction = 'NONE' | 'LOG_ONLY' | 'WARNING_TOAST' | 'OVERLAY' | 'TERMINATE';
 
 export interface RecordedViolation {
   id: string;
@@ -189,6 +189,7 @@ export class ViolationEngine {
         violation: session.violations[session.violations.length - 1] || {
           id: `violation_${now}_term`,
           ruleId: 'SESSION_TERMINATED',
+          type: 'SESSION_TERMINATED',
           name: 'Session Terminated',
           severity: 'CRITICAL',
           pointsAdded: 0,

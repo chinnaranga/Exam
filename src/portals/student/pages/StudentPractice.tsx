@@ -1,7 +1,8 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { Card } from '@/shared/components/ui/card';
 import { Button } from '@/shared/components/ui/button';
-import { Sparkles, Brain, Play } from 'lucide-react';
+import { Sparkles, Brain, Play, ShieldCheck, ArrowRight } from 'lucide-react';
 import { toast } from 'sonner';
 import { useQuestionBank } from '@/shared/hooks/useApiQueries';
 
@@ -15,6 +16,25 @@ export const StudentPractice: React.FC = () => {
         <h1 className="text-2xl font-extrabold text-[#0F172A]">AI Practice Tests & Skill Drills</h1>
         <p className="text-xs text-[#64748B] mt-1">Adaptive item practice calibrated to your Bloom's weakness areas.</p>
       </div>
+
+      {/* Feature Demo Exam Hero Banner */}
+      <Card className="p-6 rounded-2xl bg-gradient-to-r from-[#2B2350] to-[#453682] text-white border-2 border-[#1E1838] shadow-md flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div className="space-y-1.5 max-w-xl">
+          <div className="inline-flex items-center space-x-1.5 bg-[#6C4DFF] px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold text-[#FFF3A3]">
+            <Sparkles className="w-3 h-3" />
+            <span>INTERACTIVE FEATURE TEST SANDBOX</span>
+          </div>
+          <h2 className="text-lg font-heading font-black tracking-tight">AssessIQ Comprehensive Demo Examination</h2>
+          <p className="text-xs text-white/80 leading-relaxed font-body">
+            Test all platform features live: 14 diverse questions, proctoring violation triggers (focus loss, phone, second person), mobile QR second camera streaming, accommodations (WCAG 2.2 AA), hash-chained autosave, and cryptographic scoring.
+          </p>
+        </div>
+        <Link to="/demo-exam">
+          <Button className="bg-[#FFF3A3] hover:bg-[#FFE866] text-[#2B2350] font-mono font-bold text-xs px-4 py-2.5 rounded-xl border border-[#2B2350] shadow-sm whitespace-nowrap">
+            Launch Demo Exam <ArrowRight className="w-3.5 h-3.5 ml-1.5" />
+          </Button>
+        </Link>
+      </Card>
 
       {isLoading ? (
         <div className="p-8 text-center text-slate-400 font-mono text-xs animate-pulse">

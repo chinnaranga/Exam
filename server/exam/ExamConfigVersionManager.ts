@@ -246,8 +246,9 @@ export class ExamConfigVersionManager {
 
     // Append cryptographic event to session ledger if session exists in authority
     try {
-      if (examSessionAuthority.hasSession(sessionId)) {
-        examSessionAuthority.appendLedgerEvent(sessionId, {
+      const session = examSessionAuthority.getSession(sessionId);
+      if (session) {
+        examSessionAuthority.appendLedgerRecord(session, {
           type: 'CONFIG_VERSION_PINNED',
           ts: Date.now(),
           seq: 1,

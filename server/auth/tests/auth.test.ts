@@ -1,3 +1,4 @@
+import { describe, it } from 'vitest';
 import { JwtService } from '../tokens/jwt.service';
 import { PasswordService } from '../security/password.service';
 import { SessionService } from '../sessions/session.service';
@@ -59,3 +60,9 @@ export async function runAuthEngineSuite() {
 
   console.log('[AUTH SUITE] All 4 Enterprise Auth Engine Tests PASSED successfully!');
 }
+
+describe('Enterprise Auth Engine', () => {
+  it('runs auth engine suite successfully', async () => {
+    await runAuthEngineSuite();
+  });
+});
