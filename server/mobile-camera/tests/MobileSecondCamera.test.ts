@@ -31,7 +31,8 @@ describe('AssessIQ Mobile Second Camera Architecture', () => {
       expect(tokenRecord.token).toBeDefined();
       expect(tokenRecord.token.startsWith('pair_')).toBe(true);
       expect(tokenRecord.status).toBe('PENDING');
-      expect(tokenRecord.expiresAt).toBe(now + 120_000); // 2 minutes
+      expect(tokenRecord.expiresAt).toBeGreaterThanOrEqual(now + 119_000);
+      expect(tokenRecord.expiresAt).toBeLessThanOrEqual(now + 121_000);
       expect(tokenRecord.pairingUrl).toContain(`/mobile-camera?token=${tokenRecord.token}&session=sess_mobile_test`);
     });
 

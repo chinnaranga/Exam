@@ -4,13 +4,13 @@ import { ALLOWED_EDITABLE_TAGS, ALLOWED_EDITOR_CLASSES } from '../constants/Allo
 
 export class MouseEventNormalizer {
   public static isTargetEditable(element: HTMLElement | null): boolean {
-    if (!element) return false;
-    const tagName = element.tagName.toUpperCase();
+    if (!element || !element.tagName) return false;
+    const tagName = typeof element.tagName === 'string' ? element.tagName.toUpperCase() : '';
     if (ALLOWED_EDITABLE_TAGS.includes(tagName)) return true;
     if (element.isContentEditable) return true;
 
-    const className = element.className || '';
-    if (typeof className === 'string') {
+    const className = typeof element.className === 'string' ? element.className : '';
+    if (className) {
       return ALLOWED_EDITOR_CLASSES.some((cls) => className.includes(cls));
     }
     return false;
